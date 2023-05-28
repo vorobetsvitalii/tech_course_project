@@ -20,8 +20,6 @@ set(PROJECT_SOURCES
         mainwindow.ui
         db_model.cpp
         db_model.h
-        tests.cpp
-        tests.h
         server.cpp
         server.h
 )
