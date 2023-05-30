@@ -30,6 +30,6 @@ private:
     Ui::MainWindow *ui;
     QLineEdit *user_name;
     QLineEdit *user_password;
-    server serverObject;
+    Server serverObject;
 };
 #endif // MAINWINDOW_H
