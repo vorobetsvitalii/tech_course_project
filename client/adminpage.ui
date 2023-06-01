@@ -18,13 +18,13 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="genericGridLayout">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="headerLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="topLayout">
          <item>
-          <layout class="QHBoxLayout" name="headerHComponents">
+          <layout class="QHBoxLayout" name="identityLayout">
            <item>
             <widget class="QPushButton" name="homepagePushButton">
              <property name="enabled">
@@ -216,7 +216,7 @@ border:none</string>
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_12">
+          <widget class="QPushButton" name="saveChangesButton">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -294,9 +294,9 @@ color: rgb(255, 0, 0);</string>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="localNavigationLayout">
        <item>
-        <layout class="QVBoxLayout" name="menuItemsListVLayout">
+        <layout class="QVBoxLayout" name="itemsMenuLayout">
          <item>
           <widget class="QPushButton" name="pushButton_5">
            <property name="text">
