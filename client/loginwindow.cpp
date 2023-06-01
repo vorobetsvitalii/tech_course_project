@@ -26,8 +26,12 @@ QString LoginWindow::getPassword() const
 
 void LoginWindow::on_loginPushButton_clicked()
 {
+    adminPageWindow = std::make_unique<AdminPage>();
     clientInstanse = std::make_unique<Client>();
 
-    clientInstanse->InitializeSession();
+    //clientInstanse->InitializeSession();
+    adminPageWindow->show();
+
+    this->close();
 }
 

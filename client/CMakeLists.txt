@@ -18,7 +18,10 @@ set(PROJECT_SOURCES
         loginwindow.h
         client.cpp
         client.h
+        adminpage.cpp
+        adminpage.h
         loginwindow.ui
+        adminpage.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

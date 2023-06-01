@@ -9,9 +9,9 @@ void Client::InitializeSession()
     {
         std::unique_ptr<Poco::Net::HTTPClientSession> clientSession = std::make_unique<Poco::Net::HTTPClientSession>(IP_ADDRESS, PORT);
 
-        RequestToServer();
+        loginServerRequest();
 
-        ServerResponse();
+        loginServerResponse();
     }
     catch (const Poco::Exception &ex)
     {
@@ -19,7 +19,7 @@ void Client::InitializeSession()
     }
 }
 
-void Client::RequestToServer()
+void Client::loginServerRequest()
 {
     LoginWindow logWindow;
     QString requestBody;
@@ -28,7 +28,6 @@ void Client::RequestToServer()
     requestBody = logWindow.getEmail() + "|" + logWindow.getPassword();
 
     requestToServer = std::make_unique<Poco::Net::HTTPRequest>(Poco::Net::HTTPRequest::HTTP_POST, "/", Poco::Net::HTTPMessage::HTTP_1_1);
-
     requestToServer->setContentType("text/plain");
     requestToServer->setContentLength(requestBody.length() + 1);
 
@@ -37,7 +36,7 @@ void Client::RequestToServer()
     clientSession->sendRequest(*requestToServer) << requestBodyStream.str();
 }
 
-void Client::ServerResponse()
+void Client::loginServerResponse()
 {
     std::unique_ptr<Poco::Net::HTTPResponse> serverResponse = std::unique_ptr<Poco::Net::HTTPResponse>();
     std::istream& responseStream = clientSession->receiveResponse(*serverResponse);

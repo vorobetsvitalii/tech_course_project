@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "client.h"
+#include "adminpage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class LoginWindow; }
@@ -28,6 +29,7 @@ private slots:
 private:
     Ui::LoginWindow *ui;
 
+    std::unique_ptr<AdminPage> adminPageWindow;
     std::unique_ptr<Client> clientInstanse;
 };
 #endif // LOGINWINDOW_H

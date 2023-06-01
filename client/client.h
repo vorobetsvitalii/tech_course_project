@@ -24,8 +24,8 @@ private:
     std::unique_ptr<Poco::Net::HTTPRequest> requestToServer;
     std::unique_ptr<Poco::Net::HTTPResponse> serverResponse;
 
-    void RequestToServer();
-    void ServerResponse();
+    void loginServerRequest();
+    void loginServerResponse();
 };
 
 #endif // CLIENT_H
