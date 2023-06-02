@@ -14,18 +14,18 @@ class Client
 public:
     Client();
 
-    void InitializeSession();
+    void handleServerConnection();
 
 private:
     const std::string IP_ADDRESS = "127.0.0.1";
     const int PORT = 2323;
 
     std::unique_ptr<Poco::Net::HTTPClientSession> clientSession;
-    std::unique_ptr<Poco::Net::HTTPRequest> requestToServer;
+    std::unique_ptr<Poco::Net::HTTPRequest> serverRequest;
     std::unique_ptr<Poco::Net::HTTPResponse> serverResponse;
 
-    void loginServerRequest();
-    void loginServerResponse();
+    QString retriveRequestBody() const;
+    std::string retriveResponseBody() const;
 };
 
 #endif // CLIENT_H

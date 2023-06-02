@@ -2,6 +2,12 @@
 #define LOGINWINDOW_H
 
 #include <QMainWindow>
+#include<QPushButton>
+#include<QLabel>
+#include<QLineEdit>
+#include<QHBoxLayout>
+#include<QVBoxLayout>
+#include<QToolButton>
 #include <iostream>
 #include <memory>
 
@@ -24,10 +30,23 @@ public:
     QString getPassword() const;
 
 private slots:
-    void on_loginPushButton_clicked();
+    void loginPushButton_clicked();
 
 private:
     Ui::LoginWindow *ui;
+
+    QGridLayout *gridLayout;
+
+    QLabel *text_email;
+    QLabel *text_password;
+    QLabel *user_icon;
+
+    QLineEdit *user_name;
+    QLineEdit *user_password;
+
+    QPushButton *button;
+
+    QWidget *centralWidget;
 
     std::unique_ptr<AdminPage> adminPageWindow;
     std::unique_ptr<Client> clientInstanse;
