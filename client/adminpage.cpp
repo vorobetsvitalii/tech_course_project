@@ -7,7 +7,13 @@ AdminPage::AdminPage(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->switchPushButton->setIcon(QPixmap("C:/Development/Projects/tech_course_project/img/switchIcon.png"));
+    this->setWindowTitle("Sports Hub");
+
+    QString imagePath = QCoreApplication::applicationDirPath() + "img/switchIcon.png";
+
+    imagePath.replace("build-client-Desktop_Qt_6_5_0_MinGW_64_bit-Debug", "");
+
+    ui->switchPushButton->setIcon(QPixmap(imagePath));
 }
 
 AdminPage::~AdminPage()

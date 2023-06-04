@@ -18,7 +18,7 @@ public:
 
 private:
     const std::string IP_ADDRESS = "127.0.0.1";
-    const int PORT = 2323;
+    const int PORT = 8080;
 
     std::unique_ptr<Poco::Net::HTTPClientSession> clientSession;
     std::unique_ptr<Poco::Net::HTTPRequest> serverRequest;

@@ -203,8 +203,6 @@ std::string MyRequestHandler::GetLastName(Poco::Net::HTTPServerRequest &request)
     }
 }
 
-
-
 bool MyRequestHandler::DataBase_Login(const std::string email, const std::string password)
 {
     // код для перевірки БД
@@ -220,7 +218,8 @@ Poco::Net::HTTPRequestHandler* MyRequestHandlerFactory::createRequestHandler(con
 
 Server::Server()
 {
-    Poco::Net::ServerSocket serverSocket(8080);
+    Poco::Net::SocketAddress address("127.0.0.1", 8080);
+    Poco::Net::ServerSocket serverSocket(address);
     Poco::Net::HTTPServerParams* pParams = new Poco::Net::HTTPServerParams;
 
     // розмір черги

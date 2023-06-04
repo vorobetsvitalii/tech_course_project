@@ -19,8 +19,8 @@ void Client::handleServerConnection()
 
         clientSession->sendRequest(*serverRequest) << retriveRequestBody().toStdString();
 
-        qDebug() << "Response status: " << serverResponse->getStatus() << "\n";
-        qDebug() << "Response body: " << retriveResponseBody() << "\n";
+        //qDebug() << "Response status: " << serverResponse->getStatus() << "\n"; Further implementation of receiving response from Server
+        //qDebug() << "Response body: " << retriveResponseBody() << "\n";
     }
     catch (const Poco::Exception &ex)
     {
@@ -28,7 +28,7 @@ void Client::handleServerConnection()
     }
 }
 
-QString Client::retriveRequestBody() const
+QString Client::retriveRequestBody() const // Need to be implemented(Server request)
 {
     LoginWindow logWindow;
     QString requestBody;
@@ -38,7 +38,7 @@ QString Client::retriveRequestBody() const
     return requestBody;
 }
 
-std::string Client::retriveResponseBody() const
+std::string Client::retriveResponseBody() const // Need to be implemented(Server response)
 {
     std::string responseBody;
     std::istream& responseStream = clientSession->receiveResponse(*serverResponse);

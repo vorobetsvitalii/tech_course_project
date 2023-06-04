@@ -7,6 +7,12 @@ LoginWindow::LoginWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    this->setWindowTitle("Sports Hub");
+
+    QString imagePath = QCoreApplication::applicationDirPath() + "img/avatarIcon.jpg";
+
+    imagePath.replace("build-client-Desktop_Qt_6_5_0_MinGW_64_bit-Debug", "");
+
     resize(600, 400);
     gridLayout = new QGridLayout;
 
@@ -14,7 +20,7 @@ LoginWindow::LoginWindow(QWidget *parent)
     text_password = new QLabel(this);
     user_icon = new QLabel(this);
 
-    user_icon->setPixmap(QPixmap("C:/Development/Projects/tech_course_project/img/avatarIcon.jpg"));
+    user_icon->setPixmap(QPixmap(imagePath));
     user_icon->setFixedSize(64, 64); // Set the size of the icon
 
     text_email->setText("Email");
