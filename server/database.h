@@ -1,5 +1,5 @@
-#ifndef DB_MODEL_H
-#define DB_MODEL_H
+#ifndef DATABASE_H
+#define DATABASE_H
 
 #include<QtSql/QSql>
 #include<QtSql/QSqlDatabase>
@@ -7,7 +7,7 @@
 #include<QSqlError>
 #include<QSqlQuery>
 
-class db_model
+class DataBase
 {
 private:
 
@@ -27,15 +27,12 @@ private:
 
 public:
 
-    db_model();
-    db_model(QString email,QString password);
+    DataBase();
+    DataBase(QString email,QString password);
 
     QSqlDatabase Connect();
     bool Login();
     bool Login(QString email,QString password);
 
 };
-
-
-
-#endif // DB_MODEL_H
+#endif // DATABASE_H

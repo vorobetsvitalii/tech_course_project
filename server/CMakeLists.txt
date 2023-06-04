@@ -1,62 +1,47 @@
 cmake_minimum_required(VERSION 3.5)
-
-project(Login VERSION 0.1 LANGUAGES CXX)
-
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+project(Server_poco LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Sql)
+# Set the POCO library directory
+set(POCO_DIR "D:/MSYS/mingw64")
 
-set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        db_model.cpp
-        db_model.h
-        server.cpp
-        server.h
+# Include directories for POCO
+include_directories("${POCO_DIR}/include")
+
+# Set the Qt6 installation directory
+set(CMAKE_PREFIX_PATH "C:/Qt/6.0.0/msvc2019_64" ${CMAKE_PREFIX_PATH})
+
+# Find and include the Qt6 package with SQL module
+find_package(Qt6 COMPONENTS Core Sql REQUIRED)
+# Add the Qt6 include directories to the project
+include_directories(${Qt6Core_INCLUDE_DIRS})
+
+
+# Add your source files to the project
+add_executable(
+    Server_poco
+    main.cpp
+    server.h
+    server.cpp
+    database.cpp
+    database.h
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(Login
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-else()
-    if(ANDROID)
-        add_library(Login SHARED
-            ${PROJECT_SOURCES}
-        )
-    else()
-        add_executable(Login
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
-
-target_link_libraries(Login PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Qt${QT_VERSION_MAJOR}::Network)
-
-set_target_properties(Login PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+# Link against the POCO libraries
+target_link_libraries(Server_poco PRIVATE
+    "${POCO_DIR}/lib/libPocoFoundation.dll.a"
+    "${POCO_DIR}/lib/libPocoNet.dll.a"
+    "${POCO_DIR}/lib/libPocoJWT.dll.a"
+    "${POCO_DIR}/lib/libPocoJSON.dll.a"
 )
 
-install(TARGETS Login
-    BUNDLE DESTINATION .
+# Link against the Qt6 libraries
+target_link_libraries(Server_poco PRIVATE Qt6::Core Qt6::Sql)
+
+
+install(TARGETS Server_poco
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(Login)
-endif()

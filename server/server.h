@@ -1,31 +1,75 @@
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef MYSERVER_H
+#define MYSERVER_H
 
-#include <QTcpServer>
-#include <QTcpSocket>
-#include <memory>
+#include "database.h"
 
-#include "db_model.h"
 
-class Server : public QTcpServer
+#include <Poco/Net/HTTPServer.h>
+#include <Poco/Random.h>
+#include <Poco/Base64Encoder.h>
+#include <Poco/JWT/JWT.h>
+#include <Poco/JWT/Token.h>
+#include <Poco/JWT/Signer.h>
+#include <Poco/Net/HTTPRequestHandlerFactory.h>
+#include <Poco/Net/HTTPRequestHandler.h>
+#include <Poco/Net/HTTPServerRequest.h>
+#include <Poco/Net/HTTPServerResponse.h>
+#include "Poco/JSON/JSON.h"
+#include "Poco/JSON/Parser.h"
+#include "Poco/JSON/PrintHandler.h"
+#include "Poco/JSON/JSONException.h"
+#include <Poco/URI.h>
+#include <iostream>
+#include <QDebug>
+#include <random>
+#include <algorithm>
+#include <iterator>
+
+
+
+class MyRequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory
 {
-
 public:
-    Server(QObject *parent = nullptr);
-
-public slots:
-    bool handleConnection(QString,QString);
-    void handleDisconect();
-
-private:
-    db_model model;
-    QVector<QTcpSocket*> Sockets;
-
-    std::unique_ptr<QTcpSocket> socket;
-
-public slots:
-    void incomingConnection(qintptr socketDescriptor);
-    void slotReadyRead();
+    Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request);
 };
 
-#endif // SERVER_H
+
+
+class Server
+{
+public:
+    Server();
+
+    std::unique_ptr<DataBase> database;
+
+    void start();
+    void stop();
+
+private:
+    Poco::Net::HTTPServer* m_httpServer;
+};
+
+
+
+
+
+
+class MyRequestHandler : public Poco::Net::HTTPRequestHandler , public Server
+{
+public:
+    void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    bool handleLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+
+
+private:
+    std::string GetLogin(Poco::Net::HTTPServerRequest& request);
+    std::string GetFirstName(Poco::Net::HTTPServerRequest& request);
+    std::string GetLastName(Poco::Net::HTTPServerRequest& request);
+    bool DataBase_Login(const std::string ,const std::string); // Логін
+
+};
+
+#endif // MYSERVER_H
+
+
+std::string GenerateRandomKey();
