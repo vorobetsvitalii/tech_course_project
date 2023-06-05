@@ -2,7 +2,12 @@
 
 void MyRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
 {
+    try
+    {
     std::string method = request.getMethod();
+
+    //http://127.0.0.1:8080/api/login?email=user1@gmail.com&password=password1
+    //http://127.0.0.1:8080/api/login?email=user2@gmail.com&password=password2
 
     if (method == "GET")
     {
@@ -15,7 +20,7 @@ void MyRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco
             {
                 Poco::JWT::Token token;
                 token.payload().set("sub", GetLogin(request));
-                token.payload().set("exp", Poco::Timestamp::fromEpochTime(std::time(nullptr) + 3600));
+                token.payload().set("exp", Poco::Timestamp::fromEpochTime(std::time(nullptr) + 3600));//час життя токену година
 
                 std::ostringstream jwtTokenStream;
                 Poco::JSON::Stringifier::stringify(token.payload(), jwtTokenStream);
@@ -57,6 +62,10 @@ void MyRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco
             response.setStatus(Poco::Net::HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
             response.send();
         }
+    }
+        }catch(std::exception exp){
+    response.setStatus(Poco::Net::HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
+    response.send();
     }
 }
 
@@ -149,9 +158,10 @@ std::string MyRequestHandler::GetFirstName(Poco::Net::HTTPServerRequest &request
             password=param.second;
         }
     }
-    QString login_check_sql="SELECT first_name FROM Users WHERE email=:email AND password=:password";
+    //переробити
+    QString login_check_sql = DataBase::login_check_sql;
 
-    //Connect();
+   //DataBase::database_model.open() ;
     QSqlQuery check_q;
     check_q.prepare(login_check_sql);
     check_q.bindValue(":email",QString::fromStdString(email));
@@ -161,7 +171,8 @@ std::string MyRequestHandler::GetFirstName(Poco::Net::HTTPServerRequest &request
     {
         if(check_q.next())
         {
-            return check_q.value(0).toString().toUtf8().constData();
+            qDebug()<<check_q.value("first_name").toString().toUtf8().constData();
+            return check_q.value("first_name").toString().toUtf8().constData();
 
         }
     }
@@ -185,9 +196,11 @@ std::string MyRequestHandler::GetLastName(Poco::Net::HTTPServerRequest &request)
             password=param.second;
         }
     }
-    QString login_check_sql="SELECT last_name FROM Users WHERE email=:email AND password=:password";
+    //переробити
+    QString login_check_sql = DataBase::login_check_sql;
 
     //Connect();
+    //DataBase::database_model.open() ;
     QSqlQuery check_q;
     check_q.prepare(login_check_sql);
     check_q.bindValue(":email",QString::fromStdString(email));
@@ -197,11 +210,14 @@ std::string MyRequestHandler::GetLastName(Poco::Net::HTTPServerRequest &request)
     {
         if(check_q.next())
         {
-            return check_q.value(0).toString().toUtf8().constData();
+            qDebug()<<check_q.value("last_name").toString().toUtf8().constData();
+            return check_q.value("last_name").toString().toUtf8().constData();
 
         }
     }
 }
+
+
 
 bool MyRequestHandler::DataBase_Login(const std::string email, const std::string password)
 {

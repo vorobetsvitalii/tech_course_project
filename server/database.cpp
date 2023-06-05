@@ -1,5 +1,8 @@
 #include "database.h"
 
+
+const QString DataBase::login_check_sql = "SELECT * FROM Users WHERE email=:email AND password=HASHBYTES('SHA2_512', CAST(:password AS VARCHAR(100)))"; // Definition and initialization of static data member
+
 DataBase::DataBase()
 {
 
@@ -48,23 +51,30 @@ bool DataBase::Login()
     return false;
 }
 
+
+
 bool DataBase::Login(QString email, QString password)
 {
+    QString  login_sql = login_check_sql;
 
-    QString login_check_sql="SELECT * FROM Users WHERE email=:email AND password=:password";
 
-    Connect();
+    if(!database_model.isOpen()){
+    database_model.open();
+    }
     QSqlQuery check_q;
-    check_q.prepare(login_check_sql);
+    check_q.prepare(login_sql);
     check_q.bindValue(":email", email);
     check_q.bindValue(":password", password);
 
-    if(check_q.exec())
+    if (check_q.exec())
     {
-        if(check_q.next())
+        if (check_q.next())
         {
+            //database_model.close();
             return true;
         }
     }
+    //database_model.close();
     return false;
 }
+

@@ -25,11 +25,17 @@ private:
     QString user_first_name;
     QString user_last_name;
 
+
 public:
+
+
+    static const QString login_check_sql;
+
 
     DataBase();
     DataBase(QString email,QString password);
 
+    QSqlDatabase database_model = Connect();
     QSqlDatabase Connect();
     bool Login();
     bool Login(QString email,QString password);
