@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QScrollArea>
+#include <QGraphicsDropShadowEffect>
 #include <memory>
 
 namespace Ui {
@@ -31,6 +32,10 @@ private:
 
     std::unique_ptr<QVBoxLayout> headerVLayout;
     std::unique_ptr<QVBoxLayout> itemsMenuVLayout;
+
+    std::unique_ptr<QWidget> topHWidget;
+    std::unique_ptr<QWidget> switchButtonWidget;
+    std::unique_ptr<QWidget> menuHWidget;
 
     std::unique_ptr<QHBoxLayout> topHLayout;
     std::unique_ptr<QHBoxLayout> configurationHLayout;
@@ -67,6 +72,7 @@ private:
     std::unique_ptr<QScrollArea> contentArea;
 
     void initializeLayouts();
+    void initializeWidgets();
     void initializeButton();
     void initializeSpacers();
 
