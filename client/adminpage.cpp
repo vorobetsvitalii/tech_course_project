@@ -90,6 +90,7 @@ void AdminPage::initializeSpacers()
     configSpacer_1 = std::make_unique<QSpacerItem>(60, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     configSpacer_2 = std::make_unique<QSpacerItem>(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
     configSpacer_3 = std::make_unique<QSpacerItem>(9, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    configSpacer_4 = std::make_unique<QSpacerItem>(15, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     // Menu layout
     menuSpacer_1 = std::make_unique<QSpacerItem>(52, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     menuSpacer_2 = std::make_unique<QSpacerItem>(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -164,6 +165,7 @@ void AdminPage::configurationHorizontalLayout()
     configurationHLayout->addWidget(cancelPushButton.get());
     configurationHLayout->addSpacerItem(configSpacer_3.get());
     configurationHLayout->addWidget(saveChangesButton.get());
+    configurationHLayout->addSpacerItem(configSpacer_4.get());
 }
 
 void AdminPage::menuHorizontalLayout()

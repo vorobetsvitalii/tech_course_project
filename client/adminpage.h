@@ -47,6 +47,7 @@ private:
     std::unique_ptr<QSpacerItem> configSpacer_1;
     std::unique_ptr<QSpacerItem> configSpacer_2;
     std::unique_ptr<QSpacerItem> configSpacer_3;
+    std::unique_ptr<QSpacerItem> configSpacer_4;
     std::unique_ptr<QSpacerItem> menuSpacer_1;
     std::unique_ptr<QSpacerItem> menuSpacer_2;
     std::unique_ptr<QSpacerItem> itemsMenuSpacer_1;
