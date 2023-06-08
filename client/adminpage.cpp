@@ -103,17 +103,21 @@ void AdminPage::initializeSpacers()
 void AdminPage::topHorizontalLayout()
 {
     QFont homepagePushButtonFont("Tahoma", 12);
+    QString projectPath = QCoreApplication::applicationDirPath();
 
     homepagePushButton->setText("Sports Hub");
     homepagePushButton->setFixedSize(150, 50);
     homepagePushButton->setFont(homepagePushButtonFont);
-    homepagePushButton->setStyleSheet("QPushButton {background-color: rgb(208, 0, 0); color: rgb(255, 255, 255); border:none;}");
+    homepagePushButton->setStyleSheet("QPushButton { \
+                                       background-color: rgb(208, 0, 0); \
+                                       color: rgb(255, 255, 255); \
+                                       border:none;}");
 
     switchPushButton->setStyleSheet("QPushButton { \
                                      border: none; background-color: rgb(216, 223, 233); \
                                      margin-left: 10px;}");
 
-    switchPushButton->setIcon(QIcon("C:/Development/Projects/tech_course_project/img/switchIcon.png"));
+    switchPushButton->setIcon(QIcon(projectPath.replace("build-client-Desktop_Qt_6_5_0_MinGW_64_bit-Debug", "img/switchIcon.png")));
     switchPushButton->setIconSize(QSize(35, 40));
 
     adminPushButton->setStyleSheet("QPushButton {background-color: rgb(255, 255, 255);}");
