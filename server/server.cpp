@@ -17,6 +17,10 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             {
                 ApiLogin(request, response);
             }
+            else if(uri.find("/api/logout") != std::string::npos)
+            {
+                ApiLogout(request, response);
+            }
             else if(uri.find("/test")!= std::string::npos)
             {
                 //повністю для тесту запитів
@@ -367,7 +371,20 @@ bool RequestHandler::CheckToken(const std::string key)
     return false;
 }
 
+void RequestHandler::ApiLogout(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response){
+    Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+    std::string key = parameters[0].second;
 
+    QSqlQuery query;
+    query.prepare("DELETE FROM Tokens WHERE token_key = CAST(:token_key AS nvarchar(max))");
+    query.bindValue(":token_key", QString::fromStdString(key));
+    if(query.exec())
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+    else {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_FORBIDDEN);
+    }
+    response.send();
+}
 
 Poco::Net::HTTPRequestHandler* RequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest&)
 {
