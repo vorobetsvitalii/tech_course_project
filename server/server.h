@@ -3,7 +3,6 @@
 
 #include "database.h"
 
-
 #include <Poco/Net/HTTPServer.h>
 #include <Poco/Random.h>
 #include <Poco/Base64Encoder.h>
@@ -49,17 +48,11 @@ private:
     Poco::Net::HTTPServer* m_httpServer;
 };
 
-
-
-
-
-
 class MyRequestHandler : public Poco::Net::HTTPRequestHandler , public Server
 {
 public:
     void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
     bool handleLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
-
 
 private:
     std::string GetLogin(Poco::Net::HTTPServerRequest& request);
