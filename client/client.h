@@ -9,12 +9,26 @@
 #include <Poco/Net/HTTPResponse.h>
 #include <Poco/StreamCopier.h>
 
+#include <Poco/URI.h>
+#include <Poco/JSON/Parser.h>
+#include <Poco/Dynamic/Var.h>
+
+#include <Poco/Crypto/Cipher.h>
+#include <Poco/Crypto/CipherFactory.h>
+#include <Poco/Crypto/CipherKey.h>
+#include <Poco/Exception.h>
+#include <stdexcept>
+#include <cstring>
+
+
 class Client
 {
 public:
     Client();
 
     void handleServerConnection();
+
+    bool handleLoginRequest(const std::string& email, const std::string& password);
 
 private:
     const std::string IP_ADDRESS = "127.0.0.1";
@@ -26,6 +40,11 @@ private:
 
     QString retriveRequestBody() const;
     std::string retriveResponseBody() const;
+
+    std::string sendHTTPRequest(const std::string& url);
+    bool parseJSONResponse(const std::string& responseData);
+
+
 };
 
 #endif // CLIENT_H

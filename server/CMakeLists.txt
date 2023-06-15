@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the POCO library directory
-set(POCO_DIR "C:/msys64/mingw64")
+set(POCO_DIR "D:/MSYS/mingw64")
 
 # Include directories for POCO
 include_directories("${POCO_DIR}/include")
@@ -27,6 +27,9 @@ add_executable(
     server.cpp
     database.cpp
     database.h
+    user.cpp
+    user.h
+    IJsonSerializable.h
 )
 
 # Link against the POCO libraries
