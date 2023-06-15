@@ -1,7 +1,17 @@
 #ifndef MYSERVER_H
 #define MYSERVER_H
+#pragma once
+
 
 #include "database.h"
+#include "user.h"
+
+
+
+#include <QJsonDocument>
+#include <QJsonObject>
+
+
 
 
 #include <Poco/Net/HTTPServer.h>
@@ -78,9 +88,9 @@ class RequestHandler : public Poco::Net::HTTPRequestHandler , public Server
 {
 public:
     void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
-    bool handleLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    bool CheckLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 
-
+    static bool CheckToken(const std::string key);
 private:
     std::string GetLogin(Poco::Net::HTTPServerRequest& request);
     std::string GetFirstName(Poco::Net::HTTPServerRequest& request);
@@ -88,7 +98,7 @@ private:
     bool DataBase_Login(const std::string ,const std::string); // Логін
     void ApiLogin(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void AddTokenToBD(const std::string& token,const std::string key);
-    bool CheckToken(const std::string key);
+
 
 };
 

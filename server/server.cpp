@@ -20,9 +20,6 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             else if(uri.find("/test")!= std::string::npos)
             {
                 //повністю для тесту запитів
-
-
-
                 Poco::URI uri(request.getURI());
                 Poco::URI::QueryParameters parameters = uri.getQueryParameters();
                 std::string key;
@@ -45,7 +42,7 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
 
 
 
-bool RequestHandler::handleLogin(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
+bool RequestHandler::CheckLogin(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
 {
     // Отримання параметрів запиту
     Poco::URI uri(request.getURI());
@@ -136,6 +133,7 @@ std::string RequestHandler::GetFirstName(Poco::Net::HTTPServerRequest &request)
 
         }
     }
+    return NULL;
 }
 
 std::string RequestHandler::GetLastName(Poco::Net::HTTPServerRequest &request)
@@ -175,6 +173,7 @@ std::string RequestHandler::GetLastName(Poco::Net::HTTPServerRequest &request)
 
         }
     }
+    return NULL;
 }
 
 bool RequestHandler::DataBase_Login(const std::string email, const std::string password)
@@ -188,12 +187,13 @@ bool RequestHandler::DataBase_Login(const std::string email, const std::string p
 void RequestHandler::ApiLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
 {
     try{
-    bool valid = handleLogin(request, response);
+        bool valid = CheckLogin(request, response);
     if (valid)
     {
         Poco::JWT::Token token;
         token.payload().set("sub", GetLogin(request));
-        token.payload().set("exp", Poco::Timestamp::fromEpochTime(std::time(nullptr) + 3600)); //час життя токену година
+        short int OneHour= 3600;
+        token.payload().set("exp", Poco::Timestamp::fromEpochTime(std::time(nullptr) + OneHour + OneHour*2)); //час життя токену година
 
         std::string TokenKey = GenerateRandomKey();
         qDebug()<<TokenKey;
@@ -202,7 +202,6 @@ void RequestHandler::ApiLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::
         Poco::JWT::Signer signer(TokenKey);
         std::string jwt = signer.sign(token, Poco::JWT::Signer::ALGO_HS256);
         qDebug()<<jwt;
-        //token.payload().set("key",jwt);
 
 
         std::ostringstream jwtTokenStream;
@@ -274,47 +273,98 @@ void RequestHandler::AddTokenToBD(const std::string &token , const std::string k
 
 bool RequestHandler::CheckToken(const std::string key)
 {
-//не працює
+
+    /*
+    RequestHandler::CheckToken("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOiIyMDIzLTA2LTE1VDExOjI1OjI3WiIsInN1YiI6InVzZXI2MEBnbWFpbC5jb20ifQ.iuoDG-Uu-8TGnmlik4pPSnkdKC63htrQgn2vi0N_SXQ");
+    RequestHandler::CheckToken("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOiIyMDIzLTA2LTE1VDA5OjE4OjM5WiIsInN1YiI6InVzZXI1NUBnbWFpbC5jb20ifQ.ely3c9G48gW1iV3COJFqyG-HIe4ROG141pitegnHw8w");
+    RequestHandler::CheckToken("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOiIyMDIzLTA2LTE1VDAwOjI2OjQzWiIsInN1YiI6InVzZXIyQGdtYWlsLmNvbSJ9.S6PKY5AIwSiHNdsVcSltocaMIuoX3cS061aEk-E80yw");
+    RequestHandler::CheckToken("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOiIyMDIzLTA2LTE0VDIxOjE5OjU3WiIsInN1YiI6InVzZXIyQGdtYWlsLmNvbSJ9.aH2mntmfgEffylIvdqAK6IHaZ30P5DIvjk2sKJVYXeY");
+    RequestHandler::CheckToken("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOiIyMDIzLTA2LTE0VDIxOjE5OjQzWiIsInN1YiI6InVzZXIyQGdtYWlsLmNvbSJ9.tzw2B-gvtHntK6-ApZVL564fPcaq5NMPolJQwa1ylOY");
+    */
+
     try {
     QSqlQuery query;
     query.prepare("SELECT token_value FROM Tokens WHERE token_key = CAST(:key AS nvarchar(max))");
     query.bindValue(":key", QString::fromStdString(key));
 
 
-    if (query.exec() && query.next()) {
-    QString tokenValue = query.value(0).toString();
+    if (query.exec() && query.next())
+    {
+        //Значення токену в QString
+        QString tokenValue = query.value(0).toString();
 
 
-
-        Poco::JWT::Signer signer(key);
         std::string tokenString = tokenValue.toStdString();
-        Poco::JWT::Token token(tokenString);
 
-        auto a = signer.verify(token.toString());
-        // Перевірка підпису токену
-        /*if(!signer.verify(token.toString())){
-                return false;
-        }*/
+
+
+        Poco::JWT::Token token;
+
         Poco::JSON::Parser parser;
-        Poco::Dynamic::Var result = parser.parse(token.toString());
-        Poco::JSON::Object::Ptr object = result.extract<Poco::JSON::Object::Ptr>();
 
-        std::string exp = object->getValue<std::string>("exp");
+        Poco::Dynamic::Var result = parser.parse(tokenString);
 
-        Poco::DateTime dateTime;
+        Poco::JSON::Object::Ptr jsonObject;
 
 
-        /*if (currentTime > expiryTime) {
-                // Токен прострочений
+
+
+        jsonObject = result.extract<Poco::JSON::Object::Ptr>();
+
+        std::string exp = jsonObject->get("exp").toString();
+        std::string sub = jsonObject->get("sub").toString();
+
+        //токен
+        token.payload().set("exp",exp);
+        token.payload().set("sub",sub);
+
+
+
+        std::istringstream TimeIss(exp);
+
+
+
+        std::tm timeStruct = {};
+        TimeIss >> std::get_time(&timeStruct, "%Y-%m-%dT%H:%M:%SZ");
+
+
+
+        std::time_t time = std::mktime(&timeStruct);
+        std::chrono::system_clock::time_point tp = std::chrono::system_clock::from_time_t(time);
+
+
+
+        // Форматування і виведення результату
+        std::time_t timeOutput = std::chrono::system_clock::to_time_t(tp);
+        std::cout << "Parsed time: " << std::put_time(std::localtime(&timeOutput), "%Y-%m-%d %H:%M:%S") << std::endl;
+
+        // Отримання поточного часу
+        std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+        if (tp > now)
+        {
+                qDebug()<<"Токен валідний";
+                return true;
+        }
+        else
+        {
+                qDebug()<<"Токен невалідний";
                 return false;
-        }*/
+        }
 
-        return true;
+
+        //auto a = signer.verify(token.toString());
+        ///if (signer.tryVerify(tokenString, token)) {}
+
+
     }
-    }catch (const Poco::Exception& exc) {
-    // Обробка помилки при розпакуванні токену
+    }
+    catch (const Poco::Exception& exp)
+    {
+        // Обробка помилки при розпакуванні токену
+        std::cout<<"Token error";
+        return false;
+    }
     return false;
-    }
 }
 
 
@@ -347,7 +397,7 @@ void Server::start()
 {
     m_httpServer->start();
     database->Connect();
-    database->ClearTokens();
+    //database->ClearTokens();
 }
 
 void Server::stop()

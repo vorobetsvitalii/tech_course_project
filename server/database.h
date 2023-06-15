@@ -1,5 +1,6 @@
 #ifndef DATABASE_H
 #define DATABASE_H
+#pragma once
 
 #include<QtSql/QSql>
 #include<QtSql/QSqlDatabase>

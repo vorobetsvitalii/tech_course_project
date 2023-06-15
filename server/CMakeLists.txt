@@ -27,6 +27,9 @@ add_executable(
     server.cpp
     database.cpp
     database.h
+    user.cpp
+    user.h
+    IJsonSerializable.h
 )
 
 # Link against the POCO libraries
