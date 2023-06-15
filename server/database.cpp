@@ -33,7 +33,7 @@ bool DataBase::Login()
     //QSqlDatabase db = this->Connect();
 
 
-    QString login_check_sql="SELECT * FROM Users WHERE email=:email AND password=:password";
+    //QString login_check_sql="SELECT * FROM Users WHERE email=:email AND password=:password";
 
     QSqlQuery check_q;
     check_q.prepare(login_check_sql);
