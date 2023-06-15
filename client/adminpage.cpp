@@ -54,7 +54,7 @@ void AdminPage::initializeButton()
     // Top layout
     homepagePushButton = std::make_unique<QPushButton>();
     switchPushButton = std::make_unique<QPushButton>();
-    adminPushButton = std::make_unique<QPushButton>();
+    adminInfoWidget = std::make_unique<AdminInfoWidget>(); //!!!ПЕРЕНЕСТИ!!!
     // Configuration layout
     cancelPushButton = std::make_unique<QPushButton>();
     saveChangesButton = std::make_unique<QPushButton>();
@@ -106,15 +106,11 @@ void AdminPage::topHorizontalLayout()
     switchPushButton->setIcon(QIcon("C:/Development/Projects/tech_course_project/img/switchIcon.png"));
     switchPushButton->setIconSize(QSize(35, 40));
 
-    adminPushButton->setStyleSheet("QPushButton {background-color: rgb(255, 255, 255);}");
-    adminPushButton->setText("\"Admin\"");
-    adminPushButton->setFixedSize(80, 40);
-
     topHLayout->addWidget(homepagePushButton.get());
     topHLayout->addSpacerItem(topSpacer_1.get());
     topHLayout->addWidget(switchPushButton.get());
     topHLayout->addSpacerItem(topSpacer_2.get());
-    topHLayout->addWidget(adminPushButton.get());
+    topHLayout->addWidget(adminInfoWidget.get());
 }
 
 void AdminPage::configurationHorizontalLayout()
