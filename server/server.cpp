@@ -315,14 +315,12 @@ bool RequestHandler::CheckToken(const std::string key)
 void RequestHandler::ApiLogout(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response){
     Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
     std::string key = parameters[0].second;
-
-    QSqlQuery query;
-    query.prepare("DELETE FROM Tokens WHERE token_key = CAST(:token_key AS nvarchar(max))");
-    query.bindValue(":token_key", QString::fromStdString(key));
-    if(query.exec())
+    try {
+        storage::DeleteTokenByKey(key);
         response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
-    else {
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_FORBIDDEN);
+    }
+    catch(std::exception& ex){
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
     response.send();
 }

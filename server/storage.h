@@ -18,6 +18,7 @@ public:
     storage();
     static void AddToken(Poco::JWT::Token token,std::string key);
     static void ClearAllTokens();
+    static void DeleteTokenByKey(std::string key);
     static Poco::JWT::Token GetTokenFromStorage(std::string key);
 };
 

@@ -13,6 +13,11 @@ void storage::AddToken(Poco::JWT::Token token,std::string key)
     TokenStorage.insert(std::make_pair(key, token));
 }
 
+void storage::DeleteTokenByKey(std::string key)
+{
+    if(TokenStorage.find(key) != TokenStorage.end()) TokenStorage.erase(key);
+}
+
 Poco::JWT::Token storage::GetTokenFromStorage(std::string key)
 {
     return TokenStorage[key];
