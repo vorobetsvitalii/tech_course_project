@@ -30,6 +30,8 @@ add_executable(
     user.cpp
     user.h
     IJsonSerializable.h
+    storage.cpp
+    storage.h
 )
 
 # Link against the POCO libraries

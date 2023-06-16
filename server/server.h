@@ -5,6 +5,7 @@
 
 #include "database.h"
 #include "user.h"
+#include "storage.h"
 
 
 
@@ -97,7 +98,6 @@ private:
     std::string GetLastName(Poco::Net::HTTPServerRequest& request);
     bool DataBase_Login(const std::string ,const std::string); // Логін
     void ApiLogin(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
-    void AddTokenToBD(const std::string& token,const std::string key);
     void ApiLogout(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
 
 };

@@ -40,7 +40,7 @@ public:
     QSqlDatabase Connect();
     bool Login();
     bool Login(QString email,QString password);
-    void ClearTokens();
+
 
 };
 #endif // DATABASE_H

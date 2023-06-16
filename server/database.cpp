@@ -33,7 +33,7 @@ bool DataBase::Login()
     //QSqlDatabase db = this->Connect();
 
 
-    //QString login_check_sql="SELECT * FROM Users WHERE email=:email AND password=:password";
+    QString login_check_sql="SELECT * FROM Users WHERE email=:email AND password=:password";
 
     QSqlQuery check_q;
     check_q.prepare(login_check_sql);
@@ -77,13 +77,5 @@ bool DataBase::Login(QString email, QString password)
     return false;
 }
 
-void DataBase::ClearTokens()
-{
-    if(!database_model.isOpen()){database_model.open();}
-    QString sql="EXEC ClearTokens;DBCC CHECKIDENT ('Tokens', RESEED, 0);";
 
-    QSqlQuery delete_tokens;
-    delete_tokens.exec(sql);
-
-}
 
