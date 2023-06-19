@@ -4,6 +4,7 @@
 LoginWindow::LoginWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::LoginWindow)
+
 {
     ui->setupUi(this);
 
@@ -81,6 +82,16 @@ QString LoginWindow::getPassword() const
 
 void LoginWindow::loginPushButton_clicked()
 {
+    std::string email = this->user_name->text().toStdString();
+    std::string password = this->user_password->text().toStdString();
+
+    bool result = clientInstanse->handleLoginRequest(email, password);
+    if(!result)
+    {
+        return;
+    }
+
+
     adminPageWindow = std::make_unique<AdminPage>();
     clientInstanse = std::make_unique<Client>();
 

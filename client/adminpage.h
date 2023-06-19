@@ -10,7 +10,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QScrollArea>
-#include <QToolButton>
+#include <QGraphicsDropShadowEffect>
 #include <memory>
 #include "admininfowidget.h"
 
@@ -34,6 +34,10 @@ private:
     std::unique_ptr<QVBoxLayout> headerVLayout;
     std::unique_ptr<QVBoxLayout> itemsMenuVLayout;
 
+    std::unique_ptr<QWidget> topHWidget;
+    std::unique_ptr<QWidget> switchButtonWidget;
+    std::unique_ptr<QWidget> menuHWidget;
+
     std::unique_ptr<QHBoxLayout> topHLayout;
     std::unique_ptr<QHBoxLayout> configurationHLayout;
     std::unique_ptr<QHBoxLayout> menuHLayout;
@@ -44,6 +48,7 @@ private:
     std::unique_ptr<QSpacerItem> configSpacer_1;
     std::unique_ptr<QSpacerItem> configSpacer_2;
     std::unique_ptr<QSpacerItem> configSpacer_3;
+    std::unique_ptr<QSpacerItem> configSpacer_4;
     std::unique_ptr<QSpacerItem> menuSpacer_1;
     std::unique_ptr<QSpacerItem> menuSpacer_2;
     std::unique_ptr<QSpacerItem> itemsMenuSpacer_1;
@@ -69,6 +74,7 @@ private:
     std::unique_ptr<QScrollArea> contentArea;
 
     void initializeLayouts();
+    void initializeWidgets();
     void initializeButton();
     void initializeSpacers();
 

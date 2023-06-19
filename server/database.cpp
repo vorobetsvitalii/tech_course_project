@@ -16,16 +16,15 @@ DataBase::DataBase(QString email, QString password )
 
 QSqlDatabase DataBase::Connect()
 {
-
     QSqlDatabase db = QSqlDatabase::addDatabase("QODBC");
     db.setDatabaseName(QString("DRIVER={%1};SERVER=%2;DATABASE=%3;UID=%4;PWD=%5;")
                            .arg(driver, server, database, uid, pwd));
 
-
+    if(!db.isOpen()){
     if(db.open()){
         qDebug()<<"Connecting to db....\nSuccessfully\n";
     }else{ qDebug()<<"Connecting to db....\nFailed\n"<<db.lastError();}
-    db.open();
+    }
     return db;
 }
 
@@ -77,4 +76,6 @@ bool DataBase::Login(QString email, QString password)
     //database_model.close();
     return false;
 }
+
+
 
