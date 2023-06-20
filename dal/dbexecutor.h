@@ -3,10 +3,10 @@
 
 #include <iostream>
 #include <memory.h>
+#include <QDebug>
 #include <QString>
-#include <QSqlDatabase>
+#include <QtSql>
 #include "idatamodel.h"
-//#include "../server/database.h"
 
 class DBExecutor : public IDataModel
 {
@@ -16,11 +16,11 @@ public:
     const void InitDatabase();
     const void QuitDatabase();
 
-    virtual const std::string GetTable() const override;
-    virtual void Create() override;
-    virtual void Select(const std::string select_query) override;
-    virtual void Update() override;
-    virtual void Delete() override;
+    virtual const QString GetTable() const override;
+    virtual void Insert(const QString &insert_query) override;
+    virtual QString Select(const QString &select_query) override;
+    virtual void Update(const QString &update_query) override;
+    virtual void Delete(const QString &delete_query) override;
 
 private:
     const QString DRIVER = "SQL Server";
@@ -29,7 +29,7 @@ private:
     const QString UID = "UJPC++ 2023";
     const QString PASSWORD = "Tech Course UJP C++ 2023";
 
-    QSqlDatabase databaseInstance;
+    QSqlDatabase mDatabase;
 };
 
 #endif // DBEXECUTOR_H

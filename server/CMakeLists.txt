@@ -32,7 +32,19 @@ add_executable(
     IJsonSerializable.h
 )
 
-# Link against the POCO libraries
+# Link against the Qt6 libraries
+target_link_libraries(Server_poco PRIVATE Qt6::Core Qt6::Sql)
+
+
+#Poco installation start
+
+# Set the POCO library directory
+set(POCO_DIR "C:/msys64/mingw64")
+
+# Include directories for POCO
+
+include_directories("${POCO_DIR}/include")
+
 target_link_libraries(Server_poco PRIVATE
     "${POCO_DIR}/lib/libPocoFoundation.dll.a"
     "${POCO_DIR}/lib/libPocoNet.dll.a"
@@ -40,11 +52,9 @@ target_link_libraries(Server_poco PRIVATE
     "${POCO_DIR}/lib/libPocoJSON.dll.a"
 )
 
-# Link against the Qt6 libraries
-target_link_libraries(Server_poco PRIVATE Qt6::Core Qt6::Sql)
-
-
 install(TARGETS Server_poco
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+#Poco installation finish
