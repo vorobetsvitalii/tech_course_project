@@ -32,8 +32,6 @@ add_executable(
     IJsonSerializable.h
     storage.cpp
     storage.h
-    category.h
-    category.cpp
 )
 
 # Link against the Qt6 libraries
