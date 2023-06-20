@@ -358,8 +358,8 @@ void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerResponse& response)
         QJsonArray categoriesArray;
         while (query.next()) {
                 QJsonObject category;
-                category["id"] = query.value("id").toInt();
-                category["name"] = query.value("name").toString();
+                category["CategoryId"] = query.value("CategoryId").toInt();
+                category["CategoryName"] = query.value("CategoryName").toString();
                 categoriesArray.append(category);
         }
 
@@ -387,10 +387,52 @@ void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerResponse& response)
 
 void RequestHandler::ApiPostCategories(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
 {
+    try {
+        // Отримання тіла запиту
+        std::istream& requestBody = request.stream();
+        std::string body;
+        Poco::StreamCopier::copyToString(requestBody, body);
 
+        // Розпаковка JSON з тіла запиту
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(QByteArray::fromStdString(body));
+        if (jsonDocument.isNull()) {
+                throw std::runtime_error("Invalid JSON data");
+        }
+
+        // Отримання об'єкту категорії з JSON
+        QJsonObject categoryObject = jsonDocument.object();
+        qDebug() << categoryObject << "\n";
+
+        // Отримання значення імені категорії
+        QString name = categoryObject["CategoryName"].toString();
+
+        // Запис категорії в базу даних
+        DataBase database;
+        QSqlDatabase db = database.Connect();
+        QSqlQuery query(db);
+
+        // Підготовка запиту для вставки категорії
+        query.prepare("INSERT INTO Categories (CategoryName) VALUES (:CategoryName)");
+
+        // Прив'язка значення параметра до запиту
+        query.bindValue(":CategoryName", name);
+
+        // Виконання запиту для вставки категорії
+        if (!query.exec()) {
+                throw std::runtime_error("Failed to execute query: " + query.lastError().text().toStdString());
+        }
+
+        // Відправлення успішної відповіді клієнту
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+        response.setContentType("text/plain");
+        response.sendBuffer("Category added successfully", 26);
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
 }
-
-
 
 
 Poco::Net::HTTPRequestHandler* RequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest&)
