@@ -5,14 +5,13 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
     try
     {
         std::string method = request.getMethod();
+        std::string uri = request.getURI();
 
         //http://127.0.0.1:8080/api/login?email=user1@gmail.com&password=password1
         //http://127.0.0.1:8080/api/login?email=user2@gmail.com&password=password2
 
         if (method == "GET")
         {
-            std::string uri = request.getURI();
-
             if (uri.find("/api/login") != std::string::npos)
             {
                 ApiLogin(request, response);
@@ -20,6 +19,10 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             else if(uri.find("/api/logout") != std::string::npos)
             {
                 ApiLogout(request, response);
+            }
+            else if(uri.find("/api/categories") != std::string::npos)
+            {
+                ApiGetCategories(response);
             }
             else if(uri.find("/test")!= std::string::npos)
             {
@@ -31,6 +34,20 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
                     key=a.second;
                 }
                 CheckToken(key);
+            }
+            else
+            {
+                response.setStatus(Poco::Net::HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
+                response.send();
+            }
+        }
+        else if (method == "POST")
+        {
+            qDebug() << "POST\n";
+            if (uri.find("/api/categories") != std::string::npos)
+            {
+                qDebug() << "categories\n";
+                ApiPostCategories(request, response);
             }
             else
             {
@@ -324,6 +341,57 @@ void RequestHandler::ApiLogout(Poco::Net::HTTPServerRequest &request, Poco::Net:
     }
     response.send();
 }
+
+void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        DataBase database;
+        QSqlDatabase db = database.Connect();
+
+        // Виконання запиту для отримання категорій
+        QSqlQuery query(db);
+        if (!query.exec("SELECT * FROM Categories")) {
+                throw std::runtime_error("Failed to execute query: " + query.lastError().text().toStdString());
+        }
+
+        // Отримання результатів запиту
+        QJsonArray categoriesArray;
+        while (query.next()) {
+                QJsonObject category;
+                category["id"] = query.value("id").toInt();
+                category["name"] = query.value("name").toString();
+                categoriesArray.append(category);
+        }
+
+        // Формування відповіді у форматі JSON
+        QJsonObject responseObject;
+        responseObject["categories"] = categoriesArray;
+
+        QJsonDocument responseDocument(responseObject);
+        QByteArray responseData = responseDocument.toJson();
+
+        // Відправлення відповіді клієнту
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+        response.setContentType("application/json");
+        response.setContentLength(responseData.length());
+        response.sendBuffer(responseData.data(), responseData.length());
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+
+    }
+}
+
+
+void RequestHandler::ApiPostCategories(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+
+}
+
+
+
 
 Poco::Net::HTTPRequestHandler* RequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest&)
 {
