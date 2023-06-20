@@ -22,6 +22,10 @@ set(PROJECT_SOURCES
         adminpage.h
         loginwindow.ui
         adminpage.ui
+        admininfowidget.h
+        admininfowidget.cpp
+        dropdownmenu.h
+        dropdownmenu.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

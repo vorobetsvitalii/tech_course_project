@@ -77,13 +77,5 @@ bool DataBase::Login(QString email, QString password)
     return false;
 }
 
-void DataBase::ClearTokens()
-{
-    if(!database_model.isOpen()){database_model.open();}
-    QString sql="EXEC ClearTokens;DBCC CHECKIDENT ('Tokens', RESEED, 0);";
 
-    QSqlQuery delete_tokens;
-    delete_tokens.exec(sql);
-
-}
 

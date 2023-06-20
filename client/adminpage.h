@@ -12,6 +12,7 @@
 #include <QScrollArea>
 #include <QGraphicsDropShadowEffect>
 #include <memory>
+#include "admininfowidget.h"
 
 namespace Ui {
 class AdminPage;
@@ -54,7 +55,7 @@ private:
     std::unique_ptr<QSpacerItem> localNavigationSpacer_1;
     std::unique_ptr<QPushButton> homepagePushButton;
     std::unique_ptr<QPushButton> switchPushButton;
-    std::unique_ptr<QPushButton> adminPushButton;
+    std::unique_ptr<AdminInfoWidget> adminInfoWidget;
     std::unique_ptr<QPushButton> cancelPushButton;
     std::unique_ptr<QPushButton> saveChangesButton;
     std::unique_ptr<QPushButton> homePushButton;
