@@ -7,6 +7,8 @@
 #include<QDebug>
 #include<QSqlError>
 #include<QSqlQuery>
+#include<QJsonArray>
+#include<QJsonObject>
 
 class DataBase
 {
@@ -36,7 +38,8 @@ public:
     QSqlDatabase Connect();
     bool Login();
     bool Login(QString email,QString password);
-
+    QJsonArray GetCategories();
+    void PostCategories(QString name);
 
 };
 #endif // DATABASE_H

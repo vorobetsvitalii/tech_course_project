@@ -345,24 +345,7 @@ void RequestHandler::ApiLogout(Poco::Net::HTTPServerRequest &request, Poco::Net:
 void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerResponse& response)
 {
     try {
-        DataBase database;
-        QSqlDatabase db = database.Connect();
-
-        // Виконання запиту для отримання категорій
-        QSqlQuery query(db);
-        if (!query.exec("SELECT * FROM Categories")) {
-                throw std::runtime_error("Failed to execute query: " + query.lastError().text().toStdString());
-        }
-
-        // Отримання результатів запиту
-        QJsonArray categoriesArray;
-        while (query.next()) {
-                QJsonObject category;
-                category["CategoryId"] = query.value("CategoryId").toInt();
-                category["CategoryName"] = query.value("CategoryName").toString();
-                categoriesArray.append(category);
-        }
-
+        QJsonArray categoriesArray = database->GetCategories();
         // Формування відповіді у форматі JSON
         QJsonObject responseObject;
         responseObject["categories"] = categoriesArray;
@@ -402,18 +385,7 @@ void RequestHandler::ApiPostCategories(Poco::Net::HTTPServerRequest& request, Po
         qDebug() << categoryObject << "\n";
 
         QString name = categoryObject["CategoryName"].toString();
-
-        DataBase database;
-        QSqlDatabase db = database.Connect();
-        QSqlQuery query(db);
-
-        query.prepare("INSERT INTO Categories (CategoryName) VALUES (:CategoryName)");
-
-        query.bindValue(":CategoryName", name);
-
-        if (!query.exec()) {
-                throw std::runtime_error("Failed to execute query: " + query.lastError().text().toStdString());
-        }
+        database->PostCategories(name);
 
         response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
         response.setContentType("text/plain");
