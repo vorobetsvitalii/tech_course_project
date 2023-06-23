@@ -9,6 +9,8 @@
 #include <QWidget>
 #include <memory>
 
+#include "client.h"
+
 class DropdownMenu : public QMenu
 {
     Q_OBJECT

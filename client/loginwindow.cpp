@@ -95,8 +95,16 @@ void LoginWindow::loginPushButton_clicked()
     adminPageWindow = std::make_unique<AdminPage>();
     clientInstanse = std::make_unique<Client>();
 
+    connect(adminPageWindow.get(), &AdminPage::logoutDoneEvent, this, &LoginWindow::logoutPushButton_clicked);
+
     adminPageWindow->show();
 
     this->close();
 }
 
+void LoginWindow::logoutPushButton_clicked()
+{
+    this->user_name->setText("");
+    this->user_password->setText("");
+    this->show();
+}

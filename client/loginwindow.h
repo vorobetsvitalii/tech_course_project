@@ -31,6 +31,9 @@ public:
 
 private slots:
     void loginPushButton_clicked();
+    
+public slots:
+    void logoutPushButton_clicked();
 
 private:
     Ui::LoginWindow *ui;

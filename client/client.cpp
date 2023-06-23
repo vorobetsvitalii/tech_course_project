@@ -1,5 +1,6 @@
 #include "client.h"
 #include "loginwindow.h"
+#include "clientsession.h"
 
 
 Client::Client()
@@ -7,12 +8,13 @@ Client::Client()
     handleServerConnection();
 }
 
+
 void Client::handleServerConnection()
 {
     try
     {
-        std::unique_ptr<Poco::Net::HTTPClientSession> clientSession = std::make_unique<Poco::Net::HTTPClientSession>(IP_ADDRESS, PORT);
-        std::unique_ptr<Poco::Net::HTTPResponse> serverResponse = std::unique_ptr<Poco::Net::HTTPResponse>();
+        clientSession = std::make_unique<Poco::Net::HTTPClientSession>(IP_ADDRESS, PORT);
+        serverResponse = std::unique_ptr<Poco::Net::HTTPResponse>();
 
         serverRequest = std::make_unique<Poco::Net::HTTPRequest>(Poco::Net::HTTPRequest::HTTP_POST, "/", Poco::Net::HTTPMessage::HTTP_1_1);
         serverRequest->setContentType("text/plain");
@@ -49,6 +51,8 @@ std::string Client::retriveResponseBody() const // Need to be implemented(Server
     return responseBody;
 }
 
+
+
 std::string Client::sendHTTPRequest(const std::string& url) {
     Poco::URI uri(url);
 
@@ -84,6 +88,11 @@ bool Client::parseJSONResponse(const std::string& responseData) {
         }
     }
 
+    if(object->has("key")) {
+        std::string key = object->getValue<std::string>("key");
+        ClientSession::getInstance()->setKey(key);
+    }
+
     return true;
 }
 
@@ -102,3 +111,20 @@ bool Client::handleLoginRequest(const std::string& email, const std::string& pas
     return true;
 }
 
+bool Client::handleLogoutRequest() {
+    std::string key = ClientSession::getInstance()->getKey();
+    std::string url = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/logout?key="+key;
+
+    Poco::Net::HTTPClientSession session(IP_ADDRESS, PORT);
+    Poco::Net::HTTPRequest request = Poco::Net::HTTPRequest(Poco::Net::HTTPRequest::HTTP_GET, url);
+    session.sendRequest(request);
+
+    Poco::Net::HTTPResponse response;
+    session.receiveResponse(response);
+
+    if(response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK){
+        ClientSession::deleteInstance();
+        return true;
+    }
+    else return false;
+}

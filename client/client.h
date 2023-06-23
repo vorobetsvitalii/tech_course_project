@@ -29,6 +29,7 @@ public:
     void handleServerConnection();
 
     bool handleLoginRequest(const std::string& email, const std::string& password);
+    bool handleLogoutRequest();
 
 private:
     const std::string IP_ADDRESS = "127.0.0.1";

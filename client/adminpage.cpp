@@ -32,6 +32,9 @@ AdminPage::AdminPage(QWidget *parent) :
     genericGridLayout->addLayout(configurationHLayout.get(), 1, 0);
     genericGridLayout->addWidget(menuHWidget.get(), 2, 0);
     genericGridLayout->addLayout(localNavigationLayout.get(), 3, 0);
+
+    connect(this, &AdminPage::logoutDoneEvent, this, &AdminPage::onLogoutDone);
+
 }
 
 AdminPage::~AdminPage()
@@ -222,4 +225,8 @@ void AdminPage::primaryContentArea()
                                 border-left: 2px solid rgb(211, 211, 211); \
                                 border-bottom: white; \
                                 border-right: white;}");
+}
+
+void AdminPage::onLogoutDone() {
+    this->close();
 }

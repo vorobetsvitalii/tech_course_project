@@ -26,6 +26,8 @@ set(PROJECT_SOURCES
         admininfowidget.cpp
         dropdownmenu.h
         dropdownmenu.cpp
+        clientsession.h
+        clientsession.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

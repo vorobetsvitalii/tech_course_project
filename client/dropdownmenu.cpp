@@ -5,6 +5,8 @@
 #include <QMouseEvent>
 #include <QDebug>
 
+#include "adminpage.h"
+
 DropdownMenu::DropdownMenu(QHBoxLayout* mainLayout, QWidget* parent) : QMenu(parent)
 {
 
@@ -116,7 +118,9 @@ void DropdownMenu::initializeMenuLayout(QHBoxLayout* mainLayout) {
 
 void DropdownMenu::logout()
 {
-    qDebug() << "Logout button clicked";
+    Client client;
+    if(client.handleLogoutRequest())
+        emit ((AdminPage*)this->nativeParentWidget())->logoutDoneEvent();
 }
 
 bool DropdownMenu::eventFilter(QObject* object, QEvent* event)

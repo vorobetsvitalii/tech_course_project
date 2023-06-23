@@ -84,6 +84,13 @@ private:
     void itemsMenuVerticalLayout();
 
     void primaryContentArea();
+
+signals:
+    void logoutDoneEvent();
+
+public slots:
+    void onLogoutDone();
+
 };
 
 #endif // ADMINPAGE_H
