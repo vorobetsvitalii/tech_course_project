@@ -11,6 +11,7 @@ Client::Client()
 
 void Client::handleServerConnection()
 {
+    qDebug() << "handleServerConnection\n";
     try
     {
         clientSession = std::make_unique<Poco::Net::HTTPClientSession>(IP_ADDRESS, PORT);
@@ -97,6 +98,7 @@ bool Client::parseJSONResponse(const std::string& responseData) {
 }
 
 bool Client::handleLoginRequest(const std::string& email, const std::string& password) {
+    qDebug() << "handleLoginRequest\n";
     std::string apiUrl = "http://127.0.0.1:8080/api/login";
     std::string query = "password=" + password + "&email=" + email;
     Poco::URI uri(apiUrl);
@@ -128,3 +130,29 @@ bool Client::handleLogoutRequest() {
     }
     else return false;
 }
+
+std::vector<Category> Client::GetCategoties()
+{
+    std::vector<Category> categories;
+
+    std::string apiUrl = "http://127.0.0.1:8080/api/categories";
+    std::string responseData = sendHTTPRequest(apiUrl);
+
+    Poco::JSON::Parser parser;
+    Poco::Dynamic::Var result = parser.parse(responseData);
+    Poco::JSON::Object::Ptr responseObject = result.extract<Poco::JSON::Object::Ptr>();
+
+    if (responseObject->has("categories"))
+    {
+        Poco::JSON::Array::Ptr categoriesArray = responseObject->getArray("categories");
+
+        for (const auto& categoryVar : *categoriesArray)
+        {
+            std::string categoryJson = categoryVar.toString();
+            Category category = Category::fromJSON(categoryJson);
+            categories.push_back(category);
+        }
+    }
+    return categories;
+}
+

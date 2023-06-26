@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
         dropdownmenu.cpp
         clientsession.h
         clientsession.cpp
+        category.h
+        category.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -1,4 +1,5 @@
 #include "loginwindow.h"
+#include "client.h"
 #include "./ui_loginwindow.h"
 
 LoginWindow::LoginWindow(QWidget *parent)
@@ -84,8 +85,8 @@ void LoginWindow::loginPushButton_clicked()
 {
     std::string email = this->user_name->text().toStdString();
     std::string password = this->user_password->text().toStdString();
-
-    bool result = clientInstanse->handleLoginRequest(email, password);
+    Client& client = Client::getInstance();
+    bool result = client.handleLoginRequest(email, password);
     if(!result)
     {
         return;
@@ -93,7 +94,6 @@ void LoginWindow::loginPushButton_clicked()
 
 
     adminPageWindow = std::make_unique<AdminPage>();
-    clientInstanse = std::make_unique<Client>();
 
     connect(adminPageWindow.get(), &AdminPage::logoutDoneEvent, this, &LoginWindow::logoutPushButton_clicked);
 

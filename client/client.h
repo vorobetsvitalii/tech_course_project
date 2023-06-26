@@ -20,18 +20,26 @@
 #include <stdexcept>
 #include <cstring>
 
+#include "category.h"
+
 
 class Client
 {
 public:
-    Client();
+    static Client& getInstance()
+    {
+        static Client instance;
+        return instance;
+    }
 
     void handleServerConnection();
 
     bool handleLoginRequest(const std::string& email, const std::string& password);
     bool handleLogoutRequest();
-
+    std::vector<Category> GetCategoties();
 private:
+    Client();
+
     const std::string IP_ADDRESS = "127.0.0.1";
     const int PORT = 8080;
 
@@ -44,8 +52,6 @@ private:
 
     std::string sendHTTPRequest(const std::string& url);
     bool parseJSONResponse(const std::string& responseData);
-
-
 };
 
 #endif // CLIENT_H
