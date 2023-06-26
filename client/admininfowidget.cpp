@@ -17,7 +17,7 @@ AdminInfoWidget::AdminInfoWidget(QWidget *parent) : QWidget(parent) {
 void AdminInfoWidget::initializePhotoLabel() {
     photoLabel = std::make_unique<QLabel>(this);
     photoLabel->setFixedSize(40, 40);
-    QString imagePath = pathToImages + "admin_photo.jpg";
+    QString imagePath = pathToImages + "avatarIcon.jpg";
     QImage photoImage(imagePath);
 
     QPixmap photoPixmap = QPixmap::fromImage(photoImage).scaled(QSize(40, 40), Qt::KeepAspectRatio, Qt::SmoothTransformation);

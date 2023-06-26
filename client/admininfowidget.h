@@ -30,7 +30,7 @@ private:
     std::unique_ptr <QVBoxLayout> infoLayout;
     std::unique_ptr <QHBoxLayout> buttonLayout;
     std::unique_ptr <QHBoxLayout> mainLayout;
-    QString pathToImages = "../client/images/";
+    QString pathToImages = "../img/";
 
     void initializePhotoLabel();
     void initializeNameLabel();

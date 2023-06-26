@@ -9,10 +9,11 @@ Client::Client()
 
 void Client::handleServerConnection()
 {
+    qDebug() << "handleServerConnection\n";
     try
     {
-        std::unique_ptr<Poco::Net::HTTPClientSession> clientSession = std::make_unique<Poco::Net::HTTPClientSession>(IP_ADDRESS, PORT);
-        std::unique_ptr<Poco::Net::HTTPResponse> serverResponse = std::unique_ptr<Poco::Net::HTTPResponse>();
+        clientSession = std::make_unique<Poco::Net::HTTPClientSession>(IP_ADDRESS, PORT);
+        serverResponse = std::unique_ptr<Poco::Net::HTTPResponse>();
 
         serverRequest = std::make_unique<Poco::Net::HTTPRequest>(Poco::Net::HTTPRequest::HTTP_POST, "/", Poco::Net::HTTPMessage::HTTP_1_1);
         serverRequest->setContentType("text/plain");
@@ -88,6 +89,7 @@ bool Client::parseJSONResponse(const std::string& responseData) {
 }
 
 bool Client::handleLoginRequest(const std::string& email, const std::string& password) {
+    qDebug() << "handleLoginRequest\n";
     std::string apiUrl = "http://127.0.0.1:8080/api/login";
     std::string query = "password=" + password + "&email=" + email;
     Poco::URI uri(apiUrl);
@@ -102,3 +104,56 @@ bool Client::handleLoginRequest(const std::string& email, const std::string& pas
     return true;
 }
 
+std::vector<Category> Client::GetCategoties()
+{
+    std::vector<Category> categories;
+
+    std::string apiUrl = "http://127.0.0.1:8080/api/categories";
+    std::string responseData = sendHTTPRequest(apiUrl);
+
+    Poco::JSON::Parser parser;
+    Poco::Dynamic::Var result = parser.parse(responseData);
+    Poco::JSON::Object::Ptr responseObject = result.extract<Poco::JSON::Object::Ptr>();
+
+    if (responseObject->has("categories"))
+    {
+        Poco::JSON::Array::Ptr categoriesArray = responseObject->getArray("categories");
+
+        for (const auto& categoryVar : *categoriesArray)
+        {
+            std::string categoryJson = categoryVar.toString();
+            Category category = Category::fromJSON(categoryJson);
+            categories.push_back(category);
+        }
+    }
+    return categories;
+}
+
+
+/*    std::string responseString;
+    try
+    {
+        // Створення HTTP клієнтської сесії
+        Poco::Net::HTTPClientSession session("localhost", 8080);
+
+        // Створення HTTP запиту GET
+        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, "/api/categories");
+
+        // Відправка запиту
+        session.sendRequest(request);
+
+        // Отримання відповіді
+        Poco::Net::HTTPResponse response;
+        std::istream& responseStream = session.receiveResponse(response);
+        std::ostringstream ss;
+        ss << responseStream.rdbuf();
+        responseString = ss.str();
+
+        std::cout << responseString << std::endl;
+        // Завершення сесії
+        session.reset();
+    }
+    catch (const Poco::Exception& ex)
+    {
+        std::cerr << "Помилка: " << ex.displayText() << std::endl;
+    }*/

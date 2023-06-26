@@ -4,6 +4,7 @@
 #include <QPalette>
 #include <QMouseEvent>
 #include <QDebug>
+#include "client.h"
 
 DropdownMenu::DropdownMenu(QHBoxLayout* mainLayout, QWidget* parent) : QMenu(parent)
 {
@@ -96,7 +97,7 @@ void DropdownMenu::initializeIcon()
 {
     armIcon = std::make_unique<QPushButton>(this);
     armIcon->setStyleSheet("QPushButton { border: none; background-color: rgba(215, 33, 48, 0); }");
-    QPixmap armIconPixmap("../client/images/arm.jpg");
+    QPixmap armIconPixmap("../img/arm.png");
     armIcon->setIcon(QIcon(armIconPixmap));
     armIcon->setIconSize(QSize(25, 25));
     armIcon->hide();
