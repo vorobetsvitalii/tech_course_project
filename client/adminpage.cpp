@@ -33,7 +33,7 @@ AdminPage::AdminPage(QWidget *parent) :
     genericGridLayout->addWidget(menuHWidget.get(), 2, 0);
     genericGridLayout->addLayout(localNavigationLayout.get(), 3, 0);
 
-    connect(this, &AdminPage::logoutDoneEvent, this, &AdminPage::onLogoutDone);
+    connect(&Client::getInstance(), &Client::logoutDoneEvent, this, &AdminPage::onLogoutDone);
 
 }
 

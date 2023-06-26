@@ -16,6 +16,7 @@ ClientSession* ClientSession::getInstance() {
 void ClientSession::deleteInstance() {
     if(instance != nullptr)
         delete instance;
+    instance = nullptr;
 }
 
 void ClientSession::setKey(std::string key) {

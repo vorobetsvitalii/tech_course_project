@@ -126,9 +126,10 @@ bool Client::handleLogoutRequest() {
 
     if(response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK){
         ClientSession::deleteInstance();
+        emit this->logoutDoneEvent();
         return true;
     }
-    else return false;
+    return false;
 }
 
 std::vector<Category> Client::GetCategoties()

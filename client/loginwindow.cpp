@@ -63,6 +63,8 @@ LoginWindow::LoginWindow(QWidget *parent)
     setCentralWidget(centralWidget);
 
     connect(button, &QPushButton::clicked, this, &LoginWindow::loginPushButton_clicked);
+    connect(&Client::getInstance(), &Client::logoutDoneEvent, this, &LoginWindow::onLogoutDone);
+
 }
 
 LoginWindow::~LoginWindow()
@@ -92,17 +94,15 @@ void LoginWindow::loginPushButton_clicked()
         return;
     }
 
-
+    adminPageWindow.release();
     adminPageWindow = std::make_unique<AdminPage>();
-
-    connect(adminPageWindow.get(), &AdminPage::logoutDoneEvent, this, &LoginWindow::logoutPushButton_clicked);
-
     adminPageWindow->show();
 
-    this->close();
+    this->hide();
+    
 }
 
-void LoginWindow::logoutPushButton_clicked()
+void LoginWindow::onLogoutDone()
 {
     this->user_name->setText("");
     this->user_password->setText("");

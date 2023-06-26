@@ -85,10 +85,7 @@ private:
 
     void primaryContentArea();
 
-signals:
-    void logoutDoneEvent();
-
-public slots:
+private slots:
     void onLogoutDone();
 
 };

@@ -119,9 +119,7 @@ void DropdownMenu::initializeMenuLayout(QHBoxLayout* mainLayout) {
 
 void DropdownMenu::logout()
 {
-    Client client;
-    if(client.handleLogoutRequest())
-        emit ((AdminPage*)this->nativeParentWidget())->logoutDoneEvent();
+    Client::getInstance().handleLogoutRequest();
 }
 
 bool DropdownMenu::eventFilter(QObject* object, QEvent* event)

@@ -3,7 +3,10 @@
 
 #include <iostream>
 #include <memory>
+
 #include <QDebug>
+#include <QObject>
+
 #include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
@@ -23,8 +26,10 @@
 #include "category.h"
 
 
-class Client
+class Client: public QObject
 {
+    Q_OBJECT
+
 public:
     static Client& getInstance()
     {
@@ -52,6 +57,10 @@ private:
 
     std::string sendHTTPRequest(const std::string& url);
     bool parseJSONResponse(const std::string& responseData);
+
+signals:
+    void logoutDoneEvent();
+
 };
 
 #endif // CLIENT_H
