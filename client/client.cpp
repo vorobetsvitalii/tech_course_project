@@ -34,10 +34,10 @@ void Client::handleServerConnection()
 
 QString Client::retriveRequestBody() const // Need to be implemented(Server request)
 {
-    LoginWindow logWindow;
+    //LoginWindow logWindow;
     QString requestBody;
 
-    requestBody = logWindow.getEmail() + "|" + logWindow.getPassword();
+    requestBody = ""; //logWindow.getEmail() + "|" + logWindow.getPassword();
 
     return requestBody;
 }
