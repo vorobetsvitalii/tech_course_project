@@ -52,46 +52,6 @@ std::string Client::retriveResponseBody() const // Need to be implemented(Server
     return responseBody;
 }
 
-
-
-std::string Client::sendHTTPRequest(const std::string& url) {
-    Poco::URI uri(url);
-
-    Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
-    Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, uri.getPathAndQuery());
-    session.sendRequest(request);
-
-    Poco::Net::HTTPResponse response;
-    std::istream& responseBody = session.receiveResponse(response);
-    std::string responseData(std::istreambuf_iterator<char>(responseBody), {});
-    return responseData;
-}
-
-std::string Client::sendHTTPPostRequest(const std::string& url, const std::string& body)
-{
-    try {
-        Poco::URI uri(url);
-        Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
-
-        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_POST, uri.getPathAndQuery());
-        request.setContentType("application/json");
-        request.setContentLength(body.length());
-
-        std::ostream& requestBody = session.sendRequest(request);
-        requestBody << body;
-
-        Poco::Net::HTTPResponse response;
-        std::istream& responseBody = session.receiveResponse(response);
-        std::string responseData(std::istreambuf_iterator<char>(responseBody), {});
-
-        return responseData;
-    } catch (const Poco::Exception& ex) {
-        qDebug() << "Poco exception: " << ex.displayText();
-        return ""; // Повертаємо пустий рядок у випадку помилки
-    }
-}
-
-
 bool Client::parseJSONResponse(const std::string& responseData) {
     Poco::JSON::Parser parser;
     Poco::Dynamic::Var result = parser.parse(responseData);
@@ -128,7 +88,7 @@ bool Client::handleLoginRequest(const std::string& email, const std::string& pas
     std::string query = "password=" + password + "&email=" + email;
     Poco::URI uri(apiUrl);
     uri.setQuery(query);
-    std::string responseData = sendHTTPRequest(uri.toString());
+    std::string responseData = hTTPRequestManager.sendHTTPGetRequest(uri.toString());
     std::cout << "Response data: " << responseData << std::endl;
     bool success = parseJSONResponse(responseData);
     if (!success) {
@@ -162,7 +122,7 @@ std::vector<Category> Client::GetCategoties()
     std::vector<Category> categories;
 
     std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories";
-    std::string responseData = sendHTTPRequest(apiUrl);
+    std::string responseData = hTTPRequestManager.sendHTTPGetRequest(apiUrl);
 
     Poco::JSON::Parser parser;
     Poco::Dynamic::Var result = parser.parse(responseData);
@@ -178,6 +138,10 @@ std::vector<Category> Client::GetCategoties()
             Category category = Category::fromJSON(categoryJson);
             categories.push_back(category);
         }
+    }
+    for(int i = 0; i<categories.size(); i++)
+    {
+        std::cout << categories[i] << std::endl;
     }
     return categories;
 }
@@ -196,7 +160,7 @@ void Client::PostCategories(const std::string& categoryName)
 
         // Відправка POST-запиту
         std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories";
-        std::string response = sendHTTPPostRequest(apiUrl, json);
+        std::string response = hTTPRequestManager.sendHTTPPostRequest(apiUrl, json);
 
         // Обробка відповіді сервера
         if (response.empty()) {
