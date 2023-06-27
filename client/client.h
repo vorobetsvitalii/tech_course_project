@@ -42,6 +42,7 @@ public:
     bool handleLoginRequest(const std::string& email, const std::string& password);
     bool handleLogoutRequest();
     std::vector<Category> GetCategoties();
+    void PostCategories(const std::string& categoryName);
 private:
     Client();
 
@@ -56,6 +57,7 @@ private:
     std::string retriveResponseBody() const;
 
     std::string sendHTTPRequest(const std::string& url);
+    std::string sendHTTPPostRequest(const std::string& url, const std::string& body);
     bool parseJSONResponse(const std::string& responseData);
 
 signals:

@@ -5,7 +5,7 @@
 
 Client::Client()
 {
-    handleServerConnection();
+    //handleServerConnection();
 }
 
 
@@ -66,6 +66,31 @@ std::string Client::sendHTTPRequest(const std::string& url) {
     std::string responseData(std::istreambuf_iterator<char>(responseBody), {});
     return responseData;
 }
+
+std::string Client::sendHTTPPostRequest(const std::string& url, const std::string& body)
+{
+    try {
+        Poco::URI uri(url);
+        Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
+
+        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_POST, uri.getPathAndQuery());
+        request.setContentType("application/json");
+        request.setContentLength(body.length());
+
+        std::ostream& requestBody = session.sendRequest(request);
+        requestBody << body;
+
+        Poco::Net::HTTPResponse response;
+        std::istream& responseBody = session.receiveResponse(response);
+        std::string responseData(std::istreambuf_iterator<char>(responseBody), {});
+
+        return responseData;
+    } catch (const Poco::Exception& ex) {
+        qDebug() << "Poco exception: " << ex.displayText();
+        return ""; // Повертаємо пустий рядок у випадку помилки
+    }
+}
+
 
 bool Client::parseJSONResponse(const std::string& responseData) {
     Poco::JSON::Parser parser;
@@ -136,7 +161,7 @@ std::vector<Category> Client::GetCategoties()
 {
     std::vector<Category> categories;
 
-    std::string apiUrl = "http://127.0.0.1:8080/api/categories";
+    std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories";
     std::string responseData = sendHTTPRequest(apiUrl);
 
     Poco::JSON::Parser parser;
@@ -156,4 +181,32 @@ std::vector<Category> Client::GetCategoties()
     }
     return categories;
 }
+
+void Client::PostCategories(const std::string& categoryName)
+{
+    try {
+        // Створення JSON об'єкту з назвою категорії
+        Poco::JSON::Object categoryObject;
+        categoryObject.set("CategoryName", categoryName);
+
+        // Серіалізація JSON об'єкту в рядок
+        std::stringstream jsonStream;
+        categoryObject.stringify(jsonStream);
+        std::string json = jsonStream.str();
+
+        // Відправка POST-запиту
+        std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories";
+        std::string response = sendHTTPPostRequest(apiUrl, json);
+
+        // Обробка відповіді сервера
+        if (response.empty()) {
+            qDebug() << "Empty response received";
+        } else {
+            qDebug() << "Server response: " << QString::fromStdString(response);
+        }
+    } catch (const std::exception& ex) {
+        qDebug() << "Exception: " << ex.what();
+    }
+}
+
 
