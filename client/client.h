@@ -24,6 +24,7 @@
 #include <cstring>
 
 #include "category.h"
+#include "HTTPRequestManager.h"
 
 
 class Client: public QObject
@@ -42,11 +43,14 @@ public:
     bool handleLoginRequest(const std::string& email, const std::string& password);
     bool handleLogoutRequest();
     std::vector<Category> GetCategoties();
+    void PostCategories(const std::string& categoryName);
 private:
     Client();
 
     const std::string IP_ADDRESS = "127.0.0.1";
     const int PORT = 8080;
+
+    HTTPRequestManager hTTPRequestManager;
 
     std::unique_ptr<Poco::Net::HTTPClientSession> clientSession;
     std::unique_ptr<Poco::Net::HTTPRequest> serverRequest;
@@ -54,8 +58,6 @@ private:
 
     QString retriveRequestBody() const;
     std::string retriveResponseBody() const;
-
-    std::string sendHTTPRequest(const std::string& url);
     bool parseJSONResponse(const std::string& responseData);
 
 signals:

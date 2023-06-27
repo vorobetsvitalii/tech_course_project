@@ -52,21 +52,6 @@ std::string Client::retriveResponseBody() const // Need to be implemented(Server
     return responseBody;
 }
 
-
-
-std::string Client::sendHTTPRequest(const std::string& url) {
-    Poco::URI uri(url);
-
-    Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
-    Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, uri.getPathAndQuery());
-    session.sendRequest(request);
-
-    Poco::Net::HTTPResponse response;
-    std::istream& responseBody = session.receiveResponse(response);
-    std::string responseData(std::istreambuf_iterator<char>(responseBody), {});
-    return responseData;
-}
-
 bool Client::parseJSONResponse(const std::string& responseData) {
     Poco::JSON::Parser parser;
     Poco::Dynamic::Var result = parser.parse(responseData);
@@ -103,7 +88,7 @@ bool Client::handleLoginRequest(const std::string& email, const std::string& pas
     std::string query = "password=" + password + "&email=" + email;
     Poco::URI uri(apiUrl);
     uri.setQuery(query);
-    std::string responseData = sendHTTPRequest(uri.toString());
+    std::string responseData = hTTPRequestManager.sendHTTPGetRequest(uri.toString());
     std::cout << "Response data: " << responseData << std::endl;
     bool success = parseJSONResponse(responseData);
     if (!success) {
@@ -136,8 +121,8 @@ std::vector<Category> Client::GetCategoties()
 {
     std::vector<Category> categories;
 
-    std::string apiUrl = "http://127.0.0.1:8080/api/categories";
-    std::string responseData = sendHTTPRequest(apiUrl);
+    std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories";
+    std::string responseData = hTTPRequestManager.sendHTTPGetRequest(apiUrl);
 
     Poco::JSON::Parser parser;
     Poco::Dynamic::Var result = parser.parse(responseData);
@@ -154,6 +139,38 @@ std::vector<Category> Client::GetCategoties()
             categories.push_back(category);
         }
     }
+    for(int i = 0; i<categories.size(); i++)
+    {
+        std::cout << categories[i] << std::endl;
+    }
     return categories;
 }
+
+void Client::PostCategories(const std::string& categoryName)
+{
+    try {
+        // Створення JSON об'єкту з назвою категорії
+        Poco::JSON::Object categoryObject;
+        categoryObject.set("CategoryName", categoryName);
+
+        // Серіалізація JSON об'єкту в рядок
+        std::stringstream jsonStream;
+        categoryObject.stringify(jsonStream);
+        std::string json = jsonStream.str();
+
+        // Відправка POST-запиту
+        std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories";
+        std::string response = hTTPRequestManager.sendHTTPPostRequest(apiUrl, json);
+
+        // Обробка відповіді сервера
+        if (response.empty()) {
+            qDebug() << "Empty response received";
+        } else {
+            qDebug() << "Server response: " << QString::fromStdString(response);
+        }
+    } catch (const std::exception& ex) {
+        qDebug() << "Exception: " << ex.what();
+    }
+}
+
 
