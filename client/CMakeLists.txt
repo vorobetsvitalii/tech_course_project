@@ -32,6 +32,8 @@ set(PROJECT_SOURCES
         category.cpp
         HTTPRequestManager.cpp
         HTTPRequestManager.h
+        menubutton.cpp
+        menubutton.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

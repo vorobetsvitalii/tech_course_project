@@ -13,6 +13,7 @@
 #include <QGraphicsDropShadowEffect>
 #include <memory>
 #include "admininfowidget.h"
+#include "menubutton.h"
 
 namespace Ui {
 class AdminPage;
@@ -25,6 +26,8 @@ class AdminPage : public QWidget
 public:
     explicit AdminPage(QWidget *parent = nullptr);
     ~AdminPage();
+
+
 
 private:
     Ui::AdminPage *ui;
@@ -87,6 +90,7 @@ private:
 
 private slots:
     void onLogoutDone();
+    void OnMenuItemClicked(MenuButton*);
 
 };
 
