@@ -26,6 +26,7 @@ AdminPage::AdminPage(QWidget *parent) :
 
     localNavigationLayout->addLayout(itemsMenuVLayout.get()); // Generic grid layout forming
     localNavigationLayout->addSpacerItem(localNavigationSpacer_1.get());
+    localNavigationLayout->addLayout(categoriesVLayout.get());
     localNavigationLayout->addWidget(contentArea.get());
 
     genericGridLayout->addWidget(topHWidget.get(), 0, 0); // Generic grid layout forming
@@ -52,6 +53,7 @@ void AdminPage::initializeLayouts()
     menuHLayout = std::make_unique<QHBoxLayout>();
     localNavigationLayout = std::make_unique<QHBoxLayout>();
     itemsMenuVLayout = std::make_unique<QVBoxLayout>();
+    categoriesVLayout = std::make_unique<QVBoxLayout>();
 }
 
 void AdminPage::initializeWidgets()
@@ -73,6 +75,7 @@ void AdminPage::initializeButton()
     // Menu layout
     homePushButton = std::make_unique<QPushButton>();
     // Items menu layout
+    addCategoriesButton = std::make_unique<QPushButton>();
     pushButton_1 = std::make_unique<QPushButton>();
     pushButton_2 = std::make_unique<QPushButton>();
     pushButton_3 = std::make_unique<QPushButton>();
@@ -129,7 +132,6 @@ void AdminPage::topHorizontalLayout()
     topHLayout->addSpacerItem(topSpacer_2.get());
     topHLayout->addWidget(adminInfoWidget.get());
     topHWidget->setLayout(topHLayout.get());
-    topHWidget->setStyleSheet("border-bottom: 1px solid rgb(211, 211, 211);");
 }
 
 void AdminPage::configurationHorizontalLayout()
@@ -213,6 +215,11 @@ void AdminPage::itemsMenuVerticalLayout()
     itemsMenuVLayout->addWidget(pushButton_8.get());
     itemsMenuVLayout->addWidget(pushButton_9.get());
 
+    addCategoriesButton->setText("+ Add category");
+    addCategoriesButton->setMinimumSize(90, 20);
+    addCategoriesButton->setStyleSheet(" QPushButton { border: 2px dashed grey; color: black; font-size: 10px; } ");
+
+    categoriesVLayout->insertWidget(0, addCategoriesButton.get());
     itemsMenuVLayout->addSpacerItem(itemsMenuSpacer_1.get());
 }
 

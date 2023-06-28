@@ -5,7 +5,7 @@
 
 Client::Client()
 {
-    handleServerConnection();
+    //handleServerConnection();
 }
 
 
@@ -156,4 +156,3 @@ std::vector<Category> Client::GetCategoties()
     }
     return categories;
 }
-

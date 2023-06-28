@@ -33,6 +33,7 @@ private:
 
     std::unique_ptr<QVBoxLayout> headerVLayout;
     std::unique_ptr<QVBoxLayout> itemsMenuVLayout;
+    std::unique_ptr<QVBoxLayout> categoriesVLayout;
 
     std::unique_ptr<QWidget> topHWidget;
     std::unique_ptr<QWidget> switchButtonWidget;
@@ -59,6 +60,7 @@ private:
     std::unique_ptr<QPushButton> cancelPushButton;
     std::unique_ptr<QPushButton> saveChangesButton;
     std::unique_ptr<QPushButton> homePushButton;
+    std::unique_ptr<QPushButton> addCategoriesButton;
     std::unique_ptr<QPushButton> pushButton_1;
     std::unique_ptr<QPushButton> pushButton_2;
     std::unique_ptr<QPushButton> pushButton_3;
