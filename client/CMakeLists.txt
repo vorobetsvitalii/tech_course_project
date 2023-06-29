@@ -30,6 +30,10 @@ set(PROJECT_SOURCES
         clientsession.cpp
         category.h
         category.cpp
+        HTTPRequestManager.cpp
+        HTTPRequestManager.h
+        addcategory.cpp
+        addcategory.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

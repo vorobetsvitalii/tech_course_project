@@ -43,7 +43,7 @@ QString QueryBuilder::SelectQueryBuild(const QString &select_query)
 {
     DBExecutor dbexecutorInstanse;
 
-    return dbexecutorInstanse.Select(select_query);;
+    return dbexecutorInstanse.Select(select_query);
 }
 
 QString QueryBuilder::SelectQueryBuild(const QString table_name, const QList<QString> &columns_name)

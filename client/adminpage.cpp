@@ -11,6 +11,8 @@ AdminPage::AdminPage(QWidget *parent) :
     this->setWindowTitle("Sports Hub");
     this->setStyleSheet("QWidget {background-color: rgb(255, 255, 255); }");
 
+    addCategoryWindow = std::make_unique<AddCategory>();
+
     initializeLayouts(); // Tools initialization
     initializeButton();
     initializeSpacers();
@@ -29,13 +31,16 @@ AdminPage::AdminPage(QWidget *parent) :
     localNavigationLayout->addLayout(categoriesVLayout.get());
     localNavigationLayout->addWidget(contentArea.get());
 
+    appendCategories();
+
     genericGridLayout->addWidget(topHWidget.get(), 0, 0); // Generic grid layout forming
     genericGridLayout->addLayout(configurationHLayout.get(), 1, 0);
     genericGridLayout->addWidget(menuHWidget.get(), 2, 0);
     genericGridLayout->addLayout(localNavigationLayout.get(), 3, 0);
 
     connect(&Client::getInstance(), &Client::logoutDoneEvent, this, &AdminPage::onLogoutDone);
-
+    connect(addCategoryButton.get(), &QPushButton::clicked, this, &AdminPage::on_add_category_clicked);
+    connect(addCategoryWindow.get(), &AddCategory::newButtonAdded, this, &AdminPage::handleNewButtonAdded);
 }
 
 AdminPage::~AdminPage()
@@ -75,7 +80,6 @@ void AdminPage::initializeButton()
     // Menu layout
     homePushButton = std::make_unique<QPushButton>();
     // Items menu layout
-    addCategoriesButton = std::make_unique<QPushButton>();
     pushButton_1 = std::make_unique<QPushButton>();
     pushButton_2 = std::make_unique<QPushButton>();
     pushButton_3 = std::make_unique<QPushButton>();
@@ -85,6 +89,7 @@ void AdminPage::initializeButton()
     pushButton_7 = std::make_unique<QPushButton>();
     pushButton_8 = std::make_unique<QPushButton>();
     pushButton_9 = std::make_unique<QPushButton>();
+    addCategoryButton = std::make_unique<QPushButton>();
 }
 
 void AdminPage::initializeSpacers()
@@ -103,7 +108,7 @@ void AdminPage::initializeSpacers()
     // Items menu layout
     itemsMenuSpacer_1 = std::make_unique<QSpacerItem>(20, 30, QSizePolicy::Fixed, QSizePolicy::Fixed);
     // Primary content area
-    localNavigationSpacer_1 = std::make_unique<QSpacerItem>(15, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    localNavigationSpacer_1 = std::make_unique<QSpacerItem>(10, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void AdminPage::topHorizontalLayout()
@@ -215,11 +220,11 @@ void AdminPage::itemsMenuVerticalLayout()
     itemsMenuVLayout->addWidget(pushButton_8.get());
     itemsMenuVLayout->addWidget(pushButton_9.get());
 
-    addCategoriesButton->setText("+ Add category");
-    addCategoriesButton->setMinimumSize(90, 20);
-    addCategoriesButton->setStyleSheet(" QPushButton { border: 2px dashed grey; color: black; font-size: 10px; } ");
+    addCategoryButton->setText("+ Add category");
+    addCategoryButton->setMinimumSize(95, 20);
+    addCategoryButton->setStyleSheet(" QPushButton { border: 2px dashed grey; color: black; font-size: 12px; } ");
 
-    categoriesVLayout->insertWidget(0, addCategoriesButton.get());
+    categoriesVLayout->insertWidget(0, addCategoryButton.get());
     itemsMenuVLayout->addSpacerItem(itemsMenuSpacer_1.get());
 }
 
@@ -234,6 +239,37 @@ void AdminPage::primaryContentArea()
                                 border-right: white;}");
 }
 
+void AdminPage::appendCategories()
+{
+    auto future = std::async(std::launch::async, [](){
+        return Client::getInstance().GetCategoties();
+    });
+
+    const auto& categories = future.get();
+    std::vector<QPushButton*> buttons(categories.size());
+
+    std::transform(categories.begin(), categories.end(), buttons.begin(), [](const Category& category) {
+        return new QPushButton(QString::fromStdString(category.getName()));
+    });
+
+    for (auto* button : buttons) {
+        categoriesVLayout->insertWidget(1, button);
+    }
+}
+
 void AdminPage::onLogoutDone() {
     this->close();
+}
+
+void AdminPage::on_add_category_clicked()
+{
+    addCategoryWindow->show();
+}
+
+void AdminPage::handleNewButtonAdded()
+{
+    QPushButton* newButton = new QPushButton(addCategoryWindow->getCategoryName());
+
+    categoriesVLayout->insertWidget(1, newButton);
+    Client::getInstance().PostCategories(addCategoryWindow->getCategoryName().toStdString());
 }

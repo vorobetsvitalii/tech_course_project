@@ -12,7 +12,13 @@
 #include <QScrollArea>
 #include <QGraphicsDropShadowEffect>
 #include <memory>
+#include <iostream>
+#include <future>
+
 #include "admininfowidget.h"
+#include "addcategory.h"
+#include "execution"
+#include "client.h"
 
 namespace Ui {
 class AdminPage;
@@ -32,8 +38,8 @@ private:
     std::unique_ptr<QGridLayout> genericGridLayout;
 
     std::unique_ptr<QVBoxLayout> headerVLayout;
-    std::unique_ptr<QVBoxLayout> itemsMenuVLayout;
     std::unique_ptr<QVBoxLayout> categoriesVLayout;
+    std::unique_ptr<QVBoxLayout> itemsMenuVLayout;
 
     std::unique_ptr<QWidget> topHWidget;
     std::unique_ptr<QWidget> switchButtonWidget;
@@ -60,7 +66,6 @@ private:
     std::unique_ptr<QPushButton> cancelPushButton;
     std::unique_ptr<QPushButton> saveChangesButton;
     std::unique_ptr<QPushButton> homePushButton;
-    std::unique_ptr<QPushButton> addCategoriesButton;
     std::unique_ptr<QPushButton> pushButton_1;
     std::unique_ptr<QPushButton> pushButton_2;
     std::unique_ptr<QPushButton> pushButton_3;
@@ -70,10 +75,13 @@ private:
     std::unique_ptr<QPushButton> pushButton_7;
     std::unique_ptr<QPushButton> pushButton_8;
     std::unique_ptr<QPushButton> pushButton_9;
+    std::unique_ptr<QPushButton> addCategoryButton;
 
     std::unique_ptr<QLabel> homeLabel;
 
     std::unique_ptr<QScrollArea> contentArea;
+
+    std::unique_ptr<AddCategory> addCategoryWindow;
 
     void initializeLayouts();
     void initializeWidgets();
@@ -87,8 +95,12 @@ private:
 
     void primaryContentArea();
 
+    void appendCategories();
+
 private slots:
     void onLogoutDone();
+    void on_add_category_clicked();
+    void handleNewButtonAdded();
 
 };
 
