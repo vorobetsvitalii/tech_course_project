@@ -7,14 +7,15 @@
 #include "client.h"
 
 #include "adminpage.h"
+#include "clientsession.h"
 
 DropdownMenu::DropdownMenu(QHBoxLayout* mainLayout, QWidget* parent) : QMenu(parent)
 {
 
 
-    initializeNameLabel("Vitalii");
-    initializeSurnameLabel("Vorobets");
-    initializeEmailLabel("vitalii@gmail.com");
+    initializeNameLabel(QString::fromStdString(ClientSession::getInstance()->getFirstName()));
+    initializeSurnameLabel(QString::fromStdString(ClientSession::getInstance()->getLastName()));
+    initializeEmailLabel(QString::fromStdString(ClientSession::getInstance()->getEmail()));
     initializeNameLayout();
     initializeInfoLayout();
     initializeSeparatorLine();
@@ -79,12 +80,11 @@ void DropdownMenu::initializeLogoutButton() {
 }
 
 void DropdownMenu::initializeButtonLayout() {
-    buttonLayout = std::make_unique <QHBoxLayout>();
+    buttonLayout = std::make_unique<QHBoxLayout>();
     buttonLayout->addWidget(logoutButton.get());
     buttonLayout->setContentsMargins(20, 5, 15, 5);
-    buttonLayout->setSpacing(70);
-    buttonLayout->addWidget(armIcon.get());
     buttonLayout->addStretch();
+    buttonLayout->addWidget(armIcon.get(), 0, Qt::AlignRight);
 }
 
 void DropdownMenu::initializeButtonWidget() {
