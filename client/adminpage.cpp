@@ -1,5 +1,6 @@
 #include "adminpage.h"
 #include "ui_adminpage.h"
+#include <functional>
 
 AdminPage::AdminPage(QWidget *parent) :
     QWidget(parent),
@@ -200,25 +201,40 @@ void AdminPage::menuHorizontalLayout()
 
 void AdminPage::itemsMenuVerticalLayout()
 {
-    pushButton_1->setStyleSheet("margin-bottom: 5px;");
-    pushButton_2->setStyleSheet("margin-bottom: 5px;");
-    pushButton_3->setStyleSheet("margin-bottom: 5px;");
-    pushButton_4->setStyleSheet("margin-bottom: 5px;");
-    pushButton_5->setStyleSheet("margin-bottom: 5px;");
-    pushButton_6->setStyleSheet("margin-bottom: 5px;");
-    pushButton_7->setStyleSheet("margin-bottom: 5px;");
-    pushButton_8->setStyleSheet("margin-bottom: 5px;");
-    pushButton_9->setStyleSheet("margin-bottom: 5px;");
 
-    itemsMenuVLayout->addWidget(pushButton_1.get());
-    itemsMenuVLayout->addWidget(pushButton_2.get());
-    itemsMenuVLayout->addWidget(pushButton_3.get());
-    itemsMenuVLayout->addWidget(pushButton_4.get());
-    itemsMenuVLayout->addWidget(pushButton_5.get());
-    itemsMenuVLayout->addWidget(pushButton_6.get());
-    itemsMenuVLayout->addWidget(pushButton_7.get());
-    itemsMenuVLayout->addWidget(pushButton_8.get());
-    itemsMenuVLayout->addWidget(pushButton_9.get());
+    QWidget* centralWidget = new QWidget(this);
+    QString styleSheet = QString("QToolTip {  color: #ffffff; background-color: #313541; border-style: solid; border-style: solid; border-color: transparent blue transparent transparent; }");
+    qApp->setStyleSheet(styleSheet);
+
+    QStringList menuItems = {
+        "Surveys",
+        "Banners",
+        "Languages",
+        "Footer",
+        "Social Networks",
+        "Users",
+        "IA",
+        "Teams",
+        "News Partners",
+        "Advertising"
+    };
+
+    for (const QString& item : menuItems) {
+        QString tooltip = item;
+        QIcon icon("../img/"+item+".png");
+        MenuButton* menuItemButton = new MenuButton(item, tooltip, icon, centralWidget);
+
+        QObject::connect(menuItemButton, &QPushButton::clicked, this, [this, menuItemButton]() {
+            OnMenuItemClicked(menuItemButton);
+        });
+
+
+
+        itemsMenuVLayout->addWidget(menuItemButton);
+    }
+
+    itemsMenuVLayout->setAlignment(Qt::AlignTop);
+
 
     addCategoryButton->setText("+ Add category");
     addCategoryButton->setMinimumSize(95, 20);
@@ -226,6 +242,7 @@ void AdminPage::itemsMenuVerticalLayout()
 
     categoriesVLayout->insertWidget(0, addCategoryButton.get());
     itemsMenuVLayout->addSpacerItem(itemsMenuSpacer_1.get());
+
 }
 
 void AdminPage::primaryContentArea()
@@ -261,6 +278,7 @@ void AdminPage::onLogoutDone() {
     this->close();
 }
 
+<<<<<<< HEAD
 void AdminPage::on_add_category_clicked()
 {
     addCategoryWindow->show();
@@ -272,4 +290,9 @@ void AdminPage::handleNewButtonAdded()
 
     categoriesVLayout->insertWidget(1, newButton);
     Client::getInstance().PostCategories(addCategoryWindow->getCategoryName().toStdString());
+=======
+void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)
+{
+    handleMenuItemClick(menuItemButton, contentArea.get());
+>>>>>>> 6b95f86e8f7f11814662f23d754594b11fff446d
 }

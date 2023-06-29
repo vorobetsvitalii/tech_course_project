@@ -16,9 +16,13 @@
 #include <future>
 
 #include "admininfowidget.h"
+<<<<<<< HEAD
 #include "addcategory.h"
 #include "execution"
 #include "client.h"
+=======
+#include "menubutton.h"
+>>>>>>> 6b95f86e8f7f11814662f23d754594b11fff446d
 
 namespace Ui {
 class AdminPage;
@@ -31,6 +35,8 @@ class AdminPage : public QWidget
 public:
     explicit AdminPage(QWidget *parent = nullptr);
     ~AdminPage();
+
+
 
 private:
     Ui::AdminPage *ui;
@@ -99,8 +105,12 @@ private:
 
 private slots:
     void onLogoutDone();
+<<<<<<< HEAD
     void on_add_category_clicked();
     void handleNewButtonAdded();
+=======
+    void OnMenuItemClicked(MenuButton*);
+>>>>>>> 6b95f86e8f7f11814662f23d754594b11fff446d
 
 };
 
