@@ -22,7 +22,7 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             }
             else if(uri.find("/api/categories") != std::string::npos)
             {
-                ApiGetCategories(response);
+                ApiGetCategories(request, response);
             }
             else if(uri.find("/test")!= std::string::npos)
             {
@@ -276,6 +276,7 @@ void RequestHandler::ApiLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::
 
 bool RequestHandler::CheckToken(const std::string key)
 {
+    std::cout << "Token: " << key;
 
     /*
     RequestHandler::CheckToken("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOiIyMDIzLTA2LTE1VDExOjI1OjI3WiIsInN1YiI6InVzZXI2MEBnbWFpbC5jb20ifQ.iuoDG-Uu-8TGnmlik4pPSnkdKC63htrQgn2vi0N_SXQ");
@@ -299,26 +300,26 @@ bool RequestHandler::CheckToken(const std::string key)
 
 
 
-            // Отримання поточного часу
+        // Отримання поточного часу
 
-            Poco::Timestamp currentTimestamp(std::time(nullptr));
-            if (expirationTimestamp > currentTimestamp)
-            {
-                qDebug()<<"Токен валідний";
-                return true;
-            }
-            else
-            {
-                qDebug()<<"Токен невалідний";
-                return false;
-            }
-
-
-            //auto a = signer.verify(token.toString());
-            ///if (signer.tryVerify(tokenString, token)) {}
-
-
+        Poco::Timestamp currentTimestamp(std::time(nullptr));
+        if (expirationTimestamp > currentTimestamp)
+        {
+            qDebug()<<"Токен валідний";
+            return true;
         }
+        else
+        {
+            qDebug()<<"Токен невалідний";
+            return false;
+        }
+
+
+        //auto a = signer.verify(token.toString());
+        ///if (signer.tryVerify(tokenString, token)) {}
+
+
+    }
 
     catch (const Poco::Exception& exp)
     {
@@ -342,22 +343,41 @@ void RequestHandler::ApiLogout(Poco::Net::HTTPServerRequest &request, Poco::Net:
     response.send();
 }
 
-void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerResponse& response)
+void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse& response)
 {
     try {
-        QJsonArray categoriesArray = database->GetCategories();
-        // Формування відповіді у форматі JSON
-        QJsonObject responseObject;
-        responseObject["categories"] = categoriesArray;
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+        if(CheckToken(key))
+        {
+            QJsonArray categoriesArray = database->GetCategories();
+            // Формування відповіді у форматі JSON
+            QJsonObject responseObject;
+            responseObject["categories"] = categoriesArray;
 
-        QJsonDocument responseDocument(responseObject);
-        QByteArray responseData = responseDocument.toJson();
+            QJsonDocument responseDocument(responseObject);
+            QByteArray responseData = responseDocument.toJson();
 
-        // Відправлення відповіді клієнту
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
-        response.setContentType("application/json");
-        response.setContentLength(responseData.length());
-        response.sendBuffer(responseData.data(), responseData.length());
+            // Відправлення відповіді клієнту
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("application/json");
+            response.setContentLength(responseData.length());
+            response.sendBuffer(responseData.data(), responseData.length());
+        }
+        else
+        {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -377,19 +397,34 @@ void RequestHandler::ApiPostCategories(Poco::Net::HTTPServerRequest& request, Po
 
         QJsonDocument jsonDocument = QJsonDocument::fromJson(QByteArray::fromStdString(body));
         if (jsonDocument.isNull()) {
-                throw std::runtime_error("Invalid JSON data");
+            throw std::runtime_error("Invalid JSON data");
         }
 
-        // Отримання об'єкту категорії з JSON
         QJsonObject categoryObject = jsonDocument.object();
-        qDebug() << categoryObject << "\n";
+        std::string key = categoryObject["key"].toString().toStdString();
+        if (CheckToken(key)) {
+            qDebug() << categoryObject << "\n";
 
-        QString name = categoryObject["CategoryName"].toString();
-        database->PostCategories(name);
+            QString name = categoryObject["CategoryName"].toString();
+            database->PostCategories(name);
 
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
-        response.setContentType("text/plain");
-        response.sendBuffer("Category added successfully", 26);
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Category added successfully", 26);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);

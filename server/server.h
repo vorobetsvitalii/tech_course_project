@@ -100,7 +100,7 @@ private:
     bool DataBase_Login(const std::string ,const std::string); // Логін
     void ApiLogin(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void ApiLogout(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
-    void ApiGetCategories(Poco::Net::HTTPServerResponse& response);
+    void ApiGetCategories(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse& response);
     void ApiPostCategories(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
 
 };

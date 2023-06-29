@@ -79,6 +79,22 @@ bool Client::parseJSONResponse(const std::string& responseData) {
         ClientSession::getInstance()->setKey(key);
     }
 
+    if(object->has("first_name")) {
+        std::string firstName = object->getValue<std::string>("first_name");
+        ClientSession::getInstance()->setFirstName(firstName);
+    }
+
+    if(object->has("last_name")) {
+        std::string lastName = object->getValue<std::string>("last_name");
+        ClientSession::getInstance()->setLastName(lastName);
+    }
+
+    if(object->has("email")) {
+        std::string email = object->getValue<std::string>("email");
+        ClientSession::getInstance()->setEmail(email);
+    }
+
+
     return true;
 }
 
@@ -120,8 +136,8 @@ bool Client::handleLogoutRequest() {
 std::vector<Category> Client::GetCategoties()
 {
     std::vector<Category> categories;
-
-    std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories";
+    std::string key = ClientSession::getInstance()->getKey();
+    std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories?key="+key;
     std::string responseData = hTTPRequestManager.sendHTTPGetRequest(apiUrl);
 
     Poco::JSON::Parser parser;
@@ -151,7 +167,9 @@ void Client::PostCategories(const std::string& categoryName)
     try {
         // Створення JSON об'єкту з назвою категорії
         Poco::JSON::Object categoryObject;
+        std::string key = ClientSession::getInstance()->getKey();
         categoryObject.set("CategoryName", categoryName);
+        categoryObject.set("key", key);
 
         // Серіалізація JSON об'єкту в рядок
         std::stringstream jsonStream;
