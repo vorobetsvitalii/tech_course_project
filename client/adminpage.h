@@ -16,13 +16,11 @@
 #include <future>
 
 #include "admininfowidget.h"
-<<<<<<< HEAD
 #include "addcategory.h"
 #include "execution"
 #include "client.h"
-=======
 #include "menubutton.h"
->>>>>>> 6b95f86e8f7f11814662f23d754594b11fff446d
+#include "hmenu.h"
 
 namespace Ui {
 class AdminPage;
@@ -49,7 +47,7 @@ private:
 
     std::unique_ptr<QWidget> topHWidget;
     std::unique_ptr<QWidget> switchButtonWidget;
-    std::unique_ptr<QWidget> menuHWidget;
+    std::unique_ptr<HMenu> menuHWidget;
 
     std::unique_ptr<QHBoxLayout> topHLayout;
     std::unique_ptr<QHBoxLayout> configurationHLayout;
@@ -105,12 +103,10 @@ private:
 
 private slots:
     void onLogoutDone();
-<<<<<<< HEAD
     void on_add_category_clicked();
     void handleNewButtonAdded();
-=======
     void OnMenuItemClicked(MenuButton*);
->>>>>>> 6b95f86e8f7f11814662f23d754594b11fff446d
+    void onCategorySelected(Category* category);
 
 };
 
