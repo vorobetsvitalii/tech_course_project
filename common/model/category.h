@@ -1,5 +1,6 @@
 #ifndef CATEGORY_H
 #define CATEGORY_H
+
 #include <string>
 #include <Poco/JSON/Parser.h>
 #include <Poco/Dynamic/Var.h>
@@ -18,8 +19,9 @@ public:
     int getId() const;
     std::string getName() const;
     void setName(std::string name);
-    QJsonObject GetJsonObject();
-    void LoadJsonObject(QJsonObject obj);
+    void setId(int id);
+    virtual QJsonObject GetJsonObject() override;
+    virtual void LoadJsonObject(QJsonObject obj) override;
     friend std::ostream& operator<<(std::ostream& os, const Category& category);
 };
 

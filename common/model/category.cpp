@@ -28,7 +28,10 @@ std::string Category::getName() const
 {
     return name;
 }
-
+void Category::setId(int id)
+{
+    this->id = id;
+}
 void Category::setName(std::string name)
 {
     this->name = name;
