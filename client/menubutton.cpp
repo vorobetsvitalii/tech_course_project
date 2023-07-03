@@ -29,7 +29,11 @@ bool MenuButton::eventFilter(QObject* object, QEvent* event)
             setButtonIcon(originalIcon);
         } else if (event->type() == QEvent::Leave) {
             hideTooltip();
-            setButtonIcon(convertToGrayIcon(originalIcon));
+            MenuButton* menuButton = dynamic_cast<MenuButton*>(object);
+            if(!menuButton->clicked)
+            {
+                setButtonIcon(convertToGrayIcon(originalIcon));
+            }
         }
     }
     return QPushButton::eventFilter(object, event);
@@ -164,6 +168,11 @@ void MenuButton::SetIA(MenuButton* clickedButton ,QScrollArea* Content)
     Content->setWidget(widget.release());
 }
 
+QIcon MenuButton::GetIcon()
+{
+    return this->originalIcon;
+}
+
 void MenuButton::setButtonIcon(const QIcon& icon)
 {
     button->setIcon(icon);
@@ -216,6 +225,29 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
     Values.emplace("Users", 8);
     Values.emplace("Languages", 9);
     Values.emplace("IA", 10);
+
+
+
+    QObjectList children = clickedButton->parentWidget()->children();
+    for (QObject* child : children)
+    {
+        if (MenuButton* menuButton = qobject_cast<MenuButton*>(child))
+        {
+            if (menuButton != clickedButton && menuButton->clicked)
+            {
+                menuButton->clicked=false;
+                menuButton->setIcon(menuButton->convertToGrayIcon(menuButton->GetIcon()));
+            }
+        }
+    }
+
+
+    clickedButton->clicked=true;
+    QIcon originalIcon = clickedButton->GetIcon();
+
+    // Змініть іконку натиснутої кнопки на оригінальну
+    clickedButton->setButtonIcon(originalIcon);
+
 
     switch(Values[clickedButton->toolTip().toStdString()])
     {

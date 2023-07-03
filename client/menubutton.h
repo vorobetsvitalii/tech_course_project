@@ -33,14 +33,21 @@ public:
     void SetLanguages(MenuButton* clickedButton ,QScrollArea* Content);
     void SetIA(MenuButton* clickedButton ,QScrollArea* Content);
 
-private:
-    QIcon originalIcon;
-    QPushButton* button;
+    QIcon GetIcon();
+    bool clicked;
 
     void setButtonIcon(const QIcon& icon);
+    QIcon convertToGrayIcon(const QIcon& icon);
+private:
+
+
+
+
+    QPushButton* button;
+    QIcon originalIcon;
     void showTooltip();
     void hideTooltip();
-    QIcon convertToGrayIcon(const QIcon& icon);
+
 
 protected:
     bool eventFilter(QObject* object, QEvent* event) override;

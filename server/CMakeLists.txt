@@ -5,7 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the POCO library directory
-set(POCO_DIR "C:/msys64/mingw64")
+set(POCO_DIR "D:/MSYS/mingw64")
+
 
 # Include directories for POCO
 include_directories("${POCO_DIR}/include")
@@ -40,8 +41,6 @@ target_link_libraries(Server_poco PRIVATE Qt6::Core Qt6::Sql)
 
 #Poco installation start
 
-# Set the POCO library directory
-set(POCO_DIR "C:/msys64/mingw64")
 
 # Include directories for POCO
 
