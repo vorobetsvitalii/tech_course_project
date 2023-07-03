@@ -28,8 +28,6 @@ set(PROJECT_SOURCES
         dropdownmenu.cpp
         clientsession.h
         clientsession.cpp
-        category.h
-        category.cpp
         HTTPRequestManager.cpp
         HTTPRequestManager.h
         menubutton.cpp
@@ -37,11 +35,15 @@ set(PROJECT_SOURCES
         addcategory.cpp
         addcategory.h
         addcategory.ui
-        hmenu.cpp
         hmenu.h
-        hmenuitem.cpp
+        hmenu.cpp
         hmenuitem.h
+        hmenuitem.cpp
 )
+
+
+# Add the category.cpp file to the project sources
+list(APPEND PROJECT_SOURCES "E:/studying/programming/C++/SoftServe/tech_course_project/common/model/category.cpp")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Client

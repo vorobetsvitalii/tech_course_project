@@ -4,8 +4,12 @@
 #include <Poco/JSON/Parser.h>
 #include <Poco/Dynamic/Var.h>
 #include <Poco/JSON/Object.h>
+#include <QJsonObject>
+#include <QString>
+#include "../interface/IJsonSerializable.h"
 
-class Category
+
+class Category: public IJsonSerializable
 {
 private:
     int id;
@@ -13,7 +17,9 @@ private:
 public:
     int getId() const;
     std::string getName() const;
-    static Category fromJSON(const std::string& json);
+    void setName(std::string name);
+    QJsonObject GetJsonObject();
+    void LoadJsonObject(QJsonObject obj);
     friend std::ostream& operator<<(std::ostream& os, const Category& category);
 };
 

@@ -7,7 +7,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-#include "category.h"
+#include "../common/model/category.h"
 
 class HMenuItem : public QPushButton
 {

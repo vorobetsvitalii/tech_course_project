@@ -10,7 +10,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-#include "category.h"
+#include "../common/model/category.h"
 #include "hmenuitem.h"
 
 class HMenu: public QFrame
