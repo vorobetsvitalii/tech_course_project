@@ -40,13 +40,34 @@ public:
     QIcon convertToGrayIcon(const QIcon& icon);
 private:
 
-
+    std::unique_ptr<QWidget> advertisingContent=initializeAdvertisingContent();
+    std::unique_ptr<QWidget> bannersContent=initializeBannersContent();
+    std::unique_ptr<QWidget> newsPartnersContent=initializeNewsPartnersContent();
+    std::unique_ptr<QWidget> socialNetworksContent=initializeSocialNetworksContent();
+    std::unique_ptr<QWidget> surveysContent=initializeSurveysContent();
+    std::unique_ptr<QWidget> footerContent=initializeFooterContent();
+    std::unique_ptr<QWidget> teamsContent=initializeTeamsContent();
+    std::unique_ptr<QWidget> usersContent=initializeUsersContent();
+    std::unique_ptr<QWidget> languagesContent=initializeLanguagesContent();
+    std::unique_ptr<QWidget> iaContent=initializeIAContent();
 
 
     QPushButton* button;
     QIcon originalIcon;
     void showTooltip();
     void hideTooltip();
+
+
+    std::unique_ptr<QWidget> initializeAdvertisingContent();
+    std::unique_ptr<QWidget> initializeBannersContent();
+    std::unique_ptr<QWidget> initializeNewsPartnersContent();
+    std::unique_ptr<QWidget> initializeSocialNetworksContent();
+    std::unique_ptr<QWidget> initializeSurveysContent();
+    std::unique_ptr<QWidget> initializeFooterContent();
+    std::unique_ptr<QWidget> initializeTeamsContent();
+    std::unique_ptr<QWidget> initializeUsersContent();
+    std::unique_ptr<QWidget> initializeLanguagesContent();
+    std::unique_ptr<QWidget> initializeIAContent();
 
 
 protected:

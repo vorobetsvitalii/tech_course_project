@@ -41,131 +41,72 @@ bool MenuButton::eventFilter(QObject* object, QEvent* event)
 
 void MenuButton::SetAdvertising(MenuButton *clickedButton, QScrollArea *Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->advertisingContent = clickedButton->initializeAdvertisingContent();
+    Content->setWidget(clickedButton->advertisingContent.release());
 }
 
 
 
 void MenuButton::SetBanners(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->bannersContent = clickedButton->initializeBannersContent();
+    Content->setWidget(clickedButton->bannersContent.release());
 }
 
 
 void MenuButton::SetNewsPartners(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->newsPartnersContent = clickedButton->initializeNewsPartnersContent();
+    Content->setWidget(clickedButton->newsPartnersContent.release());
 }
 
 
 void MenuButton::SetSocialNetworks(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->socialNetworksContent = clickedButton->initializeSocialNetworksContent();
+    Content->setWidget(clickedButton->socialNetworksContent.release());
 }
 
 
 void MenuButton::SetSurveys(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->surveysContent = clickedButton->initializeSurveysContent();
+    Content->setWidget(clickedButton->surveysContent.release());
 }
 
 
 void MenuButton::SetFooter(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->footerContent = clickedButton->initializeFooterContent();
+    Content->setWidget(clickedButton->footerContent.release());
 }
 
 
 void MenuButton::SetTeams(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->teamsContent = clickedButton->initializeTeamsContent();
+    Content->setWidget(clickedButton->teamsContent.release());
 }
 
 
 void MenuButton::SetUsers(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->usersContent = clickedButton->initializeUsersContent();
+    Content->setWidget(clickedButton->usersContent.release());
 }
 
 
 void MenuButton::SetLanguages(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->languagesContent = clickedButton->initializeLanguagesContent();
+    Content->setWidget(clickedButton->languagesContent.release());
 }
 
 
 void MenuButton::SetIA(MenuButton* clickedButton ,QScrollArea* Content)
 {
-    std::unique_ptr<QLayout>layout = std::make_unique<QHBoxLayout>();
-    QLabel* label = new QLabel;
-    label->setText(clickedButton->toolTip());
-
-    layout->addWidget(label);
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    widget->setLayout(layout.release());
-    Content->setWidget(widget.release());
+    clickedButton->iaContent = clickedButton->initializeIAContent();
+    Content->setWidget(clickedButton->iaContent.release());
 }
 
 QIcon MenuButton::GetIcon()
@@ -190,6 +131,106 @@ void MenuButton::showTooltip()
 void MenuButton::hideTooltip()
 {
     QToolTip::hideText();
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeAdvertisingContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("Advertising");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeBannersContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("Banners");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeNewsPartnersContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("News Partners");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeSocialNetworksContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("Social Networks");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeSurveysContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("Surveys");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeFooterContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("Footer");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("Teams");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeUsersContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("Users");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeLanguagesContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("Languages");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
+}
+
+std::unique_ptr<QWidget> MenuButton::initializeIAContent()
+{
+    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QVBoxLayout* layout = new QVBoxLayout(widget.get());
+    QLabel* label = new QLabel("IA");
+    layout->addWidget(label);
+    widget->setLayout(layout);
+    return widget;
 }
 
 QIcon MenuButton::convertToGrayIcon(const QIcon& icon)

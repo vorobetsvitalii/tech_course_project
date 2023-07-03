@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the POCO library directory
-set(POCO_DIR "D:/MSYS/mingw64")
+set(POCO_DIR "C:/msys64/mingw64")
 
 
 # Include directories for POCO
