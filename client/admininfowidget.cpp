@@ -1,4 +1,5 @@
 #include "admininfowidget.h"
+#include "clientsession.h"
 
 AdminInfoWidget::AdminInfoWidget(QWidget *parent) : QWidget(parent) {
     QFontDatabase::addApplicationFont("../client/fonts/OpenSans-Regular.ttf");
@@ -37,12 +38,12 @@ void AdminInfoWidget::initializePhotoLabel() {
 }
 
 void AdminInfoWidget::initializeNameLabel() {
-    nameLabel = std::make_unique<QLabel>("Vitalii", this);
+    nameLabel = std::make_unique<QLabel>(QString::fromStdString(ClientSession::getInstance()->getFirstName()), this);
     nameLabel->setStyleSheet("color: #000000; font-family: Open Sans; font-size: 14px; font-weight:600");
 }
 
 void AdminInfoWidget::initializeSurnameLabel() {
-    surnameLabel = std::make_unique<QLabel>("Vorobets", this);
+    surnameLabel = std::make_unique<QLabel>(QString::fromStdString(ClientSession::getInstance()->getLastName()), this);
     surnameLabel->setStyleSheet("color: #000000; font-family: Open Sans; font-size: 14px; font-weight:600");
 }
 

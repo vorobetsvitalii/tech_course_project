@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <QString>
+#include <future>
 
 class IDataModel
 {

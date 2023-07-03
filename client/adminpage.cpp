@@ -12,6 +12,8 @@ AdminPage::AdminPage(QWidget *parent) :
     this->setWindowTitle("Sports Hub");
     this->setStyleSheet("QWidget {background-color: rgb(255, 255, 255); }");
 
+    addCategoryWindow = std::make_unique<AddCategory>();
+
     initializeLayouts(); // Tools initialization
     initializeButton();
     initializeSpacers();
@@ -27,15 +29,21 @@ AdminPage::AdminPage(QWidget *parent) :
 
     localNavigationLayout->addLayout(itemsMenuVLayout.get()); // Generic grid layout forming
     localNavigationLayout->addSpacerItem(localNavigationSpacer_1.get());
+    localNavigationLayout->addLayout(categoriesVLayout.get());
     localNavigationLayout->addWidget(contentArea.get());
+
+    appendCategories();
 
     genericGridLayout->addWidget(topHWidget.get(), 0, 0); // Generic grid layout forming
     genericGridLayout->addLayout(configurationHLayout.get(), 1, 0);
     genericGridLayout->addWidget(menuHWidget.get(), 2, 0);
     genericGridLayout->addLayout(localNavigationLayout.get(), 3, 0);
 
-    connect(&Client::getInstance(), &Client::logoutDoneEvent, this, &AdminPage::onLogoutDone);
+    genericGridLayout->setContentsMargins(0, 0, 0, 0);
 
+    connect(&Client::getInstance(), &Client::logoutDoneEvent, this, &AdminPage::onLogoutDone);
+    connect(addCategoryButton.get(), &QPushButton::clicked, this, &AdminPage::on_add_category_clicked);
+    connect(addCategoryWindow.get(), &AddCategory::newButtonAdded, this, &AdminPage::handleNewButtonAdded);
 }
 
 AdminPage::~AdminPage()
@@ -50,16 +58,18 @@ void AdminPage::initializeLayouts()
     headerVLayout = std::make_unique<QVBoxLayout>();
     topHLayout = std::make_unique<QHBoxLayout>();
     configurationHLayout = std::make_unique<QHBoxLayout>();
-    menuHLayout = std::make_unique<QHBoxLayout>();
+    //menuHLayout = std::make_unique<QHBoxLayout>();
     localNavigationLayout = std::make_unique<QHBoxLayout>();
     itemsMenuVLayout = std::make_unique<QVBoxLayout>();
+    categoriesVLayout = std::make_unique<QVBoxLayout>();
 }
 
 void AdminPage::initializeWidgets()
 {
     topHWidget = std::make_unique<QWidget>();
     switchButtonWidget = std::make_unique<QWidget>();
-    menuHWidget = std::make_unique<QWidget>();
+    menuHWidget = std::make_unique<HMenu>();
+    connect(menuHWidget.get(), &HMenu::categorySelected, this, &AdminPage::onCategorySelected);
     adminInfoWidget = std::make_unique<AdminInfoWidget>();
 }
 
@@ -83,6 +93,7 @@ void AdminPage::initializeButton()
     pushButton_7 = std::make_unique<QPushButton>();
     pushButton_8 = std::make_unique<QPushButton>();
     pushButton_9 = std::make_unique<QPushButton>();
+    addCategoryButton = std::make_unique<QPushButton>();
 }
 
 void AdminPage::initializeSpacers()
@@ -96,32 +107,34 @@ void AdminPage::initializeSpacers()
     configSpacer_3 = std::make_unique<QSpacerItem>(9, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     configSpacer_4 = std::make_unique<QSpacerItem>(15, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     // Menu layout
-    menuSpacer_1 = std::make_unique<QSpacerItem>(52, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
-    menuSpacer_2 = std::make_unique<QSpacerItem>(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    //menuSpacer_1 = std::make_unique<QSpacerItem>(52, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    //menuSpacer_2 = std::make_unique<QSpacerItem>(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
     // Items menu layout
     itemsMenuSpacer_1 = std::make_unique<QSpacerItem>(20, 30, QSizePolicy::Fixed, QSizePolicy::Fixed);
     // Primary content area
-    localNavigationSpacer_1 = std::make_unique<QSpacerItem>(15, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    localNavigationSpacer_1 = std::make_unique<QSpacerItem>(10, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void AdminPage::topHorizontalLayout()
 {
-    QFont homepagePushButtonFont("Tahoma", 12);
-    QString projectPath = QCoreApplication::applicationDirPath();
+    QFontDatabase::addApplicationFont("../client/fonts/OpenSans-SemiBold.ttf");
+    QFontDatabase::addApplicationFont("../client/fonts/OpenSans-Bold.ttf");
+
+    QFont homepagePushButtonFont("Open Sans", 14);
+    //QString projectPath = QCoreApplication::applicationDirPath();
 
     homepagePushButton->setText("Sports Hub");
-    homepagePushButton->setFixedSize(150, 50);
+    homepagePushButton->setFixedSize(170, 60);
     homepagePushButton->setFont(homepagePushButtonFont);
-    homepagePushButton->setStyleSheet("QPushButton { \
-                                       background-color: rgb(208, 0, 0); \
+    homepagePushButton->setStyleSheet("background-color: #D72130; \
                                        color: rgb(255, 255, 255); \
-                                       border:none;}");
+                                       border:none;\
+                                       font-weight: 600;");
 
-    switchPushButton->setStyleSheet("QPushButton { \
-                                     border: none; background-color: rgb(216, 223, 233); \
-                                     margin-left: 10px;}");
+    switchPushButton->setStyleSheet("border: none; \
+                                     margin-left: 10px;");
 
-    switchPushButton->setIcon(QIcon(projectPath.replace("build-client-Desktop_Qt_6_5_0_MinGW_64_bit-Debug", "img/switchIcon.png")));
+    switchPushButton->setIcon(QIcon("../img/switcher.svg"));
     switchPushButton->setIconSize(QSize(35, 40));
 
     topHLayout->addWidget(homepagePushButton.get());
@@ -130,7 +143,15 @@ void AdminPage::topHorizontalLayout()
     topHLayout->addSpacerItem(topSpacer_2.get());
     topHLayout->addWidget(adminInfoWidget.get());
     topHWidget->setLayout(topHLayout.get());
-    topHWidget->setStyleSheet("border-bottom: 1px solid rgb(211, 211, 211);");
+
+    topHWidget->setObjectName("topHWidget");
+    topHWidget->setStyleSheet("#topHWidget {"
+                              "border-bottom: 1px solid rgb(211, 211, 211);"
+                              "}");
+
+    topHLayout->setContentsMargins(0, 0, 0, 0);
+    topHLayout->setSpacing(0);
+
 }
 
 void AdminPage::configurationHorizontalLayout()
@@ -147,7 +168,7 @@ void AdminPage::configurationHorizontalLayout()
                                       background-color: rgb(208, 0, 0); \
                                       color: rgb(255, 255, 255); border:none}");
 
-    QFont homeLabelFont("Tahoma", 16, QFont::Bold);
+    QFont homeLabelFont("Open Sans", 16, QFont::Bold);
 
     homeLabel = std::make_unique<QLabel>();
 
@@ -165,31 +186,14 @@ void AdminPage::configurationHorizontalLayout()
 
 void AdminPage::menuHorizontalLayout()
 {
-    QFont homePushButtonFont("Tahoma", 10, QFont::Bold);
-
-    homePushButton->setFont(homePushButtonFont);
-    homePushButton->setText("HOME");
-    homePushButton->setStyleSheet("QPushButton { \
-                                   border: none; background-color: \
-                                   rgb(255, 255, 255); \
-                                   color: rgb(255, 0, 0);}");
-
-    menuHLayout->addSpacerItem(menuSpacer_1.get());
-    menuHLayout->addWidget(homePushButton.get());
-    menuHLayout->addSpacerItem(menuSpacer_2.get());
-
     QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(menuHWidget.get());
 
     shadowEffect->setBlurRadius(8);
     shadowEffect->setColor(QColor(0, 0, 0, 80));
     shadowEffect->setOffset(0, 4);
 
-    menuHWidget->setLayout(menuHLayout.get());
     menuHWidget->setGraphicsEffect(shadowEffect);
-    menuHWidget->setStyleSheet("border-left: white; \
-                                border-right: white; \
-                                border-top: 2px solid rgb(211, 211, 211); \
-                                border-bottom: 2px solid rgb(211, 211, 211);");
+    menuHWidget->setStyleSheet("border-top: 1px solid rgb(211, 211, 211);");
 }
 
 void AdminPage::itemsMenuVerticalLayout()
@@ -229,6 +233,11 @@ void AdminPage::itemsMenuVerticalLayout()
     itemsMenuVLayout->setAlignment(Qt::AlignTop);
 
 
+    addCategoryButton->setText("+ Add category");
+    addCategoryButton->setMinimumSize(95, 20);
+    addCategoryButton->setStyleSheet(" QPushButton { border: 2px dashed grey; color: black; font-size: 12px; } ");
+
+    categoriesVLayout->insertWidget(0, addCategoryButton.get());
     itemsMenuVLayout->addSpacerItem(itemsMenuSpacer_1.get());
 
 }
@@ -244,11 +253,48 @@ void AdminPage::primaryContentArea()
                                 border-right: white;}");
 }
 
+void AdminPage::appendCategories()
+{
+    auto future = std::async(std::launch::async, [](){
+        return Client::getInstance().GetCategoties();
+    });
+
+    const auto& categories = future.get();
+    std::vector<QPushButton*> buttons(categories.size());
+
+    std::transform(categories.begin(), categories.end(), buttons.begin(), [](const Category& category) {
+        return new QPushButton(QString::fromStdString(category.getName()));
+    });
+
+    for (auto* button : buttons) {
+        categoriesVLayout->insertWidget(1, button);
+    }
+}
+
 void AdminPage::onLogoutDone() {
     this->close();
+}
+
+void AdminPage::on_add_category_clicked()
+{
+    addCategoryWindow->show();
+}
+
+void AdminPage::handleNewButtonAdded()
+{
+    QPushButton* newButton = new QPushButton(addCategoryWindow->getCategoryName());
+
+    categoriesVLayout->insertWidget(1, newButton);
+    Client::getInstance().PostCategories(addCategoryWindow->getCategoryName().toStdString());
 }
 
 void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)
 {
     handleMenuItemClick(menuItemButton, contentArea.get());
+}
+
+void AdminPage::onCategorySelected(Category *category)
+{
+   // обробка вибраної сторінки
+    qDebug() << "Category: " << category->getName() << "\n";
 }

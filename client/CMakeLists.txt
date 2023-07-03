@@ -34,6 +34,13 @@ set(PROJECT_SOURCES
         HTTPRequestManager.h
         menubutton.cpp
         menubutton.h
+        addcategory.cpp
+        addcategory.h
+        addcategory.ui
+        hmenu.cpp
+        hmenu.h
+        hmenuitem.cpp
+        hmenuitem.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
