@@ -55,8 +55,9 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
                 response.send();
             }
         }
-    }catch(std::exception exp){
+    }catch(std::exception* exp){
         response.setStatus(Poco::Net::HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
+        qDebug() << exp->what();
         response.send();
     }
 }
@@ -270,7 +271,7 @@ void RequestHandler::ApiLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::
             std::ostream& ostr = response.send();
             Poco::JSON::Stringifier::stringify(result, ostr);
         }
-    }catch(std::exception exp){qDebug()<<exp.what();}
+    }catch(const std::exception& exp){qDebug()<<exp.what();}
 }
 
 

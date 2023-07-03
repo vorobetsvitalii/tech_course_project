@@ -1,6 +1,6 @@
 #ifndef MENUBUTTON_H
 #define MENUBUTTON_H
-#pragma once;
+#pragma once
 
 #include <QApplication>
 #include <QDebug>
@@ -14,7 +14,6 @@
 #include <QWidget>
 #include <QScrollArea>
 #include <map>
-
 
 class MenuButton : public QPushButton
 {

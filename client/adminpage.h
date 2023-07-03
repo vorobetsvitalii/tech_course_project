@@ -34,8 +34,6 @@ public:
     explicit AdminPage(QWidget *parent = nullptr);
     ~AdminPage();
 
-
-
 private:
     Ui::AdminPage *ui;
 
