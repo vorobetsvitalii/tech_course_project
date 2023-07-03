@@ -396,13 +396,15 @@ void RequestHandler::ApiPostCategories(Poco::Net::HTTPServerRequest& request, Po
         std::string body;
         Poco::StreamCopier::copyToString(requestBody, body);
 
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+
         QJsonDocument jsonDocument = QJsonDocument::fromJson(QByteArray::fromStdString(body));
         if (jsonDocument.isNull()) {
             throw std::runtime_error("Invalid JSON data");
         }
 
         QJsonObject categoryObject = jsonDocument.object();
-        std::string key = categoryObject["key"].toString().toStdString();
         if (CheckToken(key)) {
             qDebug() << categoryObject << "\n";
 

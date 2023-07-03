@@ -6,6 +6,10 @@
 
 #include <QDebug>
 #include <QObject>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
 
 #include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/HTTPRequest.h>
@@ -23,7 +27,7 @@
 #include <stdexcept>
 #include <cstring>
 
-#include "category.h"
+#include "../common/model/category.h"
 #include "HTTPRequestManager.h"
 
 
