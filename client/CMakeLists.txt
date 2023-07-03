@@ -43,7 +43,7 @@ set(PROJECT_SOURCES
 
 
 # Add the category.cpp file to the project sources
-list(APPEND PROJECT_SOURCES "E:/studying/programming/C++/SoftServe/tech_course_project/common/model/category.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/category.cpp")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Client
