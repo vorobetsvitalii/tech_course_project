@@ -137,50 +137,55 @@ std::vector<Category> Client::GetCategoties()
 {
     std::vector<Category> categories;
     std::string key = ClientSession::getInstance()->getKey();
-    std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories?key="+key;
+    std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories?key=" + key;
     std::string responseData = hTTPRequestManager.sendHTTPGetRequest(apiUrl);
 
-    Poco::JSON::Parser parser;
-    Poco::Dynamic::Var result = parser.parse(responseData);
-    Poco::JSON::Object::Ptr responseObject = result.extract<Poco::JSON::Object::Ptr>();
-
-    if (responseObject->has("categories"))
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(QString::fromStdString(responseData).toUtf8());
+    if (!jsonResponse.isNull())
     {
-        Poco::JSON::Array::Ptr categoriesArray = responseObject->getArray("categories");
+        QJsonObject responseObject = jsonResponse.object();
 
-        for (const auto& categoryVar : *categoriesArray)
+        if (responseObject.contains("categories") && responseObject["categories"].isArray())
         {
-            std::string categoryJson = categoryVar.toString();
-            Category category = Category::fromJSON(categoryJson);
-            categories.push_back(category);
+            QJsonArray categoriesArray = responseObject["categories"].toArray();
+
+            for (const QJsonValue& categoryValue : categoriesArray)
+            {
+                if (categoryValue.isObject())
+                {
+                    QJsonObject categoryObject = categoryValue.toObject();
+                    qDebug() << categoryObject;
+                    Category category;
+                    category.LoadJsonObject(categoryObject);
+                    categories.push_back(category);
+                    std::cout << category << std::endl;
+                }
+            }
         }
     }
-    for(int i = 0; i<categories.size(); i++)
+
+    for (const Category& category : categories)
     {
-        std::cout << categories[i] << std::endl;
+        //std::cout << category << std::endl;
     }
     return categories;
 }
 
 void Client::PostCategories(const std::string& categoryName)
 {
+    std::string key = ClientSession::getInstance()->getKey();
     try {
-        // Створення JSON об'єкту з назвою категорії
-        Poco::JSON::Object categoryObject;
-        std::string key = ClientSession::getInstance()->getKey();
-        categoryObject.set("CategoryName", categoryName);
-        categoryObject.set("key", key);
+        Category category;
+        category.setName(categoryName);
 
-        // Серіалізація JSON об'єкту в рядок
-        std::stringstream jsonStream;
-        categoryObject.stringify(jsonStream);
-        std::string json = jsonStream.str();
+        QJsonObject categoryObject = category.GetJsonObject();
 
-        // Відправка POST-запиту
-        std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories";
-        std::string response = hTTPRequestManager.sendHTTPPostRequest(apiUrl, json);
+        QJsonDocument jsonDocument(categoryObject);
+        QByteArray jsonData = jsonDocument.toJson();
 
-        // Обробка відповіді сервера
+        std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories?key="+key;
+        std::string response = hTTPRequestManager.sendHTTPPostRequest(apiUrl, jsonData.toStdString());
+
         if (response.empty()) {
             qDebug() << "Empty response received";
         } else {
@@ -190,5 +195,6 @@ void Client::PostCategories(const std::string& categoryName)
         qDebug() << "Exception: " << ex.what();
     }
 }
+
 
 
