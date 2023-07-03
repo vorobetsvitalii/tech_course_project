@@ -4,7 +4,7 @@
 #include <string>
 #include <initializer_list>
 
-#include "IJsonSerializable.h"
+#include "../common/interface/IJsonSerializable.h"
 
 
 class User : public IJsonSerializable

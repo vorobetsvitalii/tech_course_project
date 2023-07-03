@@ -19,6 +19,14 @@ find_package(Qt6 COMPONENTS Core Sql REQUIRED)
 # Add the Qt6 include directories to the project
 include_directories(${Qt6Core_INCLUDE_DIRS})
 
+# Add the category.cpp file to the project sources
+list(APPEND PROJECT_SOURCES "../common/model/category.cpp")
+list(APPEND PROJECT_SOURCES "../dal/querybuilder.h")
+list(APPEND PROJECT_SOURCES "../dal/querybuilder.cpp")
+list(APPEND PROJECT_SOURCES "../dal/dbexecutor.h")
+list(APPEND PROJECT_SOURCES "../dal/dbexecutor.cpp")
+
+
 
 # Add your source files to the project
 add_executable(
@@ -30,10 +38,17 @@ add_executable(
     database.h
     user.cpp
     user.h
-    IJsonSerializable.h
     storage.cpp
     storage.h
+    dbmodel.h
+    dbmodel.cpp
+    categoriesmodel.h
+    categoriesmodel.cpp
+    ${PROJECT_SOURCES} # Include the added source files here
 )
+
+
+
 
 # Link against the Qt6 libraries
 target_link_libraries(Server_poco PRIVATE Qt6::Core Qt6::Sql)
