@@ -38,8 +38,6 @@ public:
     QSqlDatabase Connect();
     bool Login();
     bool Login(QString email,QString password);
-    QJsonArray GetCategories();
-    void PostCategories(QString name);
 
 };
 #endif // DATABASE_H

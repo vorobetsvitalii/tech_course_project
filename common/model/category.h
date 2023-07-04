@@ -6,6 +6,7 @@
 #include <Poco/Dynamic/Var.h>
 #include <Poco/JSON/Object.h>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QString>
 #include "../interface/IJsonSerializable.h"
 
@@ -22,6 +23,7 @@ public:
     void setId(int id);
     virtual QJsonObject GetJsonObject() override;
     virtual void LoadJsonObject(QJsonObject obj) override;
+    virtual QJsonObject GetJsonObject(const QString& categories) override;
     friend std::ostream& operator<<(std::ostream& os, const Category& category);
 };
 
