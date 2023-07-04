@@ -139,7 +139,7 @@ void AdminPage::topHorizontalLayout()
 
     topHLayout->addWidget(homepagePushButton.get());
     topHLayout->addSpacerItem(topSpacer_1.get());
-    topHLayout->addWidget(switchButtonWidget.get());
+    topHLayout->addWidget(switchPushButton.get());
     topHLayout->addSpacerItem(topSpacer_2.get());
     topHLayout->addWidget(adminInfoWidget.get());
     topHWidget->setLayout(topHLayout.get());
@@ -170,13 +170,13 @@ void AdminPage::configurationHorizontalLayout()
 
     QFont homeLabelFont("Open Sans", 16, QFont::Bold);
 
-    homeLabel = std::make_unique<QLabel>();
+    pageLabel = std::make_unique<QLabel>();
 
-    homeLabel->setText("Home");
-    homeLabel->setFont(homeLabelFont);
+    pageLabel->setText("Home");
+    pageLabel->setFont(homeLabelFont);
 
     configurationHLayout->addSpacerItem(configSpacer_1.get());
-    configurationHLayout->addWidget(homeLabel.get());
+    configurationHLayout->addWidget(pageLabel.get());
     configurationHLayout->addSpacerItem(configSpacer_2.get());
     configurationHLayout->addWidget(cancelPushButton.get());
     configurationHLayout->addSpacerItem(configSpacer_3.get());
@@ -203,7 +203,7 @@ void AdminPage::itemsMenuVerticalLayout()
     QString styleSheet = QString("QToolTip {  color: #ffffff; background-color: #313541; border-style: solid; border-style: solid; border-color: transparent blue transparent transparent; }");
     qApp->setStyleSheet(styleSheet);
 
-    QStringList menuItems = {
+    QStringList menuItemsTooltips = {
         "Surveys",
         "Banners",
         "Languages",
@@ -216,6 +216,32 @@ void AdminPage::itemsMenuVerticalLayout()
         "Advertising"
     };
 
+    QStringList menuItemsNames = {
+        "Surveys",
+        "Banners",
+        "Languages",
+        "Footer",
+        "Social Networks",
+        "Users",
+        "Information Architecture",
+        "Teams",
+        "News Partners",
+        "Advertising"
+    };
+
+    for(int i = 0; i < menuItemsTooltips.size(); i++) {
+        QIcon icon("../img/"+menuItemsTooltips[i]+".png");
+        MenuButton* menuItemButton = new MenuButton(menuItemsNames[i], menuItemsTooltips[i], icon, centralWidget);
+
+        QObject::connect(menuItemButton, &QPushButton::clicked, this, [this, menuItemButton]() {
+            OnMenuItemClicked(menuItemButton);
+        });
+
+
+        itemsMenuVLayout->addWidget(menuItemButton);
+    }
+
+    /*
     for (const QString& item : menuItems) {
         QString tooltip = item;
         QIcon icon("../img/"+item+".png");
@@ -229,6 +255,7 @@ void AdminPage::itemsMenuVerticalLayout()
 
         itemsMenuVLayout->addWidget(menuItemButton);
     }
+    */
 
     itemsMenuVLayout->setAlignment(Qt::AlignTop);
 
@@ -290,11 +317,14 @@ void AdminPage::handleNewButtonAdded()
 
 void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)
 {
+    menuHWidget->resetCurrentCategory();
+    pageLabel->setText(menuItemButton->GetItemName());
     handleMenuItemClick(menuItemButton, contentArea.get());
 }
 
 void AdminPage::onCategorySelected(Category *category)
 {
    // обробка вибраної сторінки
+    pageLabel->setText(QString::fromStdString(category->getName()));
     qDebug() << "Category: " << category->getName() << "\n";
 }

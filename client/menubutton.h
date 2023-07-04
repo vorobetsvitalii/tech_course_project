@@ -20,7 +20,7 @@ class MenuButton : public QPushButton
     Q_OBJECT
 
 public:
-    MenuButton(const QString& text, const QString& tooltip, const QIcon& icon, QWidget* parent = nullptr);
+    MenuButton(const QString& name, const QString& tooltip, const QIcon& icon, QWidget* parent = nullptr);
     void SetAdvertising(MenuButton* clickedButton ,QScrollArea* Content);
     void SetBanners(MenuButton* clickedButton ,QScrollArea* Content);
     void SetNewsPartners(MenuButton* clickedButton ,QScrollArea* Content);
@@ -34,6 +34,8 @@ public:
 
     QIcon GetIcon();
     bool clicked;
+
+    QString GetItemName();
 
     void setButtonIcon(const QIcon& icon);
     QIcon convertToGrayIcon(const QIcon& icon);
@@ -53,6 +55,8 @@ private:
 
     QPushButton* button;
     QIcon originalIcon;
+    QString buttonName;
+
     void showTooltip();
     void hideTooltip();
 

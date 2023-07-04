@@ -1,6 +1,6 @@
 #include "menubutton.h"
 
-MenuButton::MenuButton(const QString& text, const QString& tooltip, const QIcon& icon, QWidget* parent)
+MenuButton::MenuButton(const QString& name, const QString& tooltip, const QIcon& icon, QWidget* parent)
     : QPushButton(parent), originalIcon(icon)
 {
     button = this;
@@ -19,6 +19,8 @@ MenuButton::MenuButton(const QString& text, const QString& tooltip, const QIcon&
                           "QPushButton::focus { outline: none; }");
     installEventFilter(this);
     setButtonIcon(convertToGrayIcon(icon));
+
+    buttonName = name;
 }
 
 bool MenuButton::eventFilter(QObject* object, QEvent* event)
@@ -251,6 +253,13 @@ QIcon MenuButton::convertToGrayIcon(const QIcon& icon)
     }
     return grayIcon;
 }
+
+
+QString MenuButton::GetItemName() {
+    return buttonName;
+}
+
+
 void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
 {
     QString buttonText = clickedButton->toolTip();
@@ -346,4 +355,3 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
     }
 
 }
-

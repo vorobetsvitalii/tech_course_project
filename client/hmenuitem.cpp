@@ -8,9 +8,10 @@ HMenuItem::HMenuItem(Category* category)
                          padding-top: 14px; padding-bottom: 13px; \
                          padding-left: 5px; padding-right: 5px; \
                          color: #B2B2B2; "
-                        "border: none");
+                        "border: none;");
     this->setText(QString::fromStdString(category->getName()));
     this->setCursor(Qt::PointingHandCursor);
+    this->setMaximumWidth(this->width());
 
     this->installEventFilter(this);
 

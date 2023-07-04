@@ -16,6 +16,7 @@ HMenu::HMenu()
     leftArrow = new QPushButton(*leftArrowIcon, "", this);
     leftArrow->setStyleSheet("padding: 15px; border: none;");
     leftArrow->setCursor(Qt::PointingHandCursor);
+    leftArrow->setMaximumWidth(leftArrow->width());
     connect(leftArrow, &QPushButton::clicked, this, &HMenu::onLeftArrowClicked);
     connect(leftArrow, &QPushButton::clicked, this, &HMenu::changeArrowsView);
 
@@ -25,6 +26,7 @@ HMenu::HMenu()
     rightArrow = new QPushButton(*rightArrowIcon, "", this);
     rightArrow->setStyleSheet("padding: 15px; border: none;");
     rightArrow->setCursor(Qt::PointingHandCursor);
+    rightArrow->setMaximumWidth(rightArrow->width());
     connect(rightArrow, &QPushButton::clicked, this, &HMenu::onRightArrowClicked);
     connect(rightArrow, &QPushButton::clicked, this, &HMenu::changeArrowsView);
 
@@ -35,7 +37,7 @@ HMenu::HMenu()
         isVisible[item.getName()] = true;
         HMenuItem* menuItem = createHMenuItem(&item);
         items[item.getName()] = menuItem;
-        clayout->addWidget(menuItem, Qt::AlignJustify);
+        clayout->addWidget(menuItem);
         connect(menuItem, &HMenuItem::itemSelected, this, &HMenu::onHMenuItemSelected);
     }
 
@@ -62,7 +64,7 @@ void HMenu::addCategory(Category* category) {
     isVisible[category->getName()] = true;
     HMenuItem* menuItem = createHMenuItem(category);
     items[category->getName()] = menuItem;
-    clayout->addWidget(menuItem, Qt::AlignJustify);
+    clayout->addWidget(menuItem);
     connect(menuItem, &HMenuItem::itemSelected, this, &HMenu::onHMenuItemSelected);
 }
 

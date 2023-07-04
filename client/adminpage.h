@@ -79,7 +79,7 @@ private:
     std::unique_ptr<QPushButton> pushButton_9;
     std::unique_ptr<QPushButton> addCategoryButton;
 
-    std::unique_ptr<QLabel> homeLabel;
+    std::unique_ptr<QLabel> pageLabel;
 
     std::unique_ptr<QScrollArea> contentArea;
 
