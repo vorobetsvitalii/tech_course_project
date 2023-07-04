@@ -277,8 +277,6 @@ void RequestHandler::ApiLogin(Poco::Net::HTTPServerRequest& request, Poco::Net::
 
 bool RequestHandler::CheckToken(const std::string key)
 {
-    std::cout << "Token: " << key;
-
     /*
     RequestHandler::CheckToken("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOiIyMDIzLTA2LTE1VDExOjI1OjI3WiIsInN1YiI6InVzZXI2MEBnbWFpbC5jb20ifQ.iuoDG-Uu-8TGnmlik4pPSnkdKC63htrQgn2vi0N_SXQ");
     RequestHandler::CheckToken("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOiIyMDIzLTA2LTE1VDA5OjE4OjM5WiIsInN1YiI6InVzZXI1NUBnbWFpbC5jb20ifQ.ely3c9G48gW1iV3COJFqyG-HIe4ROG141pitegnHw8w");
@@ -351,11 +349,10 @@ void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerRequest &request, Poc
         std::string key = parameters[0].second;
         if(CheckToken(key))
         {
-            QJsonArray categoriesArray = database->GetCategories();
+            QString categoriesString = CategoriesModel::SelectCategory();
             // Формування відповіді у форматі JSON
-            QJsonObject responseObject;
-            responseObject["categories"] = categoriesArray;
-
+            std::unique_ptr<Category> category = std::make_unique<Category>();
+            QJsonObject responseObject = category->GetJsonObject(categoriesString);
             QJsonDocument responseDocument(responseObject);
             QByteArray responseData = responseDocument.toJson();
 
@@ -408,8 +405,9 @@ void RequestHandler::ApiPostCategories(Poco::Net::HTTPServerRequest& request, Po
         if (CheckToken(key)) {
             qDebug() << categoryObject << "\n";
 
-            QString name = categoryObject["CategoryName"].toString();
-            database->PostCategories(name);
+            std::unique_ptr<CategoriesModel> model = std::make_unique<CategoriesModel>();
+            model->LoadJsonObject(categoryObject);
+            model->InsertCategory();
 
             response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
             response.setContentType("text/plain");
