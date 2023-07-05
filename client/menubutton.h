@@ -39,6 +39,8 @@ public:
 
     void setButtonIcon(const QIcon& icon);
     QIcon convertToGrayIcon(const QIcon& icon);
+    static void setCategoriesLayout(QVBoxLayout* categoriesVLayout_);
+
 private:
 
     std::unique_ptr<QWidget> advertisingContent=initializeAdvertisingContent();
@@ -72,6 +74,9 @@ private:
     std::unique_ptr<QWidget> initializeLanguagesContent();
     std::unique_ptr<QWidget> initializeIAContent();
 
+    std::unique_ptr<QWidget> widget;
+
+    static QVBoxLayout* categoriesVLayout;
 
 protected:
     bool eventFilter(QObject* object, QEvent* event) override;

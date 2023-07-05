@@ -99,7 +99,7 @@ private:
 
     void appendCategories();
 
-private slots:
+public slots:
     void onLogoutDone();
     void on_add_category_clicked();
     void handleNewButtonAdded();

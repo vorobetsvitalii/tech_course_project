@@ -29,7 +29,6 @@ AdminPage::AdminPage(QWidget *parent) :
 
     localNavigationLayout->addLayout(itemsMenuVLayout.get()); // Generic grid layout forming
     localNavigationLayout->addSpacerItem(localNavigationSpacer_1.get());
-    localNavigationLayout->addLayout(categoriesVLayout.get());
     localNavigationLayout->addWidget(contentArea.get());
 
     appendCategories();
@@ -290,12 +289,21 @@ void AdminPage::appendCategories()
     std::vector<QPushButton*> buttons(categories.size());
 
     std::transform(categories.begin(), categories.end(), buttons.begin(), [](const Category& category) {
-        return new QPushButton(QString::fromStdString(category.getName()));
-    });
+        return (new QPushButton(QString::fromStdString(category.getName())));
+    });  
 
     for (auto* button : buttons) {
+        button->setStyleSheet("QPushButton {"
+                              "border: 1px solid gray;"
+                              "border-radius: 3px;"
+                              "padding: 5px;"
+                              "}");
+
         categoriesVLayout->insertWidget(1, button);
     }
+
+    categoriesVLayout->setSpacing(20);
+    MenuButton::setCategoriesLayout(categoriesVLayout.get());
 }
 
 void AdminPage::onLogoutDone() {

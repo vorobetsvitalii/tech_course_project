@@ -108,6 +108,7 @@ void MenuButton::SetLanguages(MenuButton* clickedButton ,QScrollArea* Content)
 void MenuButton::SetIA(MenuButton* clickedButton ,QScrollArea* Content)
 {
     clickedButton->iaContent = clickedButton->initializeIAContent();
+    Content->layout()->deleteLater();
     Content->setWidget(clickedButton->iaContent.release());
 }
 
@@ -141,6 +142,7 @@ std::unique_ptr<QWidget> MenuButton::initializeAdvertisingContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("Advertising");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -151,6 +153,7 @@ std::unique_ptr<QWidget> MenuButton::initializeBannersContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("Banners");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -161,6 +164,7 @@ std::unique_ptr<QWidget> MenuButton::initializeNewsPartnersContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("News Partners");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -171,6 +175,7 @@ std::unique_ptr<QWidget> MenuButton::initializeSocialNetworksContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("Social Networks");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -181,6 +186,7 @@ std::unique_ptr<QWidget> MenuButton::initializeSurveysContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("Surveys");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -191,6 +197,7 @@ std::unique_ptr<QWidget> MenuButton::initializeFooterContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("Footer");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -201,6 +208,7 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("Teams");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -211,6 +219,7 @@ std::unique_ptr<QWidget> MenuButton::initializeUsersContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("Users");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -221,6 +230,7 @@ std::unique_ptr<QWidget> MenuButton::initializeLanguagesContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     QLabel* label = new QLabel("Languages");
     layout->addWidget(label);
+    widget->layout()->deleteLater();
     widget->setLayout(layout);
     return widget;
 }
@@ -228,10 +238,9 @@ std::unique_ptr<QWidget> MenuButton::initializeLanguagesContent()
 std::unique_ptr<QWidget> MenuButton::initializeIAContent()
 {
     std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
-    QVBoxLayout* layout = new QVBoxLayout(widget.get());
-    QLabel* label = new QLabel("IA");
-    layout->addWidget(label);
-    widget->setLayout(layout);
+    widget->layout()->deleteLater();
+    widget->setLayout(categoriesVLayout);
+
     return widget;
 }
 
@@ -252,6 +261,11 @@ QIcon MenuButton::convertToGrayIcon(const QIcon& icon)
         grayIcon.addPixmap(QPixmap::fromImage(image));
     }
     return grayIcon;
+}
+
+void MenuButton::setCategoriesLayout(QVBoxLayout *categoriesVLayout_)
+{
+    categoriesVLayout = categoriesVLayout_;
 }
 
 
@@ -355,3 +369,5 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
     }
 
 }
+
+QVBoxLayout* MenuButton::categoriesVLayout = nullptr;
