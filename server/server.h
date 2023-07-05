@@ -6,6 +6,8 @@
 #include "database.h"
 #include "user.h"
 #include "storage.h"
+#include "categoriesmodel.h"
+#include "../common/model/category.h"
 
 
 

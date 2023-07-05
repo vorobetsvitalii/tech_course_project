@@ -119,12 +119,14 @@ void HMenu::onLeftArrowClicked()
 
 void HMenu::onHMenuItemSelected(HMenuItem *item)
 {
-    if(currentItem != nullptr)
-        currentItem->setStyleSheet(currentItem->styleSheet().replace("color: #D72130;", "color: #B2B2B2;"));
-    currentItem = item;
-    currentItem->setStyleSheet(currentItem->styleSheet().replace("color: #7F7B7B;", "color: #D72130;"));
+    if(currentItem != item) {
+        if(currentItem != nullptr)
+            currentItem->setStyleSheet(currentItem->styleSheet().replace("color: #D72130;", "color: #B2B2B2;"));
+        currentItem = item;
+        currentItem->setStyleSheet(currentItem->styleSheet().replace("color: #7F7B7B;", "color: #D72130;"));
+    }
 
-    emit categorySelected(item->getCategory());
+    emit categorySelected(currentItem->getCategory());
 }
 
 void HMenu::resizeEvent(QResizeEvent* event)
