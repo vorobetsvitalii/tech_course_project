@@ -80,6 +80,11 @@ void HMenu::showCategory(Category* category)
     items[category->getName()]->show();
 }
 
+void HMenu::setHidden(Category *category, bool isHidden)
+{
+    items[category->getName()]->setHidden(isHidden);
+}
+
 Category* HMenu::getCurrentCategory()
 {
     return currentItem->getCategory();

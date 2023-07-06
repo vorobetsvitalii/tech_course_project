@@ -15,10 +15,12 @@ class HMenuItem : public QPushButton
 public:
     HMenuItem(Category* category);
     Category* getCategory();
+    void setHidden(bool isHidden);
 
 private:
     Category* category;
-    QLabel* state;
+    std::unique_ptr<QLabel> state;
+    bool isHidden;
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 

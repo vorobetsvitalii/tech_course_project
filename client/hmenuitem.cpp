@@ -6,8 +6,8 @@ HMenuItem::HMenuItem(Category* category)
     this->category = category;
     this->setStyleSheet("font: 700 14px \"Open Sans\";\
                          padding-top: 14px; padding-bottom: 13px; \
-                         padding-left: 5px; padding-right: 5px; \
-                         color: #B2B2B2; "
+                         padding-left: 8px; padding-right: 8px; \
+                         color: #B2B2B2;"
                         "border: none;");
     this->setText(QString::fromStdString(category->getName()));
     this->setCursor(Qt::PointingHandCursor);
@@ -15,17 +15,15 @@ HMenuItem::HMenuItem(Category* category)
 
     this->installEventFilter(this);
 
-    this->state = new QLabel("hidden", this);
+    this->state = std::unique_ptr<QLabel>(new QLabel("hidden", this));
     state->setStyleSheet("background-color: #EDEDED;"
                          "color: #B2B2B2;"
                          "font: 600 8px \"Open Sans\";"
-                         "border: none;"
-                         "border-radius: 15px;"
-                         "padding-top: 1px; padding-bottom: 1px;"
-                         "padding-left: 5px; padding-right: 5px;"
-                         "subcontrol-position: right center;"
-                         "margin-top: 5px;");
-    state->hide();
+                         "border-radius: 6px;"
+                         "padding-top: 0.5px; padding-bottom: 0.5px;"
+                         "padding-left: 6px; padding-right: 6px;");
+    state->move(this->width() - state->width(), 3);
+    isHidden = false;
 
 }
 
@@ -48,8 +46,21 @@ bool HMenuItem::eventFilter(QObject *watched, QEvent *event)
             emit itemSelected(this);
             return true;
         }
+        if(event->type() == QEvent::Show || event->type() == QEvent::Resize) {
+            if(!isHidden) state->hide();
+            state->move(this->width() - state->width(), 3);
+        }
     }
     return false;
+}
+
+void HMenuItem::setHidden(bool isHidden) {
+    this->isHidden = isHidden;
+    if(isHidden) {
+        state->show();
+        state->move(this->width() - state->width(), 3);
+    }
+    else state->hide();
 }
 
 Category* HMenuItem::getCategory() {

@@ -21,7 +21,7 @@ public:
     HMenu();
 
     void addCategory(Category* category);
-    void setHidden(Category* category);
+    void setHidden(Category* category, bool isHidden);
     Category* getCurrentCategory();
     void resetCurrentCategory();
 
@@ -41,6 +41,9 @@ private:
     void hideCategory(Category* category);
     void showCategory(Category* category);
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private slots:
     void onRightArrowClicked();
     void onLeftArrowClicked();
@@ -49,10 +52,6 @@ private slots:
 
 signals:
     void categorySelected(Category* category);
-
-
-protected:
-    void resizeEvent(QResizeEvent *event) override;
 
 };
 
