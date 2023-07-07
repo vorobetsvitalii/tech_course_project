@@ -20,26 +20,6 @@ QJsonObject Category::GetJsonObject()
     return jsonObject;
 }
 
-QJsonObject Category::GetJsonObject(const QString& categories) {
-    QStringList dataList = categories.split(", ");
-    QJsonArray categoriesArray;
-    for (int i = 0; i < dataList.size(); i += 2) {
-        int categoryId = dataList[i].toInt();
-        QString categoryName = dataList[i + 1];
-
-        QJsonObject categoryObject;
-        categoryObject["CategoryId"] = categoryId;
-        categoryObject["CategoryName"] = categoryName;
-
-        categoriesArray.append(categoryObject);
-    }
-
-    QJsonObject jsonObject;
-    jsonObject["categories"] = categoriesArray;
-
-    return jsonObject;
-}
-
 int Category::getId() const
 {
     return id;

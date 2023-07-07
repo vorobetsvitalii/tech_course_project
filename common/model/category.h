@@ -23,7 +23,6 @@ public:
     void setId(int id);
     virtual QJsonObject GetJsonObject() override;
     virtual void LoadJsonObject(QJsonObject obj) override;
-    virtual QJsonObject GetJsonObject(const QString& categories) override;
     friend std::ostream& operator<<(std::ostream& os, const Category& category);
 };
 
