@@ -24,6 +24,10 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             {
                 ApiGetCategories(request, response);
             }
+            else if(uri.find("/api/subcategories") != std::string::npos)
+            {
+                GetSubcategories(request, response);
+            }
             else if(uri.find("/test")!= std::string::npos)
             {
                 //повністю для тесту запитів
@@ -48,6 +52,11 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             {
                 qDebug() << "categories\n";
                 ApiPostCategories(request, response);
+            }
+            if (uri.find("/api/subcategories") != std::string::npos)
+            {
+                qDebug() << "subcategories\n";
+                PostSubcategories(request, response);
             }
             else
             {
@@ -413,6 +422,104 @@ void RequestHandler::ApiPostCategories(Poco::Net::HTTPServerRequest& request, Po
 
             std::unique_ptr<CategoriesModel> model = std::make_unique<CategoriesModel>();
             model->LoadJsonObject(categoryObject);
+            model->InsertCategory();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Category added successfully", 26);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
+void RequestHandler::GetSubcategories(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+        if(CheckToken(key))
+        {
+            std::vector<Subcategory> subcategoriesVector = SubcategoriesModel::SelectCategory();
+
+            QJsonArray subcategoriesArray;
+            for (Subcategory& subcategory : subcategoriesVector) {
+                QJsonObject subcategoryObject = subcategory.GetJsonObject();
+                subcategoriesArray.append(subcategoryObject);
+            }
+
+            QJsonObject responseObject;
+            responseObject["subcategories"] = subcategoriesArray;
+            qDebug() << responseObject;
+            QJsonDocument responseDocument(responseObject);
+            QByteArray responseData = responseDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("application/json");
+            response.setContentLength(responseData.length());
+            response.sendBuffer(responseData.data(), responseData.length());
+        }
+        else
+        {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+
+    }
+}
+
+void RequestHandler::PostSubcategories(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        std::istream& requestBody = request.stream();
+        std::string body;
+        Poco::StreamCopier::copyToString(requestBody, body);
+
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(QByteArray::fromStdString(body));
+        if (jsonDocument.isNull()) {
+            throw std::runtime_error("Invalid JSON data");
+        }
+
+        QJsonObject subcategoryObject = jsonDocument.object();
+        if (CheckToken(key)) {
+            qDebug() << subcategoryObject << "\n";
+
+            std::unique_ptr<SubcategoriesModel> model = std::make_unique<SubcategoriesModel>();
+            model->LoadJsonObject(subcategoryObject);
+            qDebug() << model->getName();
             model->InsertCategory();
 
             response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);

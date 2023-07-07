@@ -21,6 +21,7 @@ include_directories(${Qt6Core_INCLUDE_DIRS})
 
 # Add the category.cpp file to the project sources
 list(APPEND PROJECT_SOURCES "../common/model/category.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/subcategory.cpp")
 list(APPEND PROJECT_SOURCES "../dal/querybuilder.h")
 list(APPEND PROJECT_SOURCES "../dal/querybuilder.cpp")
 list(APPEND PROJECT_SOURCES "../dal/dbexecutor.h")
@@ -44,6 +45,8 @@ add_executable(
     dbmodel.cpp
     categoriesmodel.h
     categoriesmodel.cpp
+    subcategoryModel.h
+    subcategoryModel.cpp
     ${PROJECT_SOURCES} # Include the added source files here
 )
 

@@ -7,8 +7,9 @@
 #include "user.h"
 #include "storage.h"
 #include "categoriesmodel.h"
+#include "subcategoryModel.h"
 #include "../common/model/category.h"
-
+#include "../common/model/subcategory.h"
 
 
 #include <QJsonDocument>
@@ -104,6 +105,8 @@ private:
     void ApiLogout(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void ApiGetCategories(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse& response);
     void ApiPostCategories(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
+    void GetSubcategories(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse& response);
+    void PostSubcategories(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
 
 };
 
