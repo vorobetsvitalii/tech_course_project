@@ -349,14 +349,20 @@ void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerRequest &request, Poc
         std::string key = parameters[0].second;
         if(CheckToken(key))
         {
-            QString categoriesString = CategoriesModel::SelectCategory();
-            // Формування відповіді у форматі JSON
-            std::unique_ptr<Category> category = std::make_unique<Category>();
-            QJsonObject responseObject = category->GetJsonObject(categoriesString);
+            std::vector<Category> categoriesVector = CategoriesModel::SelectCategory();
+
+            QJsonArray categoriesArray;
+            for (Category& category : categoriesVector) {
+                QJsonObject categoryObject = category.GetJsonObject();
+                categoriesArray.append(categoryObject);
+            }
+
+            QJsonObject responseObject;
+            responseObject["categories"] = categoriesArray;
+            qDebug() << responseObject;
             QJsonDocument responseDocument(responseObject);
             QByteArray responseData = responseDocument.toJson();
 
-            // Відправлення відповіді клієнту
             response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
             response.setContentType("application/json");
             response.setContentLength(responseData.length());
