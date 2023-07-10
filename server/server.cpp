@@ -12,19 +12,19 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
 
         if (method == "GET")
         {
-            if (uri.find("/api/login") != std::string::npos)
+            if (uri.find(Constants::loginApi) != std::string::npos)
             {
                 ApiLogin(request, response);
             }
-            else if(uri.find("/api/logout") != std::string::npos)
+            else if(uri.find(Constants::logoutApi) != std::string::npos)
             {
                 ApiLogout(request, response);
             }
-            else if(uri.find("/api/categories") != std::string::npos)
+            else if(uri.find(Constants::categoriesApi) != std::string::npos)
             {
                 ApiGetCategories(request, response);
             }
-            else if(uri.find("/api/subcategories") != std::string::npos)
+            else if(uri.find(Constants::subcategoriesApi) != std::string::npos)
             {
                 GetSubcategories(request, response);
             }
@@ -48,12 +48,12 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
         else if (method == "POST")
         {
             qDebug() << "POST\n";
-            if (uri.find("/api/categories") != std::string::npos)
+            if (uri.find(Constants::categoriesApi) != std::string::npos)
             {
                 qDebug() << "categories\n";
                 ApiPostCategories(request, response);
             }
-            if (uri.find("/api/subcategories") != std::string::npos)
+            if (uri.find(Constants::subcategoriesApi) != std::string::npos)
             {
                 qDebug() << "subcategories\n";
                 PostSubcategories(request, response);

@@ -282,7 +282,7 @@ void AdminPage::primaryContentArea()
 void AdminPage::appendCategories()
 {
     auto future = std::async(std::launch::async, [](){
-        return Client::getInstance().GetCategoties();
+        return Client::getInstance().GetCategories();
     });
 
     const auto& categories = future.get();
@@ -320,7 +320,7 @@ void AdminPage::handleNewButtonAdded()
     QPushButton* newButton = new QPushButton(addCategoryWindow->getCategoryName());
 
     categoriesVLayout->insertWidget(1, newButton);
-    Client::getInstance().PostCategories(addCategoryWindow->getCategoryName().toStdString());
+    Client::getInstance().PostCategory(addCategoryWindow->getCategoryName().toStdString());
 }
 
 void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)

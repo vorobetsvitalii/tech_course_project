@@ -9,9 +9,10 @@
 #include <QJsonArray>
 #include <QString>
 #include "../interface/IJsonSerializable.h"
+#include "entity.h"
 
 
-class Subcategory: public IJsonSerializable
+class Subcategory: public Entity
 {
 private:
     int id;
