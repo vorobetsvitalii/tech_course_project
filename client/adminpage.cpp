@@ -297,7 +297,7 @@ void AdminPage::primaryContentArea()
 void AdminPage::appendCategories()
 {
     auto future = std::async(std::launch::async, [](){
-        return Client::getInstance().GetCategoties();
+        return Client::getInstance().GetCategories();
     });
 
     const auto& categories = future.get();
@@ -365,6 +365,7 @@ void AdminPage::handleNewButtonAdded()
 {
     tempCategory = addCategoryWindow->getCategoryName();
 
+<<<<<<< HEAD
     if(!checkIfStringEmpty(tempCategory))
     {
         QPushButton* newButton = new QPushButton(tempCategory);
@@ -407,6 +408,10 @@ void AdminPage::handleNewSubcategoryAdded()
     }
 
     subcategoriesVLayout->setSpacing(20);
+=======
+    categoriesVLayout->insertWidget(1, newButton);
+    Client::getInstance().PostCategory(addCategoryWindow->getCategoryName().toStdString());
+>>>>>>> 5de63976471c602163427540a8b27f3ad17d7f9d
 }
 
 void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)

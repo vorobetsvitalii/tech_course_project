@@ -30,7 +30,7 @@ HMenu::HMenu()
     connect(rightArrow, &QPushButton::clicked, this, &HMenu::onRightArrowClicked);
     connect(rightArrow, &QPushButton::clicked, this, &HMenu::changeArrowsView);
 
-    categories = Client::getInstance().GetCategoties();
+    categories = Client::getInstance().GetCategories();
     clayout = new QHBoxLayout();
 
     for(auto& item : categories) {

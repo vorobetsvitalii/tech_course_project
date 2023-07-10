@@ -133,11 +133,11 @@ bool Client::handleLogoutRequest() {
     return false;
 }
 
-std::vector<Category> Client::GetCategoties()
+std::vector<std::unique_ptr<Entity>> Client::GetEntity(const std::string& url, const std::string& jsonName, Creator& creator)
 {
-    std::vector<Category> categories;
+    std::vector<std::unique_ptr<Entity>> entities;
     std::string key = ClientSession::getInstance()->getKey();
-    std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories?key=" + key;
+    std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + url + "?key=" + key;
     std::string responseData = hTTPRequestManager.sendHTTPGetRequest(apiUrl);
 
     QJsonDocument jsonResponse = QJsonDocument::fromJson(QString::fromStdString(responseData).toUtf8());
@@ -145,45 +145,35 @@ std::vector<Category> Client::GetCategoties()
     {
         QJsonObject responseObject = jsonResponse.object();
 
-        if (responseObject.contains("categories") && responseObject["categories"].isArray())
+        if (responseObject.contains(QString::fromStdString(jsonName)) && responseObject[QString::fromStdString(jsonName)].isArray())
         {
-            QJsonArray categoriesArray = responseObject["categories"].toArray();
+            QJsonArray entitiesArray = responseObject[QString::fromStdString(jsonName)].toArray();
 
-            for (const QJsonValue& categoryValue : categoriesArray)
+            for (const QJsonValue& entityValue : entitiesArray)
             {
-                if (categoryValue.isObject())
+                if (entityValue.isObject())
                 {
-                    QJsonObject categoryObject = categoryValue.toObject();
-                    qDebug() << categoryObject;
-                    Category category;
-                    category.LoadJsonObject(categoryObject);
-                    categories.push_back(category);
-                    std::cout << category << std::endl;
+                    QJsonObject entityObject = entityValue.toObject();
+                    qDebug() << entityObject;
+                    std::unique_ptr<Entity> entity = creator.FactoryMethod();
+                    entity->LoadJsonObject(entityObject);
+                    entities.push_back(std::move(entity));
                 }
             }
         }
     }
-
-    for (const Category& category : categories)
-    {
-        //std::cout << category << std::endl;
-    }
-    return categories;
+    return entities;
 }
 
-void Client::PostCategories(const std::string& categoryName)
+void Client::PostEntity(const std::string& url, Entity& object, Creator& creator)
 {
+    QJsonObject categoryObject = object.GetJsonObject();
+    QJsonDocument jsonDocument(categoryObject);
+    QByteArray jsonData = jsonDocument.toJson();
+
     std::string key = ClientSession::getInstance()->getKey();
     try {
-        Category category;
-        category.setName(categoryName);
-
-        QJsonObject categoryObject = category.GetJsonObject();
-
-        QJsonDocument jsonDocument(categoryObject);
-        QByteArray jsonData = jsonDocument.toJson();
-
-        std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/categories?key="+key;
+        std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + url + "?key=" + key;
         std::string response = hTTPRequestManager.sendHTTPPostRequest(apiUrl, jsonData.toStdString());
 
         if (response.empty()) {
@@ -195,6 +185,61 @@ void Client::PostCategories(const std::string& categoryName)
         qDebug() << "Exception: " << ex.what();
     }
 }
+
+std::vector<Category> Client::GetCategories()
+{
+    CategoryCreator categoryCreator;
+    std::vector<std::unique_ptr<Entity>> entities = Client::getInstance().GetEntity(Constants::categoriesApi , Constants::categoriesArrayJson, categoryCreator);
+
+    std::vector<Category> categories;
+    for (std::unique_ptr<Entity>& entity : entities)
+    {
+        Category* category = dynamic_cast<Category*>(entity.get());
+        if (category)
+        {
+            categories.push_back(*category);
+        }
+    }
+
+    return categories;
+}
+
+std::vector<Subcategory> Client::GetSubcategories()
+{
+    SubcategoryCreator subcategoryCreator;
+    std::vector<std::unique_ptr<Entity>> entities = Client::getInstance().GetEntity(Constants::subcategoriesApi, Constants::subcategoriesArrayJson, subcategoryCreator);
+
+    std::vector<Subcategory> subcategories;
+    for (std::unique_ptr<Entity>& entity : entities)
+    {
+        Subcategory* subcategory = dynamic_cast<Subcategory*>(entity.get());
+        if (subcategory)
+        {
+            subcategories.push_back(*subcategory);
+        }
+    }
+
+    return subcategories;
+}
+
+void Client::PostCategory(const std::string& categoryName)
+{
+    CategoryCreator categoryCreator;
+    Category* category = new Category();
+    category->setName(categoryName);
+    Client::getInstance().PostEntity(Constants::categoriesApi, *category, categoryCreator);
+}
+
+void Client::PostSubcategory(const std::string& subcategoryName, int categoryId)
+{
+    SubcategoryCreator subcategoryCreator;
+    Subcategory* subcategory = new Subcategory();
+    subcategory->setName(subcategoryName);
+    subcategory->setCategoryId(categoryId);
+    Client::getInstance().PostEntity(Constants::subcategoriesApi, *subcategory, subcategoryCreator);
+}
+
+
 
 
 

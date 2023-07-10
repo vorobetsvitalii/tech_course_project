@@ -28,6 +28,11 @@
 #include <cstring>
 
 #include "../common/model/category.h"
+#include "../common/model/entity.h"
+#include "../common/model/subcategory.h"
+#include "../common/model/categoryCreator.h"
+#include "../common/model/subcategoryCreator.h"
+#include "../common/constants.h"
 #include "HTTPRequestManager.h"
 
 
@@ -46,8 +51,12 @@ public:
 
     bool handleLoginRequest(const std::string& email, const std::string& password);
     bool handleLogoutRequest();
-    std::vector<Category> GetCategoties();
-    void PostCategories(const std::string& categoryName);
+    std::vector<std::unique_ptr<Entity>> GetEntity(const std::string& url, const std::string& jsonName, Creator& creator);
+    void PostEntity(const std::string& url, Entity& object, Creator& creator);
+    static std::vector<Category> GetCategories();
+    static std::vector<Subcategory> GetSubcategories();
+    static void PostCategory(const std::string& categoryName);
+    static void PostSubcategory(const std::string& categoryName, int categoryId);
 private:
     Client();
 

@@ -10,6 +10,7 @@
 #include "subcategoryModel.h"
 #include "../common/model/category.h"
 #include "../common/model/subcategory.h"
+#include "../common/constants.h"
 
 
 #include <QJsonDocument>
