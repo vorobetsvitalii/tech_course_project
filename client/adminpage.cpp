@@ -13,6 +13,7 @@ AdminPage::AdminPage(QWidget *parent) :
     this->setStyleSheet("QWidget {background-color: rgb(255, 255, 255); }");
 
     addCategoryWindow = std::make_unique<AddCategory>();
+    addSubcategoryWindow  = std::make_unique<AddSubcategory>();
 
     initializeLayouts(); // Tools initialization
     initializeButton();
@@ -42,7 +43,10 @@ AdminPage::AdminPage(QWidget *parent) :
 
     connect(&Client::getInstance(), &Client::logoutDoneEvent, this, &AdminPage::onLogoutDone);
     connect(addCategoryButton.get(), &QPushButton::clicked, this, &AdminPage::on_add_category_clicked);
+    connect(addSubcategoryButton.get(), &QPushButton::clicked, this, &AdminPage::on_add_subcategory_clicked);
     connect(addCategoryWindow.get(), &AddCategory::newButtonAdded, this, &AdminPage::handleNewButtonAdded);
+    connect(addSubcategoryWindow.get(), &AddSubcategory::newButtonAdded, this, &AdminPage::handleNewSubcategoryAdded);
+    connect(saveChangesButton.get(), &QPushButton::clicked, this, &AdminPage::on_save_changes_clicked);  
 }
 
 AdminPage::~AdminPage()
@@ -57,10 +61,11 @@ void AdminPage::initializeLayouts()
     headerVLayout = std::make_unique<QVBoxLayout>();
     topHLayout = std::make_unique<QHBoxLayout>();
     configurationHLayout = std::make_unique<QHBoxLayout>();
-    //menuHLayout = std::make_unique<QHBoxLayout>();
+
     localNavigationLayout = std::make_unique<QHBoxLayout>();
     itemsMenuVLayout = std::make_unique<QVBoxLayout>();
     categoriesVLayout = std::make_unique<QVBoxLayout>();
+    subcategoriesVLayout = std::make_unique<QVBoxLayout>();
 }
 
 void AdminPage::initializeWidgets()
@@ -92,19 +97,21 @@ void AdminPage::initializeButton()
     pushButton_7 = std::make_unique<QPushButton>();
     pushButton_8 = std::make_unique<QPushButton>();
     pushButton_9 = std::make_unique<QPushButton>();
+
     addCategoryButton = std::make_unique<QPushButton>();
+    addSubcategoryButton = std::make_unique<QPushButton>();
 }
 
 void AdminPage::initializeSpacers()
 {
     // Top layout
-    topSpacer_1 = std::make_unique<QSpacerItem>(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
-    topSpacer_2 = std::make_unique<QSpacerItem>(25, 10, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    topSpacer_1 = std::make_unique<QSpacerItem>(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding);
+    topSpacer_2 = std::make_unique<QSpacerItem>(15, 10, QSizePolicy::Fixed, QSizePolicy::Fixed);
     // Configuration layout
     configSpacer_1 = std::make_unique<QSpacerItem>(60, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     configSpacer_2 = std::make_unique<QSpacerItem>(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
     configSpacer_3 = std::make_unique<QSpacerItem>(9, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
-    configSpacer_4 = std::make_unique<QSpacerItem>(15, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    configSpacer_4 = std::make_unique<QSpacerItem>(40, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     // Menu layout
     //menuSpacer_1 = std::make_unique<QSpacerItem>(52, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     //menuSpacer_2 = std::make_unique<QSpacerItem>(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -161,8 +168,8 @@ void AdminPage::configurationHorizontalLayout()
                                      background-color: rgb(255, 255, 255); \
                                      color: rgb(255, 0, 0); border:none}");
 
-    saveChangesButton->setText("Save all changes");
-    saveChangesButton->setFixedSize(100, 30);
+    saveChangesButton->setText("Save");
+    saveChangesButton->setFixedSize(110, 30);
     saveChangesButton->setStyleSheet("QPushButton { \
                                       background-color: rgb(208, 0, 0); \
                                       color: rgb(255, 255, 255); border:none}");
@@ -177,7 +184,7 @@ void AdminPage::configurationHorizontalLayout()
     configurationHLayout->addSpacerItem(configSpacer_1.get());
     configurationHLayout->addWidget(pageLabel.get());
     configurationHLayout->addSpacerItem(configSpacer_2.get());
-    configurationHLayout->addWidget(cancelPushButton.get());
+    //configurationHLayout->addWidget(cancelPushButton.get());
     configurationHLayout->addSpacerItem(configSpacer_3.get());
     configurationHLayout->addWidget(saveChangesButton.get());
     configurationHLayout->addSpacerItem(configSpacer_4.get());
@@ -263,9 +270,17 @@ void AdminPage::itemsMenuVerticalLayout()
     addCategoryButton->setMinimumSize(95, 20);
     addCategoryButton->setStyleSheet(" QPushButton { border: 2px dashed grey; color: black; font-size: 12px; } ");
 
+    categoriesVLayout->setAlignment(Qt::AlignTop);
     categoriesVLayout->insertWidget(0, addCategoryButton.get());
-    itemsMenuVLayout->addSpacerItem(itemsMenuSpacer_1.get());
 
+    addSubcategoryButton->setText("+ Add subcategory");
+    addSubcategoryButton->setMinimumSize(95, 20);
+    addSubcategoryButton->setStyleSheet(" QPushButton { border: 2px dashed grey; color: black; font-size: 12px; } ");
+
+    subcategoriesVLayout->setAlignment(Qt::AlignTop);
+    subcategoriesVLayout->insertWidget(0, addSubcategoryButton.get());
+
+    itemsMenuVLayout->addSpacerItem(itemsMenuSpacer_1.get());
 }
 
 void AdminPage::primaryContentArea()
@@ -290,20 +305,37 @@ void AdminPage::appendCategories()
 
     std::transform(categories.begin(), categories.end(), buttons.begin(), [](const Category& category) {
         return (new QPushButton(QString::fromStdString(category.getName())));
-    });  
+    });
 
     for (auto* button : buttons) {
         button->setStyleSheet("QPushButton {"
                               "border: 1px solid gray;"
                               "border-radius: 3px;"
                               "padding: 5px;"
+                              "font-weight: bold;"
+                              "color: gray;"
+                              "}"
+                              "QPushButton:hover {"
+                              "color: red;"
                               "}");
 
         categoriesVLayout->insertWidget(1, button);
     }
 
     categoriesVLayout->setSpacing(20);
+
+    MenuButton::setSubcategoriesLayout(subcategoriesVLayout.get());
     MenuButton::setCategoriesLayout(categoriesVLayout.get());
+}
+
+void AdminPage::appendSubcategories()
+{
+
+}
+
+bool AdminPage::checkIfStringEmpty(const QString &temp_string)
+{
+    return (temp_string == "");
 }
 
 void AdminPage::onLogoutDone() {
@@ -315,12 +347,66 @@ void AdminPage::on_add_category_clicked()
     addCategoryWindow->show();
 }
 
+void AdminPage::on_add_subcategory_clicked()
+{
+    addSubcategoryWindow->show();
+}
+
+void AdminPage::on_save_changes_clicked()
+{
+    if(!checkIfStringEmpty(tempCategory))
+    {
+        Client::getInstance().PostCategories(tempCategory.toStdString());
+        tempCategory = "";
+    }
+}
+
 void AdminPage::handleNewButtonAdded()
 {
-    QPushButton* newButton = new QPushButton(addCategoryWindow->getCategoryName());
+    tempCategory = addCategoryWindow->getCategoryName();
 
-    categoriesVLayout->insertWidget(1, newButton);
-    Client::getInstance().PostCategories(addCategoryWindow->getCategoryName().toStdString());
+    if(!checkIfStringEmpty(tempCategory))
+    {
+        QPushButton* newButton = new QPushButton(tempCategory);
+
+        newButton->setStyleSheet("QPushButton {"
+                                 "border: 1px solid gray;"
+                                 "border-radius: 3px;"
+                                 "padding: 5px;"
+                                 "font-weight: bold;"
+                                 "color: gray;"
+                                 "}"
+                                 "QPushButton:hover {"
+                                 "color: red;"
+                                 "}");
+
+        categoriesVLayout->insertWidget(1, newButton);
+    }
+}
+
+void AdminPage::handleNewSubcategoryAdded()
+{
+    tempCategory = addSubcategoryWindow->getSubcategoryName();
+
+    if(!checkIfStringEmpty(tempCategory))
+    {
+        QPushButton* newButton = new QPushButton(tempCategory);
+
+        newButton->setStyleSheet("QPushButton {"
+                                 "border: 1px solid gray;"
+                                 "border-radius: 3px;"
+                                 "padding: 5px;"
+                                 "font-weight: bold;"
+                                 "color: gray;"
+                                 "}"
+                                 "QPushButton:hover {"
+                                 "color: red;"
+                                 "}");
+
+        subcategoriesVLayout->insertWidget(1, newButton);
+    }
+
+    subcategoriesVLayout->setSpacing(20);
 }
 
 void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)

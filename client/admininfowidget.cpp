@@ -89,7 +89,7 @@ void AdminInfoWidget::initializeMainLayout() {
     mainLayout->addLayout(infoLayout.get());
     mainLayout->addLayout(buttonLayout.get());
     mainLayout->setAlignment(Qt::AlignLeft);
-    mainLayout->setContentsMargins(0, 0, 60, 0);
+    mainLayout->setContentsMargins(0, 0, 20, 0);
     mainLayout->setSpacing(10);
     setLayout(mainLayout.get());
 

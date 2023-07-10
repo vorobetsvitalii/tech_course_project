@@ -39,6 +39,9 @@ set(PROJECT_SOURCES
         hmenu.cpp
         hmenuitem.h
         hmenuitem.cpp
+        addsubcategory.cpp
+        addsubcategory.h
+        addcategory.ui
 )
 
 

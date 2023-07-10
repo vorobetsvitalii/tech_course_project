@@ -17,6 +17,7 @@
 
 #include "admininfowidget.h"
 #include "addcategory.h"
+#include "addsubcategory.h"
 #include "execution"
 #include "client.h"
 #include "menubutton.h"
@@ -41,6 +42,7 @@ private:
 
     std::unique_ptr<QVBoxLayout> headerVLayout;
     std::unique_ptr<QVBoxLayout> categoriesVLayout;
+    std::unique_ptr<QVBoxLayout> subcategoriesVLayout;
     std::unique_ptr<QVBoxLayout> itemsMenuVLayout;
 
     std::unique_ptr<QWidget> topHWidget;
@@ -49,7 +51,6 @@ private:
 
     std::unique_ptr<QHBoxLayout> topHLayout;
     std::unique_ptr<QHBoxLayout> configurationHLayout;
-    std::unique_ptr<QHBoxLayout> menuHLayout;
     std::unique_ptr<QHBoxLayout> localNavigationLayout;
 
     std::unique_ptr<QSpacerItem> topSpacer_1;
@@ -78,12 +79,16 @@ private:
     std::unique_ptr<QPushButton> pushButton_8;
     std::unique_ptr<QPushButton> pushButton_9;
     std::unique_ptr<QPushButton> addCategoryButton;
+    std::unique_ptr<QPushButton> addSubcategoryButton;
 
     std::unique_ptr<QLabel> pageLabel;
 
     std::unique_ptr<QScrollArea> contentArea;
 
     std::unique_ptr<AddCategory> addCategoryWindow;
+    std::unique_ptr<AddSubcategory> addSubcategoryWindow;
+
+    QString tempCategory = "";
 
     void initializeLayouts();
     void initializeWidgets();
@@ -94,18 +99,20 @@ private:
     void configurationHorizontalLayout();
     void menuHorizontalLayout();
     void itemsMenuVerticalLayout();
-
     void primaryContentArea();
-
     void appendCategories();
+    void appendSubcategories();
+    bool checkIfStringEmpty(const QString& temp_string);
 
 public slots:
     void onLogoutDone();
     void on_add_category_clicked();
+    void on_add_subcategory_clicked();
+    void on_save_changes_clicked();
     void handleNewButtonAdded();
+    void handleNewSubcategoryAdded();
     void OnMenuItemClicked(MenuButton*);
     void onCategorySelected(Category* category);
-
 };
 
 #endif // ADMINPAGE_H

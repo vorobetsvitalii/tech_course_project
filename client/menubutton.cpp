@@ -108,7 +108,6 @@ void MenuButton::SetLanguages(MenuButton* clickedButton ,QScrollArea* Content)
 void MenuButton::SetIA(MenuButton* clickedButton ,QScrollArea* Content)
 {
     clickedButton->iaContent = clickedButton->initializeIAContent();
-    Content->layout()->deleteLater();
     Content->setWidget(clickedButton->iaContent.release());
 }
 
@@ -238,8 +237,14 @@ std::unique_ptr<QWidget> MenuButton::initializeLanguagesContent()
 std::unique_ptr<QWidget> MenuButton::initializeIAContent()
 {
     std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    QHBoxLayout* IAContentLayout = new QHBoxLayout();
+
     widget->layout()->deleteLater();
-    widget->setLayout(categoriesVLayout);
+
+    IAContentLayout->addLayout(categoriesVLayout);
+    IAContentLayout->addLayout(subcategoriesVLayout);
+
+    widget->setLayout(IAContentLayout);
 
     return widget;
 }
@@ -268,6 +273,10 @@ void MenuButton::setCategoriesLayout(QVBoxLayout *categoriesVLayout_)
     categoriesVLayout = categoriesVLayout_;
 }
 
+void MenuButton::setSubcategoriesLayout(QVBoxLayout *subcategoriesVLayout_)
+{
+    subcategoriesVLayout = subcategoriesVLayout_;
+}
 
 QString MenuButton::GetItemName() {
     return buttonName;
@@ -371,3 +380,4 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
 }
 
 QVBoxLayout* MenuButton::categoriesVLayout = nullptr;
+QVBoxLayout* MenuButton::subcategoriesVLayout = nullptr;

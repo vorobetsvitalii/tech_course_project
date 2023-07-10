@@ -13,6 +13,7 @@
 #include <QToolTip>
 #include <QWidget>
 #include <QScrollArea>
+#include <QHBoxLayout>
 #include <map>
 
 class MenuButton : public QPushButton
@@ -40,6 +41,7 @@ public:
     void setButtonIcon(const QIcon& icon);
     QIcon convertToGrayIcon(const QIcon& icon);
     static void setCategoriesLayout(QVBoxLayout* categoriesVLayout_);
+    static void setSubcategoriesLayout(QVBoxLayout* subcategoriesVLayout_);
 
 private:
 
@@ -77,6 +79,7 @@ private:
     std::unique_ptr<QWidget> widget;
 
     static QVBoxLayout* categoriesVLayout;
+    static QVBoxLayout* subcategoriesVLayout;
 
 protected:
     bool eventFilter(QObject* object, QEvent* event) override;
