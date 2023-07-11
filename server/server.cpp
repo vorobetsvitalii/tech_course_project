@@ -28,6 +28,10 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             {
                 GetSubcategories(request, response);
             }
+            else if(uri.find(Constants::locationsGet) != std::string::npos)
+            {
+                GetLocations(request, response);
+            }
             else if(uri.find("/test")!= std::string::npos)
             {
                 //повністю для тесту запитів
@@ -544,6 +548,30 @@ void RequestHandler::PostSubcategories(Poco::Net::HTTPServerRequest& request, Po
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
         response.setContentType("text/plain");
         response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
+void RequestHandler::GetLocations(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
+{
+    TeamModel Team;
+    QJsonObject locationJson = Team.LocationJson(Team.SelectLocations());
+
+    try
+    {
+        // Встановити заголовок відповіді на JSON
+        response.setContentType("application/json");
+
+        // Конвертувати об'єкт JSON в рядок JSON
+        QByteArray jsonData = QJsonDocument(locationJson).toJson();
+
+        // Встановити рядок JSON як тіло відповіді
+        response.sendBuffer(jsonData.data(), jsonData.size());
+    }
+    catch (const Poco::JSON::JSONException& e)
+    {
+        // Обробити помилку розбору JSON
+        response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.send() << "Error parsing JSON: " << e.message();
     }
 }
 

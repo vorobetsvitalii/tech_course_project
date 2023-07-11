@@ -12,6 +12,8 @@
 #include <QScrollArea>
 #include <QGraphicsDropShadowEffect>
 #include <memory>
+#include <vector>
+#include <QMap>
 #include <iostream>
 #include <future>
 
@@ -81,6 +83,8 @@ private:
     std::unique_ptr<QPushButton> addCategoryButton;
     std::unique_ptr<QPushButton> addSubcategoryButton;
 
+    QPushButton* previousButton = nullptr;
+
     std::unique_ptr<QLabel> pageLabel;
 
     std::unique_ptr<QScrollArea> contentArea;
@@ -88,7 +92,13 @@ private:
     std::unique_ptr<AddCategory> addCategoryWindow;
     std::unique_ptr<AddSubcategory> addSubcategoryWindow;
 
+    int tempCategoryId = NULL;
+
     QString tempCategory = "";
+    QString tempSubcategory = "";
+
+    std::vector<Category> categories;
+    QMap<QString, int> subcategories_map;
 
     void initializeLayouts();
     void initializeWidgets();
@@ -113,6 +123,7 @@ public slots:
     void handleNewSubcategoryAdded();
     void OnMenuItemClicked(MenuButton*);
     void onCategorySelected(Category* category);
+    void onCategoryClicked();
 };
 
 #endif // ADMINPAGE_H

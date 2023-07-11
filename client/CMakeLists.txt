@@ -42,6 +42,9 @@ set(PROJECT_SOURCES
         addsubcategory.cpp
         addsubcategory.h
         addcategory.ui
+        teamsui.h
+        teamsui.cpp
+        ${PROJECT_SOURCES}
 )
 
 
@@ -93,7 +96,7 @@ install(TARGETS Client
 #Poco installation start
 
 # Set the POCO library directory
-set(POCO_DIR "C:/msys64/mingw64")
+set(POCO_DIR "D:/MSYS/mingw64")
 
 # Include directories for POCO
 

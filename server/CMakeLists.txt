@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the POCO library directory
-set(POCO_DIR "C:/msys64/mingw64")
+set(POCO_DIR "D:/MSYS/mingw64")
 
 
 # Include directories for POCO
@@ -27,6 +27,8 @@ list(APPEND PROJECT_SOURCES "../dal/querybuilder.h")
 list(APPEND PROJECT_SOURCES "../dal/querybuilder.cpp")
 list(APPEND PROJECT_SOURCES "../dal/dbexecutor.h")
 list(APPEND PROJECT_SOURCES "../dal/dbexecutor.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/team.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/team.h")
 
 
 
@@ -48,6 +50,9 @@ add_executable(
     categoriesmodel.cpp
     subcategoryModel.h
     subcategoryModel.cpp
+    teammodel.cpp
+    teammodel.h
+    IJsonSerializable.h
     ${PROJECT_SOURCES} # Include the added source files here
 )
 

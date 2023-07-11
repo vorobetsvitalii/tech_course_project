@@ -1,0 +1,101 @@
+#ifndef TEAMSUI_H
+#define TEAMSUI_H
+
+#include <QWidget>
+#include <QMenu>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QListView>
+#include <QFileDialog>
+#include <QEvent>
+#include <QEnterEvent>
+#include <QGraphicsDropShadowEffect>
+#include <Poco/Net/HTTPRequest.h>
+#include <Poco/Net/HTTPResponse.h>
+#include <Poco/Net/HTTPClientSession.h>
+#include <Poco/Net/SocketAddress.h>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <Poco/URI.h>
+#include <iostream>
+#include <future>
+#include "HTTPRequestManager.h"
+#include "client.h"
+
+class TeamsUI: public QWidget
+{
+    Q_OBJECT
+private:
+    bool isImageSet = false;
+
+    std::unique_ptr<QComboBox>LocationDrop;
+    std::unique_ptr<QComboBox>CategoryDrop;
+    std::unique_ptr<QComboBox>SubCategoryDrop;
+
+
+    std::unique_ptr<QLineEdit>TeamInput;
+
+
+    std::unique_ptr<QPushButton>ApplyButton;
+    std::unique_ptr<QPushButton>CancelButton;
+
+    std::unique_ptr<QLabel>LocationLabel;
+    std::unique_ptr<QLabel>CategoryLabel;
+    std::unique_ptr<QLabel>SubCategoryLabel;
+    std::unique_ptr<QLabel>TeamLabel;
+
+    std::unique_ptr<QFrame>TeamImage;
+
+    std::unique_ptr<QVBoxLayout>Layout;
+
+    std::unique_ptr<QPushButton> CameraIcon;
+    std::unique_ptr<QLabel> LogoText;
+
+    QIcon TeamIcon;
+    QString ImagePath;
+
+
+protected:
+
+    void enterEvent(QEnterEvent* event);
+    void leaveEvent(QEvent* event);
+    std::map<int,std::string> GetLocations();
+    std::map<int,std::string> GetCategories();
+
+
+
+public:
+    std::map<int,std::string>LocationMap = GetLocations();
+    std::map<int,std::string>CategoriesMap;
+
+
+    void initializeLocationDrop();
+    void initializeCategoryDrop();
+    void initializeSubCategoryDrop();
+
+    void initializeTeamInput();
+
+    void initializeApplyButton();
+    void initializeCancelButton();
+
+    void initializeLocationLabel();
+    void initializeSubCategoryLabel();
+    void initializeTeamLabel();
+    void initializeCategoryLabel();
+
+    void initializeTeamImage();
+
+
+
+    TeamsUI();
+
+
+private slots:
+    void openFileExplorer();
+};
+
+
+#endif // TEAMSUI_H
