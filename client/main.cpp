@@ -6,15 +6,9 @@
 
 int main(int argc, char *argv[])
 {
-     Client::getInstance().GetTeams();
+    Client::getInstance().GetTeams();
     QApplication a(argc, argv);
 
-
-    QMainWindow mainWindow;
-    TeamsUI teamsUI;
-
-    mainWindow.setCentralWidget(&teamsUI);
-    mainWindow.show();
 
     LoginWindow loginWindowInstance;
 
