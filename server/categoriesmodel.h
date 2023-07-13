@@ -14,8 +14,12 @@ public:
     CategoriesModel(const std::string& name, int id);
     virtual const QString GetTable() const override;
     void InsertCategory();
-    static std::vector<Category> SelectCategory();
     void UpdateCategory();
     void DeleteCategory();
+
+    static std::vector<Category> SelectCategory();
+    static void EditCategories(std::vector<CategoriesModel> items);
+    static void DeleteCategories(std::vector<CategoriesModel> items);
+
 };
 #endif // CATEGORIESMODEL_H

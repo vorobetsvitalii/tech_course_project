@@ -24,14 +24,28 @@ const QString SubcategoriesModel::GetTable() const
     return "Subcategories";
 }
 
-void SubcategoriesModel::InsertCategory()
+void SubcategoriesModel::InsertSubcategory()
 {
     QString insertQuery = "INSERT INTO " + GetTable() + " (SubcategoryName, CategoryID) "
                           "VALUES ('" + QString::fromStdString(this->getName()) + "', " + QString::number(this->getCategoryId()) + ")";
     qDebug() << insertQuery;
     Insert(insertQuery);
 }
-std::vector<Subcategory> SubcategoriesModel::SelectCategory()
+
+
+void SubcategoriesModel::UpdateSubcategory()
+{
+    QString updateQuery = "UPDATE " + GetTable() + " SET SubcategoryName='" + QString::fromStdString(this->getName()) + "', CategoryID=" + QString::number(this->getCategoryId()) + " WHERE SubcategoryId=" + QString::number(this->getId());
+    Update(updateQuery);
+}
+
+void SubcategoriesModel::DeleteSubcategory()
+{
+    QString deleteQuery = "DELETE FROM " + GetTable() + " WHERE SubcategoryId=" + QString::number(this->getId());
+    Delete(deleteQuery);
+}
+
+std::vector<Subcategory> SubcategoriesModel::SelectSubategory()
 {
     std::unique_ptr<SubcategoriesModel> cm = std::make_unique<SubcategoriesModel>();
     QString selectQuery = "SELECT * FROM " + cm->GetTable();
@@ -57,14 +71,19 @@ std::vector<Subcategory> SubcategoriesModel::SelectCategory()
 
 }
 
-void SubcategoriesModel::UpdateCategory()
+
+void SubcategoriesModel::EditSubcategories(std::vector<SubcategoriesModel> items)
 {
-    QString updateQuery = "UPDATE " + GetTable() + " SET SubcategoryName='" + QString::fromStdString(this->getName()) + "', CategoryID=" + QString::number(this->getCategoryId()) + " WHERE SubcategoryId=" + QString::number(this->getId());
-    Update(updateQuery);
+    for(SubcategoriesModel& sc : items)
+    {
+        sc.UpdateSubcategory();
+    }
 }
 
-void SubcategoriesModel::DeleteCategory()
+void SubcategoriesModel::DeleteSubcategories(std::vector<SubcategoriesModel> items)
 {
-    QString deleteQuery = "DELETE FROM " + GetTable() + " WHERE SubcategoryId=" + QString::number(this->getId());
-    Delete(deleteQuery);
+    for(SubcategoriesModel& sc : items)
+    {
+        sc.DeleteSubcategory();
+    }
 }
