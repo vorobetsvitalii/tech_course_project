@@ -10,6 +10,7 @@ public:
     static const std::string logoutApi;
     static const std::string categoriesApi;
     static const std::string subcategoriesApi;
+    static const std::string locationsGet;
 
     //JSON
     static const std::string categoriesArrayJson;

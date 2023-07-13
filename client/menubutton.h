@@ -15,6 +15,7 @@
 #include <QScrollArea>
 #include <QHBoxLayout>
 #include <map>
+#include "teamsui.h"
 
 class MenuButton : public QPushButton
 {
@@ -51,7 +52,7 @@ private:
     std::unique_ptr<QWidget> socialNetworksContent=initializeSocialNetworksContent();
     std::unique_ptr<QWidget> surveysContent=initializeSurveysContent();
     std::unique_ptr<QWidget> footerContent=initializeFooterContent();
-    std::unique_ptr<QWidget> teamsContent=initializeTeamsContent();
+    std::unique_ptr<QWidget> teamsContent;
     std::unique_ptr<QWidget> usersContent=initializeUsersContent();
     std::unique_ptr<QWidget> languagesContent=initializeLanguagesContent();
     std::unique_ptr<QWidget> iaContent=initializeIAContent();

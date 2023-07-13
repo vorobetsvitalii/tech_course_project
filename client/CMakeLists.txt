@@ -44,6 +44,8 @@ set(PROJECT_SOURCES
         addcategory.ui
         customcontextmenu.cpp
         customcontextmenu.h
+        teamsui.h
+        teamsui.cpp
 )
 
 

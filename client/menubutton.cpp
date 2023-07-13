@@ -205,10 +205,15 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
 {
     std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
-    QLabel* label = new QLabel("Teams");
-    layout->addWidget(label);
-    widget->layout()->deleteLater();
+    //QLabel* label = new QLabel("Teams");
+    TeamsUI* teamui = new TeamsUI();
+
+
+    layout->addWidget(teamui);
+    //layout->addWidget(label);
+
     widget->setLayout(layout);
+    widget->setWindowTitle("Teams");
     return widget;
 }
 

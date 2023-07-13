@@ -1,3 +1,4 @@
+
 #include "adminpage.h"
 #include "ui_adminpage.h"
 #include <functional>
@@ -48,7 +49,7 @@ AdminPage::AdminPage(QWidget *parent) :
     connect(addSubcategoryButton.get(), &QPushButton::clicked, this, &AdminPage::on_add_subcategory_clicked);
     connect(addCategoryWindow.get(), &AddCategory::newButtonAdded, this, &AdminPage::handleNewButtonAdded);
     connect(addSubcategoryWindow.get(), &AddSubcategory::newButtonAdded, this, &AdminPage::handleNewSubcategoryAdded);
-    connect(saveChangesButton.get(), &QPushButton::clicked, this, &AdminPage::on_save_changes_clicked);  
+    connect(saveChangesButton.get(), &QPushButton::clicked, this, &AdminPage::on_save_changes_clicked);
 }
 
 AdminPage::~AdminPage()
@@ -103,6 +104,7 @@ void AdminPage::initializeButton()
     addCategoryButton = std::make_unique<QPushButton>();
     addSubcategoryButton = std::make_unique<QPushButton>();
 }
+
 
 void AdminPage::initializeSpacers()
 {
@@ -196,7 +198,8 @@ void AdminPage::menuHorizontalLayout()
 {
     QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect(menuHWidget.get());
 
-    shadowEffect->setBlurRadius(8);
+
+shadowEffect->setBlurRadius(8);
     shadowEffect->setColor(QColor(0, 0, 0, 80));
     shadowEffect->setOffset(0, 4);
 
@@ -369,12 +372,10 @@ void AdminPage::appendSubcategories()
         });
 
         connect(button, &QPushButton::released, this, &AdminPage::onSubcategoryClicked);
-
         subcategoriesVLayout->insertWidget(1, button);
     }
 
     subcategoriesVLayout->setSpacing(20);
-
     MenuButton::setSubcategoriesLayout(subcategoriesVLayout.get());
 }
 
@@ -438,6 +439,7 @@ void AdminPage::handleNewButtonAdded()
                                  "color: red;"
                                  "}");
 
+        connect(newButton, &QPushButton::clicked, this, &AdminPage::onCategoryClicked);
         connect(newButton, &QPushButton::clicked, this, &AdminPage::onCategoryClicked);
         categoriesVLayout->insertWidget(1, newButton);
     }
@@ -544,5 +546,5 @@ void AdminPage::onSubcategoryClicked()
 
     tempSubcategoryId = subcategories_map_id[clickedButton->text()];
 
-    clickedButton->setText(clickedButton->text() + QString::number(tempSubcategoryId));
+    //clickedButton->setText(clickedButton->text() + QString::number(tempSubcategoryId));
 }

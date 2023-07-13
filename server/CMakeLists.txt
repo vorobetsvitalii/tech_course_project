@@ -27,6 +27,8 @@ list(APPEND PROJECT_SOURCES "../dal/querybuilder.h")
 list(APPEND PROJECT_SOURCES "../dal/querybuilder.cpp")
 list(APPEND PROJECT_SOURCES "../dal/dbexecutor.h")
 list(APPEND PROJECT_SOURCES "../dal/dbexecutor.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/team.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/team.h")
 
 
 
@@ -48,6 +50,9 @@ add_executable(
     categoriesmodel.cpp
     subcategoryModel.h
     subcategoryModel.cpp
+    teammodel.cpp
+    teammodel.h
+    IJsonSerializable.h
     ${PROJECT_SOURCES} # Include the added source files here
 )
 

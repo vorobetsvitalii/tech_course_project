@@ -11,6 +11,7 @@
 #include "../common/model/category.h"
 #include "../common/model/subcategory.h"
 #include "../common/constants.h"
+#include "teammodel.h"
 
 
 #include <QJsonDocument>
@@ -108,6 +109,7 @@ private:
     void ApiPostCategories(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void GetSubcategories(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse& response);
     void PostSubcategories(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
+    void GetLocations(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
 
 };
 
