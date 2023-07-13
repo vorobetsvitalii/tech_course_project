@@ -1,5 +1,43 @@
 #include "teamsui.h"
 
+QString TeamsUI::comboBoxStyle = "QComboBox {"
+                        "background-color: white;"
+                        "color: black;"
+                        "border: 1px solid rgba(212, 217, 226, 1);"
+                        "min-width: 246px;"
+                        "min-height: 36px;"
+                        "}"
+                        "QComboBox::drop-down {"
+                        "border: none;"
+                        "}"
+                        "QComboBox::down-arrow {"
+                        "image: url(../img/TeamArrow.png);"
+                        "height: 5px;"
+                        "width: 7px;"
+                        "}"
+                        "QListView::item {"
+                        "max-width: 240px;"
+                        "min-height: 36px;"
+                        "border: none;"
+                        "outline: 0px;"
+                        "}";
+
+
+QString TeamsUI::listViewStyle="QListView::item {"
+                                 "max-width: 246px;"
+                                 "min-height: 36px;"
+                                 "border:none;"
+                                 "}"
+                                 "QListView::item:selected {"
+                                 "border-color:white;"
+                                 "background-color: rgba(215, 33, 48, 0.11);"
+                                 "color: rgba(215, 33, 48, 1);"
+                                 "outline: 0px;"
+                                 "}"
+                                 "QListView::item:hover {"
+                                 "outline: 0px;"
+                                 "border: 1px solid rgba(215, 33, 48, 0.11);"
+                                 "}";
 void TeamsUI::initializeLocationDrop()
 {
     LocationDrop = std::make_unique<QComboBox>();
@@ -8,46 +46,12 @@ void TeamsUI::initializeLocationDrop()
 
 
     LocationDrop->setFixedSize(246,36);
-    QString comboBoxStyle = "QComboBox {"
-                            "background-color: white;"
-                            "color: black;"
-                            "border: 1px solid rgba(212, 217, 226, 1);"
-                            "min-width: 246px;"
-                            "min-height: 36px;"
-                            "}"
-                            "QComboBox::drop-down {"
-                            "border: none;"
-                            "}"
-                            "QComboBox::down-arrow {"
-                            "image: url(../img/TeamArrow.png);"
-                            "height: 5px;"
-                            "width: 7px;"
-                            "}"
-                            "QListView::item {"
-                            "max-width: 240px;"
-                            "min-height: 36px;"
-                            "border: none;"
-                            "outline: 0px;"
-                            "}";
+
 
 
     LocationDrop->setStyleSheet(comboBoxStyle);
     QListView * listView = new QListView();
-    listView->setStyleSheet("QListView::item {"
-                            "max-width: 246px;"
-                            "min-height: 36px;"
-                            "border:none;"
-                            "}"
-                            "QListView::item:selected {"
-                            "border-color:white;"
-                            "background-color: rgba(215, 33, 48, 0.11);"
-                            "color: rgba(215, 33, 48, 1);"
-                            "outline: 0px;"
-                            "}"
-                            "QListView::item:hover {"
-                            "outline: 0px;"
-                            "border: 1px solid rgba(215, 33, 48, 0.11);"
-                            "}");
+    listView->setStyleSheet(listViewStyle);
 
     //listView->setFixedSize(250,36);
 
@@ -68,47 +72,11 @@ void TeamsUI::initializeCategoryDrop()
     this->CategoriesMap = GetCategories();
     CategoryDrop->setFixedSize(246,36);
 
-    //не забути про стрілку
-    QString comboBoxStyle = "QComboBox {"
-                            "background-color: white;"
-                            "color: black;"
-                            "border: 1px solid rgba(212, 217, 226, 1);"
-                            "min-width: 246px;"
-                            "min-height: 36px;"
-                            "}"
-                            "QComboBox::drop-down {"
-                            "border: none;"
-                            "}"
-                            "QComboBox::down-arrow {"
-                            "image: url(../img/TeamArrow.png);"
-                            "height: 5px;"
-                            "width: 7px;"
-                            "}"
-                            "QListView::item {"
-                            "max-width: 240px;"
-                            "min-height: 36px;"
-                            "border: none;"
-                            "outline: 0px;"
-                            "}";
 
 
     CategoryDrop->setStyleSheet(comboBoxStyle);
     QListView * listView = new QListView();
-    listView->setStyleSheet("QListView::item {"
-                            "max-width: 246px;"
-                            "min-height: 36px;"
-                            "border:none;"
-                            "}"
-                            "QListView::item:selected {"
-                            "border-color:white;"
-                            "background-color: rgba(215, 33, 48, 0.11);"
-                            "color: rgba(215, 33, 48, 1);"
-                            "outline: 0px;"
-                            "}"
-                            "QListView::item:hover {"
-                            "outline: 0px;"
-                            "border: 1px solid rgba(215, 33, 48, 0.11);"
-                            "}");
+    listView->setStyleSheet(listViewStyle);
 
     //listView->setFixedSize(250,36);
 
@@ -117,60 +85,64 @@ void TeamsUI::initializeCategoryDrop()
     CategoryDrop->view()->setCursor(QCursor(QPixmap("../img/Cursor.png")));
     CategoryDrop->setCursor(QCursor(QPixmap("../img/Cursor.png")));
     CategoryDrop->view()->style()->setProperty("hoverHighlight", false);
+
+    connect(CategoryDrop.get(), QOverload<int>::of(&QComboBox::currentIndexChanged), this, &TeamsUI::onCategoryActivated);
+
+
     for (const auto& tmp : this->CategoriesMap) {
         CategoryDrop->addItem(QString::fromStdString(tmp.second));
     }
 }
 
+
+void TeamsUI::onCategoryActivated(int index)
+{
+    QString category = CategoryDrop->itemText(index);
+    qDebug()<< category;
+
+
+    auto SubCount = SubCategoriesVector.size();
+
+    this->SubCategoriesVector.clear();
+
+    for (auto tmp : SubCategoriesAll)
+    {
+        qDebug() << QString::number(tmp.getCategoryId()) + "   " + QString::fromStdString(this->CategoriesMap[tmp.getCategoryId()]);
+        if (this->CategoriesMap[tmp.getCategoryId()].compare(category.toStdString()) == 0)
+        {
+            this->SubCategoriesVector.push_back(tmp);
+            qDebug() <<QString("PUSH BACK\n");
+        }
+
+    }
+
+    for (int i = 0; i < SubCount; i++) {
+        SubCategoryDrop->removeItem(0);
+    }
+    qDebug() << QString("SubCategoriesVector:");
+    for (const auto& tmp : SubCategoriesVector) {
+        qDebug() << QString::fromStdString(tmp.getName());
+    }
+
+
+
+    for (const auto& tmp : this->SubCategoriesVector) {
+        SubCategoryDrop->addItem(QString::fromStdString(tmp.getName()));
+    }
+
+}
+
 void TeamsUI::initializeSubCategoryDrop()
 {
     SubCategoryDrop = std::make_unique<QComboBox>();
-    QStringList SubCategoryList; //додати зчитування з БД підкатегорій!
-    SubCategoryDrop->addItem("All");
-    SubCategoryList << "Football" << "Dog Sledding" << "Baseball" << "Basketball" << "Surfing" << "Skiing"
-                 << "Golf" << "Fishing" << "Handball" << "Cornhole";
+
 
     SubCategoryDrop->setFixedSize(246,36);
-    QString comboBoxStyle = "QComboBox {"
-                            "background-color: white;"
-                            "color: black;"
-                            "border: 1px solid rgba(212, 217, 226, 1);"
-                            "min-width: 246px;"
-                            "min-height: 36px;"
-                            "}"
-                            "QComboBox::drop-down {"
-                            "border: none;"
-                            "}"
-                            "QComboBox::down-arrow {"
-                            "image: url(../img/TeamArrow.png);"
-                            "height: 5px;"
-                            "width: 7px;"
-                            "}"
-                            "QListView::item {"
-                            "max-width: 240px;"
-                            "min-height: 36px;"
-                            "border: none;"
-                            "outline: 0px;"
-                            "}";
 
 
     SubCategoryDrop->setStyleSheet(comboBoxStyle);
     QListView * listView = new QListView();
-    listView->setStyleSheet("QListView::item {"
-                            "max-width: 246px;"
-                            "min-height: 36px;"
-                            "border:none;"
-                            "}"
-                            "QListView::item:selected {"
-                            "border-color:white;"
-                            "background-color: rgba(215, 33, 48, 0.11);"
-                            "color: rgba(215, 33, 48, 1);"
-                            "outline: 0px;"
-                            "}"
-                            "QListView::item:hover {"
-                            "outline: 0px;"
-                            "border: 1px solid rgba(215, 33, 48, 0.11);"
-                            "}");
+    listView->setStyleSheet(listViewStyle);
 
     //listView->setFixedSize(250,36);
 
@@ -179,8 +151,9 @@ void TeamsUI::initializeSubCategoryDrop()
     SubCategoryDrop->view()->setCursor(QCursor(QPixmap("../img/Cursor.png")));
     SubCategoryDrop->setCursor(QCursor(QPixmap("../img/Cursor.png")));
     SubCategoryDrop->view()->style()->setProperty("hoverHighlight", false);
-    for(auto tmp : SubCategoryList){
-        SubCategoryDrop->addItem(tmp);
+
+    for (const auto& tmp : this->SubCategoriesVector) {
+        SubCategoryDrop->addItem(QString::fromStdString(tmp.getName()));
     }
 }
 
@@ -210,6 +183,7 @@ void TeamsUI::initializeApplyButton()
                                "QPushButton:pressed {"
                                "background-color: rgba(200, 5, 21, 1);"
                                "}");
+    connect(ApplyButton.get(), &QPushButton::clicked, this, &TeamsUI::CreateTeam);
 
 }
 
@@ -229,6 +203,7 @@ void TeamsUI::initializeCancelButton()
                                 "QPushButton:pressed {"
                                 "background-color: white;"
                                 "}");
+    connect(CancelButton.get(), &QPushButton::clicked, this, &TeamsUI::Cancel);
 }
 
 void TeamsUI::initializeLocationLabel()
@@ -372,6 +347,7 @@ void TeamsUI::openFileExplorer()
     }
 }
 
+
 void TeamsUI::enterEvent(QEnterEvent* event)
 {
     if (event->type() == QEvent::Enter && isImageSet) {
@@ -448,4 +424,63 @@ std::map<int, std::string> TeamsUI::GetCategories()
         categoriesMap.insert(std::make_pair(category.getId(), category.getName()));
     }
     return categoriesMap;
+}
+
+std::vector<Subcategory> TeamsUI::GetSubCategories()
+{
+
+
+    auto future = std::async(std::launch::async, [](){
+        return Client::getInstance().GetSubcategories();
+    });
+
+    const auto& subcategories = future.get();
+
+    return subcategories;
+
+}
+
+void TeamsUI::CreateTeam()
+{
+    qDebug()<<"CreateTeam";
+    team Team;
+    QString CategoryText = this->CategoryDrop->currentText();
+    QString SubCategoryText = this->SubCategoryDrop->currentText();
+    QString LocationText = this->LocationDrop->currentText();
+    QString TeamName = this->TeamInput->text();
+
+    if(!SubCategoryText.isEmpty()){
+    for(const auto tmp: this->SubCategoriesVector)
+    {
+        if(tmp.getName()==SubCategoryText.toStdString())
+        {
+            Team.setSubcategoryId(tmp.getId());
+            break;
+        }
+    }}else{return;}
+
+    if(!LocationText.isEmpty()){
+    for (const auto pair : this->LocationMap) {
+        if (pair.second == LocationText.toStdString()) {
+            Team.setTeamLocation(pair.first);
+            break;
+        }
+    }}else{return;}
+
+    if(!TeamName.isEmpty()){
+        Team.setTeamName(TeamName);
+    }else{return;}
+
+    if(!this->ImagePath.isEmpty())
+    {
+        Team.setTeamLogoBlob(this->ImagePath);
+
+    }else{return;}
+    qDebug()<<SubCategoryText+"  "+QString::number( Team.getSubcategoryId())+  " " +LocationText+"  "+QString::number(Team.getTeamLocation())+"  "+Team.getTeamName()+"   "+this->ImagePath;
+    Client::getInstance().PostTeam(Team);
+}
+
+void TeamsUI::Cancel()
+{
+    qDebug()<<"Cancel";
 }

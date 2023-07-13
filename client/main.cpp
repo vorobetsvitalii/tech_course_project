@@ -6,6 +6,7 @@
 
 int main(int argc, char *argv[])
 {
+     Client::getInstance().GetTeams();
     QApplication a(argc, argv);
 
 
@@ -18,6 +19,8 @@ int main(int argc, char *argv[])
     LoginWindow loginWindowInstance;
 
     loginWindowInstance.show();
+
+
 
     return a.exec();
 }

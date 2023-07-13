@@ -222,6 +222,24 @@ std::vector<Subcategory> Client::GetSubcategories()
     return subcategories;
 }
 
+std::vector<team> Client::GetTeams()
+{
+    TeamCreator teamCreator;
+    std::vector<std::unique_ptr<Entity>> entities = Client::getInstance().GetEntity(Constants::teamSelect, Constants::TeamsArrayJson, teamCreator);
+
+    std::vector<team> Teams;
+    for (std::unique_ptr<Entity>& entity : entities)
+    {
+        team* Team = dynamic_cast<team*>(entity.get());
+        if (Team)
+        {
+            Teams.push_back(*Team);
+        }
+    }
+
+    return Teams;
+}
+
 void Client::PostCategory(const std::string& categoryName)
 {
     CategoryCreator categoryCreator;
@@ -237,6 +255,13 @@ void Client::PostSubcategory(const std::string& subcategoryName, int categoryId)
     subcategory->setName(subcategoryName);
     subcategory->setCategoryId(categoryId);
     Client::getInstance().PostEntity(Constants::subcategoriesApi, *subcategory, subcategoryCreator);
+}
+
+void Client::PostTeam(team& Team)
+{
+    TeamCreator teamCreator;
+    //team* Team= new team();
+    Client::getInstance().PostEntity(Constants::teamInsert, Team , teamCreator);
 }
 
 

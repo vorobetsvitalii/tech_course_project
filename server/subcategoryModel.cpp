@@ -45,7 +45,7 @@ void SubcategoriesModel::DeleteSubcategory()
     Delete(deleteQuery);
 }
 
-std::vector<Subcategory> SubcategoriesModel::SelectSubategory()
+std::vector<Subcategory> SubcategoriesModel::SelectSubcategory()
 {
     std::unique_ptr<SubcategoriesModel> cm = std::make_unique<SubcategoriesModel>();
     QString selectQuery = "SELECT * FROM " + cm->GetTable();

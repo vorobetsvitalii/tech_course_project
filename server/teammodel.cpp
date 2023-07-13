@@ -1,5 +1,4 @@
 #include "teammodel.h"
-
 const QString TeamModel::GetTable() const
 {
     return "Teams";
@@ -7,10 +6,14 @@ const QString TeamModel::GetTable() const
 
 void TeamModel::InsertTeam()
 {
-    QString insertQuery = QString("INSERT INTO %1 (TeamId, TeamName, SubcategoryId, TeamLocation, TeamLogo) "
-                                  "VALUES ('%2', '%3', '%4', '%5', '%6')")
+    QString subQuery =QString("SELECT COALESCE(MAX(TeamId), 0) + 1 FROM %1").arg(this->GetTable());
+
+
+    //QByteArray byteArray = QByteArray::fromBase64(this->getTeamLogoBlob().toLatin1());
+    QString insertQuery = QString("SET IDENTITY_INSERT %1 ON;INSERT INTO %1 (TeamId, TeamName, SubcategoryId, TeamLocation, TeamLogo) "
+                                  "VALUES ((%2), '%3', '%4', '%5', CAST('%6' AS VARBINARY(MAX)))")
                               .arg(this->GetTable())
-                              .arg(this->getTeamId())
+                              .arg(subQuery)
                               .arg(this->getTeamName())
                               .arg(this->getSubcategoryId())
                               .arg(this->getTeamLocation())
@@ -19,6 +22,7 @@ void TeamModel::InsertTeam()
     qDebug() << insertQuery;
     this->Insert(insertQuery);
 }
+
 
 void TeamModel::UpdateTeam()
 {
@@ -34,16 +38,60 @@ void TeamModel::DeleteTeam()
     Delete(deleteQuery);
 }
 
-QString TeamModel::SelectTeam()
+
+std::vector<team> TeamModel::SelectTeam()
 {
-    QString selectQuery = QString("SELECT * FROM %1").arg(this->GetTable());
-    qDebug() << selectQuery;
+    std::unique_ptr<TeamModel> TM = std::make_unique<TeamModel>();
+
+    QString IdSelect = QString("SELECT TeamId FROM %1").arg(TM->GetTable());
+
+    std::vector<team>TeamVector;
 
 
+    QRegularExpression regexID(R"(\s*,\s*)");
 
-    QString result = this->Select(selectQuery);
+    // Розділення рядка за допомогою регулярного виразу
+
+
+    QString IdResult = TM->Select(IdSelect);
+    QStringList teamIdTokens = IdResult.split(regexID);
+
+    // Виведення результату
+    for (const QString& teamId : teamIdTokens) {
+
+
+    QString selectQuery = QString("SELECT * FROM %1 WHERE TeamId = %2").arg(TM->GetTable()).arg(teamId);
+    QString result = TM->Select(selectQuery);
     qDebug() << result;
-    return result;
+    QRegularExpression regex(R"((.*?), (.*?), (.*?), (.*?), (.*))");
+
+    // Використовуємо QRegularExpressionMatchIterator для знаходження всіх входжень, що відповідають регулярному виразу
+    QRegularExpressionMatchIterator regexIterator = regex.globalMatch(result);
+
+    // Перебираємо всі знайдені входження
+    while (regexIterator.hasNext()) {
+        QRegularExpressionMatch match = regexIterator.next();
+
+        // Отримуємо значення полів за номерами груп
+        QString teamId = match.captured(1);
+        QString teamName = match.captured(2);
+        QString subcategoryId = match.captured(3);
+        QString teamLocation = match.captured(4);
+        QString teamLogo = match.captured(5);
+
+
+
+        // Створюємо новий екземпляр Team і додаємо його до вектора
+        team Team;
+        Team.setTeamId(teamId.toInt());
+        Team.setTeamName(teamName);
+        Team.setSubcategoryId(subcategoryId.toInt());
+        Team.setTeamLocation(teamLocation.toInt());
+        Team.setTeamLogoBlob(teamLogo);
+        TeamVector.push_back(Team);
+    }
+    }
+    return TeamVector;
 }
 
 QString TeamModel::SelectLocations()

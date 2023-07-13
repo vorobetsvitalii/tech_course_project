@@ -6,6 +6,11 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QRegularExpressionMatchIterator>
+#include <QBuffer>
+#include <QImage>
+#include <regex>
+#include <sstream>
+#include <string>
 
 class TeamModel: public DbModel , public team
 {
@@ -13,9 +18,12 @@ class TeamModel: public DbModel , public team
 public:
     virtual const QString GetTable() const override;
     void InsertTeam();
+
     void UpdateTeam();
     void DeleteTeam();
-    QString SelectTeam();
+
+    static std::vector<team> SelectTeam();
+
     QString SelectLocations();
 
     static std::vector<team> SelectTeams();

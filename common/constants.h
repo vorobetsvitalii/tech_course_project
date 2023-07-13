@@ -11,9 +11,11 @@ public:
     static const std::string categoriesApi;
     static const std::string subcategoriesApi;
     static const std::string locationsGet;
-
+    static const std::string teamInsert;
+    static const std::string teamSelect;
     //JSON
     static const std::string categoriesArrayJson;
     static const std::string subcategoriesArrayJson;
+    static const std::string TeamsArrayJson;
 };
 #endif // CONSTANTS_H

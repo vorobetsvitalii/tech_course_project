@@ -54,6 +54,9 @@ list(APPEND PROJECT_SOURCES "../common/model/subcategory.cpp")
 list(APPEND PROJECT_SOURCES "../common/model/categoryCreator.cpp")
 list(APPEND PROJECT_SOURCES "../common/model/subcategoryCreator.cpp")
 list(APPEND PROJECT_SOURCES "../common/constants.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/team.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/team.h")
+list(APPEND PROJECT_SOURCES "../common/model/teamCreator.cpp")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Client

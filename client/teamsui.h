@@ -60,18 +60,25 @@ private:
 
 protected:
 
+    static QString comboBoxStyle;
+    static QString listViewStyle;
+
     void enterEvent(QEnterEvent* event);
     void leaveEvent(QEvent* event);
     std::map<int,std::string> GetLocations();
     std::map<int,std::string> GetCategories();
+    std::vector<Subcategory> GetSubCategories();
+    void CreateTeam();
+    void Cancel();
 
 
 
 public:
-    std::map<int,std::string>LocationMap = GetLocations();
-    std::map<int,std::string>CategoriesMap;
+    std::map<int,std::string> LocationMap = GetLocations();
+    std::map<int,std::string> CategoriesMap;
+    std::vector<Subcategory> SubCategoriesVector;
 
-
+    std::vector<Subcategory> SubCategoriesAll = GetSubCategories();
     void initializeLocationDrop();
     void initializeCategoryDrop();
     void initializeSubCategoryDrop();
@@ -93,8 +100,11 @@ public:
     TeamsUI();
 
 
+
+
 private slots:
     void openFileExplorer();
+    void onCategoryActivated(int);
 };
 
 

@@ -57,6 +57,7 @@
 
 #include <iostream>
 #include <QDebug>
+#include <QBuffer>
 #include <random>
 #include <algorithm>
 #include <iterator>
@@ -110,6 +111,8 @@ private:
     void GetSubcategories(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse& response);
     void PostSubcategories(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void GetLocations(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
+    void PostTeam(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
+    void GetTeams(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
 
 };
 
