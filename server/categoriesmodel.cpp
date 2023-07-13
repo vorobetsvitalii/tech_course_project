@@ -22,6 +22,19 @@ void CategoriesModel::InsertCategory()
     QString insertQuery = "INSERT INTO " + GetTable() + " (CategoryName) VALUES ('" + QString::fromStdString(this->getName()) + "')";
     Insert(insertQuery);
 }
+
+void CategoriesModel::UpdateCategory()
+{
+    QString updateQuery = "UPDATE " + GetTable() + " SET CategoryName='" + QString::fromStdString(this->getName()) + "' WHERE CategoryId=" + QString::number(this->getId());
+    Update(updateQuery);
+}
+
+void CategoriesModel::DeleteCategory()
+{
+    QString deleteQuery = "DELETE FROM " + GetTable() + " WHERE CategoryId=" + QString::number(this->getId());
+    Delete(deleteQuery);
+}
+
 std::vector<Category> CategoriesModel::SelectCategory()
 {
     std::unique_ptr<CategoriesModel> cm = std::make_unique<CategoriesModel>();
@@ -45,14 +58,19 @@ std::vector<Category> CategoriesModel::SelectCategory()
     return categoryVector;
 
 }
-void CategoriesModel::UpdateCategory()
+
+void CategoriesModel::EditCategories(std::vector<CategoriesModel> items)
 {
-    QString updateQuery = "UPDATE " + GetTable() + " SET CategoryName='" + QString::fromStdString(this->getName()) + "' WHERE CategoryId=" + QString::number(this->getId());
-    Update(updateQuery);
+    for(CategoriesModel& c : items)
+    {
+        c.UpdateCategory();
+    }
 }
 
-void CategoriesModel::DeleteCategory()
+void CategoriesModel::DeleteCategories(std::vector<CategoriesModel> items)
 {
-    QString deleteQuery = "DELETE FROM " + GetTable() + " WHERE CategoryId=" + QString::number(this->getId());
-    Delete(deleteQuery);
+    for(CategoriesModel& c : items)
+    {
+        c.DeleteCategory();
+    }
 }

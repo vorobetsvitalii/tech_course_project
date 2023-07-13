@@ -460,7 +460,7 @@ void RequestHandler::GetSubcategories(Poco::Net::HTTPServerRequest &request, Poc
         std::string key = parameters[0].second;
         if(CheckToken(key))
         {
-            std::vector<Subcategory> subcategoriesVector = SubcategoriesModel::SelectCategory();
+            std::vector<Subcategory> subcategoriesVector = SubcategoriesModel::SelectSubcategory();
 
             QJsonArray subcategoriesArray;
             for (Subcategory& subcategory : subcategoriesVector) {
@@ -524,7 +524,7 @@ void RequestHandler::PostSubcategories(Poco::Net::HTTPServerRequest& request, Po
             std::unique_ptr<SubcategoriesModel> model = std::make_unique<SubcategoriesModel>();
             model->LoadJsonObject(subcategoryObject);
             qDebug() << model->getName();
-            model->InsertCategory();
+            model->InsertSubcategory();
 
             response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
             response.setContentType("text/plain");

@@ -20,6 +20,20 @@ void TeamModel::InsertTeam()
     this->Insert(insertQuery);
 }
 
+void TeamModel::UpdateTeam()
+{
+    QString updateQuery = "UPDATE " + GetTable() + " SET TeamName='" + this->getTeamName() + "', SubcategoryId="
+                          + QString::number(this->getSubcategoryId()) + ", TeamLocation=" + QString::number(this->getTeamLocation()) +
+                          ", TeamLogo='" + this->getTeamLogoBlob() + "' WHERE TeamId=" + QString::number(this->getTeamId());
+    Update(updateQuery);
+}
+
+void TeamModel::DeleteTeam()
+{
+    QString deleteQuery = "DELETE FROM " + GetTable() + " WHERE TeamId=" + QString::number(this->getTeamId());
+    Delete(deleteQuery);
+}
+
 QString TeamModel::SelectTeam()
 {
     QString selectQuery = QString("SELECT * FROM %1").arg(this->GetTable());
@@ -39,6 +53,46 @@ QString TeamModel::SelectLocations()
     QString result = this->Select(selectQuery);
     qDebug() << result;
     return result;
+}
+
+std::vector<team> TeamModel::SelectTeams()
+{
+    std::unique_ptr<TeamModel> tm = std::make_unique<TeamModel>();
+    QString selectQuery = "SELECT TeamId, TeamName, SubcategoryId, TeamLocation, TeamLogo FROM " + tm->GetTable();
+    QString result = tm->Select(selectQuery);
+
+    std::vector<team> items;
+    QStringList dataVector = result.split(", ");
+    for(int i = 0; i < dataVector.count(); i += 5)
+    {
+        team t = TeamModel();
+        t.setTeamId(dataVector[i].toInt());
+        t.setTeamName(dataVector[i+1]);
+        t.setSubcategoryId(dataVector[i+2].toInt());
+        t.setTeamLocation(dataVector[i+3].toInt());
+        t.setTeamLogoBlob(dataVector[i+4]);
+        items.push_back(t);
+
+    }
+
+    return items;
+
+}
+
+void TeamModel::EditTeams(std::vector<TeamModel> items)
+{
+    for(TeamModel& t : items)
+    {
+        t.UpdateTeam();
+    }
+}
+
+void TeamModel::DeleteTeams(std::vector<TeamModel> items)
+{
+    for(TeamModel& t : items)
+    {
+        t.DeleteTeam();
+    }
 }
 
 QJsonObject TeamModel::LocationJson(QString str)
