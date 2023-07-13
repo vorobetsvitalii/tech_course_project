@@ -42,6 +42,8 @@ set(PROJECT_SOURCES
         addsubcategory.cpp
         addsubcategory.h
         addcategory.ui
+        customcontextmenu.cpp
+        customcontextmenu.h
 )
 
 

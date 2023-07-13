@@ -242,6 +242,7 @@ std::unique_ptr<QWidget> MenuButton::initializeIAContent()
     widget->layout()->deleteLater();
 
     IAContentLayout->addLayout(categoriesVLayout);
+    IAContentLayout->addSpacing(30);
     IAContentLayout->addLayout(subcategoriesVLayout);
 
     widget->setLayout(IAContentLayout);

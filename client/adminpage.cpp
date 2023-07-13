@@ -8,12 +8,13 @@ AdminPage::AdminPage(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->resize(620, 579);
+    this->resize(720, 480);
     this->setWindowTitle("Sports Hub");
     this->setStyleSheet("QWidget {background-color: rgb(255, 255, 255); }");
 
     addCategoryWindow = std::make_unique<AddCategory>();
     addSubcategoryWindow  = std::make_unique<AddSubcategory>();
+    contextMenu = std::make_unique<CustomContextMenu>();
 
     initializeLayouts(); // Tools initialization
     initializeButton();
@@ -33,6 +34,7 @@ AdminPage::AdminPage(QWidget *parent) :
     localNavigationLayout->addWidget(contentArea.get());
 
     appendCategories();
+    appendSubcategories();
 
     genericGridLayout->addWidget(topHWidget.get(), 0, 0); // Generic grid layout forming
     genericGridLayout->addLayout(configurationHLayout.get(), 1, 0);
@@ -300,7 +302,7 @@ void AdminPage::appendCategories()
         return Client::getInstance().GetCategories();
     });
 
-    const auto& categories = future.get();
+    categories = future.get();
     std::vector<QPushButton*> buttons(categories.size());
 
     std::transform(categories.begin(), categories.end(), buttons.begin(), [](const Category& category) {
@@ -319,18 +321,61 @@ void AdminPage::appendCategories()
                               "color: red;"
                               "}");
 
+        connect(button, &QPushButton::clicked, this, &AdminPage::onCategoryClicked);
         categoriesVLayout->insertWidget(1, button);
     }
 
     categoriesVLayout->setSpacing(20);
-
-    MenuButton::setSubcategoriesLayout(subcategoriesVLayout.get());
     MenuButton::setCategoriesLayout(categoriesVLayout.get());
 }
 
 void AdminPage::appendSubcategories()
 {
+    auto future = std::async(std::launch::async, [](){
+        return Client::getInstance().GetSubcategories();
+    });
 
+    const auto& subcategories = future.get();
+    std::vector<QPushButton*> buttons(subcategories.size());
+
+    for(auto& el : subcategories)
+    {
+        subcategories_map.insert(QString::fromStdString(el.getName()), el.getCategoryId());
+        subcategories_map_id.insert(QString::fromStdString(el.getName()), el.getId());
+    }
+
+    std::transform(subcategories.begin(), subcategories.end(), buttons.begin(), [](const Subcategory& subcategory) {
+        return (new QPushButton(QString::fromStdString(subcategory.getName())));
+    });
+
+    for (auto* button : buttons) {
+        button->setStyleSheet("QPushButton {"
+                              "border: 1px solid gray;"
+                              "border-radius: 3px;"
+                              "padding: 5px;"
+                              "font-weight: bold;"
+                              "color: gray;"
+                              "}"
+                              "QPushButton:hover {"
+                              "color: red;"
+                              "}");
+
+        button->setContextMenuPolicy(Qt::CustomContextMenu);
+        button->setMenu(contextMenu.get());
+        button->hide();
+
+        connect(button, &QPushButton::customContextMenuRequested, [=](const QPoint &pos) {
+            contextMenu->exec(button->mapToGlobal(pos));
+        });
+
+        connect(button, &QPushButton::released, this, &AdminPage::onSubcategoryClicked);
+
+        subcategoriesVLayout->insertWidget(1, button);
+    }
+
+    subcategoriesVLayout->setSpacing(20);
+
+    MenuButton::setSubcategoriesLayout(subcategoriesVLayout.get());
 }
 
 bool AdminPage::checkIfStringEmpty(const QString &temp_string)
@@ -344,20 +389,33 @@ void AdminPage::onLogoutDone() {
 
 void AdminPage::on_add_category_clicked()
 {
+    addCategoryWindow->setModal(true);
     addCategoryWindow->show();
 }
 
 void AdminPage::on_add_subcategory_clicked()
 {
-    addSubcategoryWindow->show();
+    if(tempCategoryId != NULL)
+    {
+        addSubcategoryWindow->setModal(true);
+        addSubcategoryWindow->show();
+    }
+    else { QMessageBox::warning(this, "CategoryError", "You need to choose some category first!"); }
 }
 
 void AdminPage::on_save_changes_clicked()
 {
     if(!checkIfStringEmpty(tempCategory))
     {
-        Client::getInstance().PostCategories(tempCategory.toStdString());
+        Client::getInstance().PostCategory(tempCategory.toStdString());
         tempCategory = "";
+    }
+
+    if((!checkIfStringEmpty(tempSubcategory)) and (tempCategoryId != NULL))
+    {
+        subcategories_map_id.insert(tempSubcategory, Client::getInstance().GetSubcategories().at(Client::getInstance().GetSubcategories().size() - 1).getId());
+        Client::getInstance().PostSubcategory(tempSubcategory.toStdString(), tempCategoryId);
+        tempSubcategory = "";
     }
 }
 
@@ -365,7 +423,6 @@ void AdminPage::handleNewButtonAdded()
 {
     tempCategory = addCategoryWindow->getCategoryName();
 
-<<<<<<< HEAD
     if(!checkIfStringEmpty(tempCategory))
     {
         QPushButton* newButton = new QPushButton(tempCategory);
@@ -381,17 +438,18 @@ void AdminPage::handleNewButtonAdded()
                                  "color: red;"
                                  "}");
 
+        connect(newButton, &QPushButton::clicked, this, &AdminPage::onCategoryClicked);
         categoriesVLayout->insertWidget(1, newButton);
     }
 }
 
 void AdminPage::handleNewSubcategoryAdded()
 {
-    tempCategory = addSubcategoryWindow->getSubcategoryName();
+    tempSubcategory = addSubcategoryWindow->getSubcategoryName();
 
-    if(!checkIfStringEmpty(tempCategory))
+    if(!checkIfStringEmpty(tempSubcategory))
     {
-        QPushButton* newButton = new QPushButton(tempCategory);
+        QPushButton* newButton = new QPushButton(tempSubcategory);
 
         newButton->setStyleSheet("QPushButton {"
                                  "border: 1px solid gray;"
@@ -404,14 +462,17 @@ void AdminPage::handleNewSubcategoryAdded()
                                  "color: red;"
                                  "}");
 
+        subcategories_map.insert(tempSubcategory, tempCategoryId);
+
+        newButton->setContextMenuPolicy(Qt::CustomContextMenu);
+        newButton->setMenu(contextMenu.get());
+
+        connect(newButton, &QPushButton::customContextMenuRequested, this, [=](const QPoint &pos) {
+            contextMenu->exec(newButton->mapToGlobal(pos));
+        });
+
         subcategoriesVLayout->insertWidget(1, newButton);
     }
-
-    subcategoriesVLayout->setSpacing(20);
-=======
-    categoriesVLayout->insertWidget(1, newButton);
-    Client::getInstance().PostCategory(addCategoryWindow->getCategoryName().toStdString());
->>>>>>> 5de63976471c602163427540a8b27f3ad17d7f9d
 }
 
 void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)
@@ -426,4 +487,62 @@ void AdminPage::onCategorySelected(Category *category)
    // обробка вибраної сторінки
     pageLabel->setText(QString::fromStdString(category->getName()));
     qDebug() << "Category: " << category->getName() << "\n";
+}
+
+void AdminPage::onCategoryClicked()
+{
+    QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());
+
+    clickedButton->setStyleSheet("QPushButton {"
+                                 "border: 1px solid gray;"
+                                 "border-radius: 3px;"
+                                 "padding: 5px;"
+                                 "font-weight: bold;"
+                                 "color: red;"
+                                 "}");
+
+    if (previousButton != nullptr)
+    {
+        previousButton->setStyleSheet("QPushButton {"
+                                      "border: 1px solid gray;"
+                                      "border-radius: 3px;"
+                                      "padding: 5px;"
+                                      "font-weight: bold;"
+                                      "color: gray;"
+                                      "}"
+                                      "QPushButton:hover {"
+                                      "color: red;"
+                                      "}");
+    }
+
+    previousButton = clickedButton;
+
+    for(const auto& el : categories)
+    {
+        if(el.getName() == clickedButton->text().toStdString())
+        {
+            tempCategoryId = el.getId();
+            break;
+        }
+    }
+
+    for(int i = 1; i < subcategoriesVLayout->count(); i++)
+    {
+        QPushButton* button = qobject_cast<QPushButton*>(subcategoriesVLayout->itemAt(i)->widget());
+
+        if(subcategories_map[button->text()] == tempCategoryId)
+        {
+            button->show();
+        }
+        else { button->hide();}
+    }
+}
+
+void AdminPage::onSubcategoryClicked()
+{
+    QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());
+
+    tempSubcategoryId = subcategories_map_id[clickedButton->text()];
+
+    clickedButton->setText(clickedButton->text() + QString::number(tempSubcategoryId));
 }

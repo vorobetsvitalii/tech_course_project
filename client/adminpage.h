@@ -12,6 +12,8 @@
 #include <QScrollArea>
 #include <QGraphicsDropShadowEffect>
 #include <memory>
+#include <vector>
+#include <QMap>
 #include <iostream>
 #include <future>
 
@@ -22,6 +24,7 @@
 #include "client.h"
 #include "menubutton.h"
 #include "hmenu.h"
+#include "customcontextmenu.h"
 
 namespace Ui {
 class AdminPage;
@@ -81,14 +84,25 @@ private:
     std::unique_ptr<QPushButton> addCategoryButton;
     std::unique_ptr<QPushButton> addSubcategoryButton;
 
+    QPushButton* previousButton = nullptr;
+
     std::unique_ptr<QLabel> pageLabel;
 
     std::unique_ptr<QScrollArea> contentArea;
 
     std::unique_ptr<AddCategory> addCategoryWindow;
     std::unique_ptr<AddSubcategory> addSubcategoryWindow;
+    std::unique_ptr<CustomContextMenu> contextMenu;
+
+    int tempCategoryId = NULL;
+    int tempSubcategoryId = NULL;
 
     QString tempCategory = "";
+    QString tempSubcategory = "";
+
+    std::vector<Category> categories;
+    QMap<QString, int> subcategories_map;
+    QMap<QString, int> subcategories_map_id;
 
     void initializeLayouts();
     void initializeWidgets();
@@ -113,6 +127,8 @@ public slots:
     void handleNewSubcategoryAdded();
     void OnMenuItemClicked(MenuButton*);
     void onCategorySelected(Category* category);
+    void onCategoryClicked();
+    void onSubcategoryClicked();
 };
 
 #endif // ADMINPAGE_H
