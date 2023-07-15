@@ -2,12 +2,10 @@
 #include "loginwindow.h"
 #include "clientsession.h"
 
-
 Client::Client()
 {
     handleServerConnection();
 }
-
 
 void Client::handleServerConnection()
 {
@@ -222,6 +220,24 @@ std::vector<Subcategory> Client::GetSubcategories()
     return subcategories;
 }
 
+std::vector<team> Client::GetTeams()
+{
+    TeamCreator teamCreator;
+    std::vector<std::unique_ptr<Entity>> entities = Client::getInstance().GetEntity(Constants::teamSelect, Constants::TeamsArrayJson, teamCreator);
+
+    std::vector<team> Teams;
+    for (std::unique_ptr<Entity>& entity : entities)
+    {
+        team* Team = dynamic_cast<team*>(entity.get());
+        if (Team)
+        {
+            Teams.push_back(*Team);
+        }
+    }
+
+    return Teams;
+}
+
 void Client::PostCategory(const std::string& categoryName)
 {
     CategoryCreator categoryCreator;
@@ -238,3 +254,30 @@ void Client::PostSubcategory(const std::string& subcategoryName, int categoryId)
     subcategory->setCategoryId(categoryId);
     Client::getInstance().PostEntity(Constants::subcategoriesApi, *subcategory, subcategoryCreator);
 }
+
+void Client::PostTeam(team& Team)
+{
+    TeamCreator teamCreator;
+    //team* Team= new team();
+    Client::getInstance().PostEntity(Constants::teamInsert, Team , teamCreator);
+}
+
+bool Client::sendSubcategoryId(int subcategoryId) {
+    std::string url = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/subcategory?id="+QString::number(subcategoryId).toStdString();
+
+    Poco::Net::HTTPClientSession session(IP_ADDRESS, PORT);
+    Poco::Net::HTTPRequest request = Poco::Net::HTTPRequest(Poco::Net::HTTPRequest::HTTP_GET, url);
+    session.sendRequest(request);
+
+    Poco::Net::HTTPResponse response;
+    session.receiveResponse(response);
+
+    if(response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK){
+        // to do
+        return true;
+    }
+    return false;
+}
+
+std::string Client::IP_ADDRESS = "127.0.0.1";
+int Client::PORT = 8080;

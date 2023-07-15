@@ -1,9 +1,11 @@
 #include "menubutton.h"
 
-MenuButton::MenuButton(const QString& name, const QString& tooltip, const QIcon& icon, QWidget* parent)
+MenuButton::MenuButton(const QString& name, const QString& tooltip, const QIcon& icon, QWidget* parent, AdminPage* adminpage)
     : QPushButton(parent), originalIcon(icon)
 {
     button = this;
+
+    this->adminpage = adminpage;
 
     button->setFlat(true);
     button->setToolTip(tooltip);
@@ -203,17 +205,21 @@ std::unique_ptr<QWidget> MenuButton::initializeFooterContent()
 
 std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
 {
-    std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
+    std::unique_ptr<ResizableWidget> widget = std::make_unique<ResizableWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
-    //QLabel* label = new QLabel("Teams");
     TeamsUI* teamui = new TeamsUI();
-
+    TableWidget* tableWidget = new TableWidget(); // Створюємо табличку
 
     layout->addWidget(teamui);
-    //layout->addWidget(label);
+    layout->addWidget(tableWidget); // Додаємо табличку до layout
 
     widget->setLayout(layout);
     widget->setWindowTitle("Teams");
+
+    // Підписка на сигнал adminPageResized
+    QObject::connect(adminpage, &AdminPage::adminPageResized, widget.get(), &ResizableWidget::resize);
+    QObject::connect(adminpage, &AdminPage::adminPageResized, tableWidget, &TableWidget::resize);
+
     return widget;
 }
 

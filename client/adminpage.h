@@ -26,6 +26,8 @@
 #include "hmenu.h"
 #include "customcontextmenu.h"
 
+class MenuButton;
+
 namespace Ui {
 class AdminPage;
 }
@@ -132,6 +134,20 @@ public slots:
     void onCategorySelected(Category* category);
     void onCategoryClicked();
     void onSubcategoryClicked();
+
+signals:
+    void adminPageResized();
+
+protected:
+    void resizeEvent(QResizeEvent *event) override
+    {
+        // Відправка сигналу про зміну розміру
+        emit adminPageResized();
+        qDebug() << "Admin Resized";
+
+        // Виклик базової реалізації resizeEvent
+        QWidget::resizeEvent(event);
+    }
 };
 
 #endif // ADMINPAGE_H

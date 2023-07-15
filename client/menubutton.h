@@ -16,13 +16,18 @@
 #include <QHBoxLayout>
 #include <map>
 #include "teamsui.h"
+#include "tableWidget.h"
+#include "resizableWidget.h"
+#include "adminpage.h"
+
+class AdminPage;
 
 class MenuButton : public QPushButton
 {
     Q_OBJECT
 
 public:
-    MenuButton(const QString& name, const QString& tooltip, const QIcon& icon, QWidget* parent = nullptr);
+    MenuButton(const QString& name, const QString& tooltip, const QIcon& icon, QWidget* parent = nullptr, AdminPage* adminpage = nullptr);
     void SetAdvertising(MenuButton* clickedButton ,QScrollArea* Content);
     void SetBanners(MenuButton* clickedButton ,QScrollArea* Content);
     void SetNewsPartners(MenuButton* clickedButton ,QScrollArea* Content);
@@ -57,6 +62,7 @@ private:
     std::unique_ptr<QWidget> languagesContent=initializeLanguagesContent();
     std::unique_ptr<QWidget> iaContent=initializeIAContent();
 
+    AdminPage* adminpage;
 
     QPushButton* button;
     QIcon originalIcon;

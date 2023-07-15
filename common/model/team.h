@@ -1,26 +1,29 @@
 #ifndef TEAM_H
 #define TEAM_H
 #include "../interface/IJsonSerializable.h"
-
-class team : public IJsonSerializable
+#include "entity.h"
+#include <QImage>
+#include <QByteArray>
+#include <QBuffer>
+class team : public Entity
 {
 private:
-    uint16_t TeamId;
-    uint16_t SubcategoryId;
-    uint16_t TeamLocation;
+    int TeamId;
+    int SubcategoryId;
+    int TeamLocation;
     QString TeamLogoBlob;
     QString TeamName;
 
 public:
-    uint16_t getTeamId();
-    uint16_t getTeamLocation();
-    uint16_t getSubcategoryId();
+    int getTeamId();
+    int getTeamLocation();
+    int getSubcategoryId();
     QString getTeamLogoBlob();
     QString getTeamName();
 
-    void setTeamId(uint16_t);
-    void setTeamLocation(uint16_t);
-    void setSubcategoryId(uint16_t);
+    void setTeamId(int);
+    void setTeamLocation(int);
+    void setSubcategoryId(int);
     void setTeamLogoBlob(QString);
     void setTeamName(QString);
 

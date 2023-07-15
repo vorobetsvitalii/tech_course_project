@@ -8,7 +8,7 @@ AdminPage::AdminPage(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->resize(720, 480);
+    this->resize(820, 480);
     this->setWindowTitle("Sports Hub");
     this->setStyleSheet("QWidget {background-color: rgb(255, 255, 255); }");
 
@@ -241,7 +241,7 @@ void AdminPage::itemsMenuVerticalLayout()
 
     for(int i = 0; i < menuItemsTooltips.size(); i++) {
         QIcon icon("../img/"+menuItemsTooltips[i]+".png");
-        MenuButton* menuItemButton = new MenuButton(menuItemsNames[i], menuItemsTooltips[i], icon, centralWidget);
+        MenuButton* menuItemButton = new MenuButton(menuItemsNames[i], menuItemsTooltips[i], icon, centralWidget, this);
 
         QObject::connect(menuItemButton, &QPushButton::clicked, this, [this, menuItemButton]() {
             OnMenuItemClicked(menuItemButton);

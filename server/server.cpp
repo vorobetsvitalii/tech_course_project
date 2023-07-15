@@ -32,6 +32,11 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             {
                 GetLocations(request, response);
             }
+            else if(uri.find(Constants::teamSelect) != std::string::npos)
+            {
+                GetTeams(request, response);
+
+            }
             else if(uri.find("/test")!= std::string::npos)
             {
                 //повністю для тесту запитів
@@ -61,6 +66,11 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             {
                 qDebug() << "subcategories\n";
                 PostSubcategories(request, response);
+            }
+            if(uri.find(Constants::teamInsert)!=std::string::npos)
+            {
+                qDebug()<< "team";
+                PostTeam(request, response);
             }
             else
             {
@@ -572,6 +582,103 @@ void RequestHandler::GetLocations(Poco::Net::HTTPServerRequest &request, Poco::N
         // Обробити помилку розбору JSON
         response.setStatusAndReason(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
         response.send() << "Error parsing JSON: " << e.message();
+    }
+}
+
+void RequestHandler::PostTeam(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
+{
+    try {
+        std::istream& requestBody = request.stream();
+        std::string body;
+        Poco::StreamCopier::copyToString(requestBody, body);
+
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(QByteArray::fromStdString(body));
+        if (jsonDocument.isNull()) {
+            throw std::runtime_error("Invalid JSON data");
+        }
+
+        QJsonObject teamObject = jsonDocument.object();
+        if (CheckToken(key)) {
+            qDebug() << teamObject << "\n";
+
+            std::unique_ptr<TeamModel> model = std::make_unique<TeamModel>();
+            model->LoadJsonObject(teamObject);
+            model->InsertTeam();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Team added successfully", 26);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
+void RequestHandler::GetTeams(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
+{
+    try {
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+        if(CheckToken(key))
+        {
+            std::vector<team> TeamsVector = TeamModel::SelectTeam();
+
+            QJsonArray TeamsArray;
+            for (team& Team : TeamsVector) {
+                QJsonObject teamObject = Team.GetJsonObject();
+                TeamsArray.append(teamObject);
+            }
+
+            QJsonObject responseObject;
+            responseObject["Teams"] = TeamsArray;
+            qDebug() << responseObject;
+            QJsonDocument responseDocument(responseObject);
+            QByteArray responseData = responseDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("application/json");
+            response.setContentLength(responseData.length());
+            response.sendBuffer(responseData.data(), responseData.length());
+        }
+        else
+        {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+
     }
 }
 

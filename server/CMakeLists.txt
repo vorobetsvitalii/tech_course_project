@@ -61,12 +61,14 @@ add_executable(
 
 # Link against the Qt6 libraries
 target_link_libraries(Server_poco PRIVATE Qt6::Core Qt6::Sql)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui) # Додаємо модуль Core
+
+target_link_libraries(Server_poco PRIVATE Qt6::Core Qt6::Gui) # Додаємо Qt6::Core та Qt6::Gui
 
 
-#Poco installation start
 
 
-# Include directories for POCO
+
 
 include_directories("${POCO_DIR}/include")
 

@@ -30,8 +30,10 @@
 #include "../common/model/category.h"
 #include "../common/model/entity.h"
 #include "../common/model/subcategory.h"
+#include "../common/model/team.h"
 #include "../common/model/categoryCreator.h"
 #include "../common/model/subcategoryCreator.h"
+#include "../common/model/teamCreator.h"
 #include "../common/constants.h"
 #include "HTTPRequestManager.h"
 
@@ -55,13 +57,16 @@ public:
     void PostEntity(const std::string& url, Entity& object, Creator& creator);
     static std::vector<Category> GetCategories();
     static std::vector<Subcategory> GetSubcategories();
+    static std::vector<team> GetTeams();
     static void PostCategory(const std::string& categoryName);
     static void PostSubcategory(const std::string& categoryName, int categoryId);
+    static void PostTeam(team&);
+    static bool sendSubcategoryId(int subcategoryId);
 private:
     Client();
 
-    const std::string IP_ADDRESS = "127.0.0.1";
-    const int PORT = 8080;
+    static std::string IP_ADDRESS;
+    static int PORT;
 
     HTTPRequestManager hTTPRequestManager;
 

@@ -13,39 +13,43 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        loginwindow.cpp
-        loginwindow.h
-        client.cpp
-        client.h
-        adminpage.cpp
-        adminpage.h
-        loginwindow.ui
-        adminpage.ui
-        admininfowidget.h
-        admininfowidget.cpp
-        dropdownmenu.h
-        dropdownmenu.cpp
-        clientsession.h
-        clientsession.cpp
-        HTTPRequestManager.cpp
-        HTTPRequestManager.h
-        menubutton.cpp
-        menubutton.h
-        addcategory.cpp
-        addcategory.h
-        addcategory.ui
-        hmenu.h
-        hmenu.cpp
-        hmenuitem.h
-        hmenuitem.cpp
-        addsubcategory.cpp
-        addsubcategory.h
-        addcategory.ui
-        customcontextmenu.cpp
-        customcontextmenu.h
-        teamsui.h
-        teamsui.cpp
+    main.cpp
+    loginwindow.cpp
+    loginwindow.h
+    client.cpp
+    client.h
+    adminpage.cpp
+    adminpage.h
+    loginwindow.ui
+    adminpage.ui
+    admininfowidget.h
+    admininfowidget.cpp
+    dropdownmenu.h
+    dropdownmenu.cpp
+    clientsession.h
+    clientsession.cpp
+    HTTPRequestManager.cpp
+    HTTPRequestManager.h
+    menubutton.cpp
+    menubutton.h
+    addcategory.cpp
+    addcategory.h
+    addcategory.ui
+    hmenu.h
+    hmenu.cpp
+    hmenuitem.h
+    hmenuitem.cpp
+    addsubcategory.cpp
+    addsubcategory.h
+    addcategory.ui
+    customcontextmenu.cpp
+    customcontextmenu.h
+    teamsui.h
+    teamsui.cpp
+    tableWidget.h
+    tableWidget.cpp
+    resizableWidget.h
+    resizableWidget.cpp
 )
 
 
@@ -54,6 +58,9 @@ list(APPEND PROJECT_SOURCES "../common/model/subcategory.cpp")
 list(APPEND PROJECT_SOURCES "../common/model/categoryCreator.cpp")
 list(APPEND PROJECT_SOURCES "../common/model/subcategoryCreator.cpp")
 list(APPEND PROJECT_SOURCES "../common/constants.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/team.cpp")
+list(APPEND PROJECT_SOURCES "../common/model/team.h")
+list(APPEND PROJECT_SOURCES "../common/model/teamCreator.cpp")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Client
@@ -69,13 +76,13 @@ else()
         add_library(Client SHARED
             ${PROJECT_SOURCES}
         )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(Client
-            ${PROJECT_SOURCES}
-        )
-    endif()
+    # Define properties for Android with Qt 5 after find_package() calls as:
+    #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+else()
+    add_executable(Client
+        ${PROJECT_SOURCES}
+    )
+endif()
 endif()
 
 target_link_libraries(Client PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
