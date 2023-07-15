@@ -2,6 +2,8 @@
 
 CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
 {
+    addCategoryWindow = new AddCategory();
+
     QAction *action1 = new QAction("Hide", this);
     QAction *action2 = new QAction("Delete", this);
     QAction *action3 = new QAction("Edit", this);
@@ -27,6 +29,11 @@ CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
                         "");
 }
 
+void CustomContextMenu::setSubcategoryIndex(const int &index_)
+{
+    index = index_;
+}
+
 void CustomContextMenu::handleContextMenuRequested(const QPoint &pos)
 {
     emit contextMenuRequested(pos);
@@ -44,6 +51,7 @@ void CustomContextMenu::handleContextMenuAction()
         }
         else if (senderAction->text() == "Delete")
         {
+            addCategoryWindow->show();
             qDebug() << "Delete action triggered!";
         }
         else if (senderAction->text() == "Edit")
@@ -52,3 +60,5 @@ void CustomContextMenu::handleContextMenuAction()
         }
     }
 }
+
+int CustomContextMenu::index = NULL;

@@ -3,6 +3,7 @@
 
 #include <QMenu>
 #include <QAction>
+#include "addcategory.h"
 
 class CustomContextMenu : public QMenu
 {
@@ -10,6 +11,13 @@ class CustomContextMenu : public QMenu
 
 public:
     explicit CustomContextMenu(QWidget *parent = nullptr);
+
+    static void setSubcategoryIndex(const int& index_);
+
+private:
+    AddCategory* addCategoryWindow;
+
+    static int index;
 
 signals:
     void contextMenuRequested(const QPoint &pos);

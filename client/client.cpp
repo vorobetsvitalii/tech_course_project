@@ -238,8 +238,3 @@ void Client::PostSubcategory(const std::string& subcategoryName, int categoryId)
     subcategory->setCategoryId(categoryId);
     Client::getInstance().PostEntity(Constants::subcategoriesApi, *subcategory, subcategoryCreator);
 }
-
-
-
-
-

@@ -85,6 +85,7 @@ private:
     std::unique_ptr<QPushButton> addSubcategoryButton;
 
     QPushButton* previousButton = nullptr;
+    QPushButton* previousSubcategory = nullptr;
 
     std::unique_ptr<QLabel> pageLabel;
 
@@ -96,6 +97,8 @@ private:
 
     int tempCategoryId = NULL;
     int tempSubcategoryId = NULL;
+    bool saveCategoryChanges = false;
+    bool saveSubcategoryChanges = false;
 
     QString tempCategory = "";
     QString tempSubcategory = "";
