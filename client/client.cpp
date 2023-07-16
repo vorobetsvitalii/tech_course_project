@@ -263,7 +263,7 @@ void Client::PostTeam(team& Team)
 }
 
 bool Client::sendSubcategoryId(int subcategoryId) {
-    std::string url = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/subcategory?id="+QString::number(subcategoryId).toStdString();
+    std::string url = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/subcategory?id=" + std::to_string(subcategoryId);
 
     Poco::Net::HTTPClientSession session(IP_ADDRESS, PORT);
     Poco::Net::HTTPRequest request = Poco::Net::HTTPRequest(Poco::Net::HTTPRequest::HTTP_GET, url);

@@ -26,7 +26,9 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             }
             else if(uri.find(Constants::subcategoriesApi) != std::string::npos)
             {
-                GetSubcategories(request, response);
+                 if(uri.find("/send") != std::string::npos) 
+                    ReceiveSubcategory(request, response);
+                else GetSubcategories(request, response);
             }
             else if(uri.find(Constants::locationsGet) != std::string::npos)
             {
@@ -559,6 +561,21 @@ void RequestHandler::PostSubcategories(Poco::Net::HTTPServerRequest& request, Po
         response.setContentType("text/plain");
         response.sendBuffer(e.what(), std::strlen(e.what()));
     }
+}
+
+void RequestHandler::ReceiveSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+    std::string id = parameters[0].second;
+    try {
+        qDebug() << "Received ID: " << id;
+        // to do
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+    }
+    catch(std::exception& ex){
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    response.send();
 }
 
 void RequestHandler::GetLocations(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
