@@ -51,6 +51,7 @@ void CustomContextMenu::handleContextMenuAction()
         }
         else if (senderAction->text() == "Delete")
         {
+            Client::sendSubcategoryId(index);
             addCategoryWindow->show();
             qDebug() << "Delete action triggered!";
         }

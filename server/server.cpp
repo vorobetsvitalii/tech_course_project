@@ -32,6 +32,12 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             {
                 GetLocations(request, response);
             }
+            else if(uri.find(Constants::subcategoriesApi) != std::string::npos)
+            {
+                if(uri.find("/send") != std::string::npos)
+                    ReceiveSubcategory(request, response);
+                GetSubcategories(request, response);
+            }
             else if(uri.find(Constants::teamSelect) != std::string::npos)
             {
                 GetTeams(request, response);
@@ -738,4 +744,22 @@ std::string GenerateRandomKey()
     std::string readableKey = ss.str();
 
     return readableKey;
+}
+
+void RequestHandler::ReceiveSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+    std::string id = parameters[0].second;
+
+    std::unique_ptr<SubcategoriesModel> subcategoriesModel = std::make_unique<SubcategoriesModel>("Clown", QString::fromStdString(id).toInt());
+
+    qDebug() << "Subcategory id = " << id;
+
+    try {
+        subcategoriesModel->DeleteSubcategory();
+    }
+    catch(std::exception& ex){
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    response.send();
 }

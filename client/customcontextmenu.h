@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QAction>
 #include "addcategory.h"
+#include "client.h"
 
 class CustomContextMenu : public QMenu
 {
