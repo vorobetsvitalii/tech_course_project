@@ -34,6 +34,11 @@ void CustomContextMenu::setSubcategoryIndex(const int &index_)
     index = index_;
 }
 
+void CustomContextMenu::setTempSubcategoryButton(QPushButton* temp_subcategory_button_)
+{
+    temp_subcategory_button = temp_subcategory_button_;
+}
+
 void CustomContextMenu::handleContextMenuRequested(const QPoint &pos)
 {
     emit contextMenuRequested(pos);
@@ -51,15 +56,19 @@ void CustomContextMenu::handleContextMenuAction()
         }
         else if (senderAction->text() == "Delete")
         {
-            Client::sendSubcategoryId(index);
-            addCategoryWindow->show();
-            qDebug() << "Delete action triggered!";
+            if(temp_subcategory_button != nullptr)
+            {
+                temp_subcategory_button->parentWidget()->deleteLater();
+            }
+
+            //Client::sendSubcategoryId(index, "Delete", "None");
         }
         else if (senderAction->text() == "Edit")
         {
-            qDebug() << "Edit action triggered!";
+            //Client::sendSubcategoryId(index, "Edit", "Test4");
         }
     }
 }
 
+QPushButton* CustomContextMenu::temp_subcategory_button = nullptr;
 int CustomContextMenu::index = NULL;

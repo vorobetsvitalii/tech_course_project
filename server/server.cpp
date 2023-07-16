@@ -27,6 +27,9 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             else if(uri.find(Constants::subcategoriesApi) != std::string::npos)
             {
                 GetSubcategories(request, response);
+                if(uri.find("/send") != std::string::npos)
+                    ReceiveSubcategory(request, response);
+                else GetSubcategories(request, response);
             }
             else if(uri.find(Constants::locationsGet) != std::string::npos)
             {
@@ -567,6 +570,44 @@ void RequestHandler::PostSubcategories(Poco::Net::HTTPServerRequest& request, Po
     }
 }
 
+void RequestHandler::ReceiveSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+
+    std::string id = parameters[0].second;
+    std::string query_type = parameters[1].second;
+    std::string subcategory_name = parameters[2].second;
+    std::string subcategory_to_edit = parameters[3].second;
+
+    try {
+        qDebug() << "Received ID: " << id << "           Received QueryTyoe: " << query_type << "           Received subcategory_name: " << subcategory_name << "           Received subcategory_name: " << subcategory_to_edit;
+        if(query_type == "Delete")
+        {
+            SubcategoriesModel* model = new SubcategoriesModel(subcategory_name, QString::fromStdString(id).toInt());
+            model->DeleteSubcategory();
+        }
+        else if(query_type == "Edit")
+        {
+            SubcategoriesModel* model = new SubcategoriesModel(subcategory_to_edit, QString::fromStdString(id).toInt());
+            std::vector<SubcategoriesModel> vector;
+
+            vector.push_back(*model);
+
+            model->EditSubcategories(vector);
+        }
+        else if(query_type == "Hide")
+        {
+
+        }
+
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+    }
+    catch(std::exception& ex){
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    response.send();
+}
+
 void RequestHandler::GetLocations(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
 {
     TeamModel Team;
@@ -744,22 +785,4 @@ std::string GenerateRandomKey()
     std::string readableKey = ss.str();
 
     return readableKey;
-}
-
-void RequestHandler::ReceiveSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
-{
-    Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
-    std::string id = parameters[0].second;
-
-    std::unique_ptr<SubcategoriesModel> subcategoriesModel = std::make_unique<SubcategoriesModel>("Clown", QString::fromStdString(id).toInt());
-
-    qDebug() << "Subcategory id = " << id;
-
-    try {
-        subcategoriesModel->DeleteSubcategory();
-    }
-    catch(std::exception& ex){
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
-    }
-    response.send();
 }

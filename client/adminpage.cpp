@@ -629,5 +629,6 @@ void AdminPage::onSubcategoryClicked()
     tempSubcategoryId = subcategories_map_id[clickedButton->text()];
 
     qobject_cast<QPushButton*>(subcategory_widget->layout()->itemAt(1)->widget())->setEnabled(true);
+    CustomContextMenu::setTempSubcategoryButton(clickedButton);
     CustomContextMenu::setSubcategoryIndex(tempSubcategoryId);
 }

@@ -14,9 +14,11 @@ public:
     explicit CustomContextMenu(QWidget *parent = nullptr);
 
     static void setSubcategoryIndex(const int& index_);
-
+    static void setTempSubcategoryButton(QPushButton* temp_subcategory_button_);
 private:
     AddCategory* addCategoryWindow;
+
+    static QPushButton* temp_subcategory_button;
 
     static int index;
 
