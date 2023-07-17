@@ -1,14 +1,15 @@
-#include "customcontextmenu.h"
+#include "teamcontextmenu.h"
+#include "qpushbutton.h"
 
-CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
+TeamContextMenu::TeamContextMenu(QWidget *parent)  : QMenu(parent)
 {
     QAction *action1 = new QAction("Hide", this);
     QAction *action2 = new QAction("Delete", this);
     QAction *action3 = new QAction("Edit", this);
 
-    connect(action1, &QAction::triggered, this, &CustomContextMenu::handleContextMenuAction);
-    connect(action2, &QAction::triggered, this, &CustomContextMenu::handleContextMenuAction);
-    connect(action3, &QAction::triggered, this, &CustomContextMenu::handleContextMenuAction);
+    connect(action1, &QAction::triggered, this, &TeamContextMenu::handleContextMenuAction);
+    connect(action2, &QAction::triggered, this, &TeamContextMenu::handleContextMenuAction);
+    connect(action3, &QAction::triggered, this, &TeamContextMenu::handleContextMenuAction);
 
     addAction(action1);
     addSeparator();
@@ -27,22 +28,22 @@ CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
                         "");
 }
 
-void CustomContextMenu::setSubcategoryIndex(const int &index_)
+void TeamContextMenu::setTeamIndex(const int &index_)
 {
     index = index_;
 }
 
-void CustomContextMenu::setTempSubcategoryButton(QPushButton* temp_subcategory_button_)
+void TeamContextMenu::setTempTeamButton(QPushButton* temp_team_button_)
 {
-    temp_subcategory_button = temp_subcategory_button_;
+    temp_team_button = temp_team_button_;
 }
 
-void CustomContextMenu::handleContextMenuRequested(const QPoint &pos)
+void TeamContextMenu::handleContextMenuRequested(const QPoint &pos)
 {
     emit contextMenuRequested(pos);
 }
 
-void CustomContextMenu::handleContextMenuAction()
+void TeamContextMenu::handleContextMenuAction()
 {
     QAction *senderAction = qobject_cast<QAction*>(sender());
 
@@ -54,7 +55,7 @@ void CustomContextMenu::handleContextMenuAction()
         }
         else if (senderAction->text() == "Delete")
         {
-            if(temp_subcategory_button != nullptr)
+            if(temp_team_button != nullptr)
             {
 
             }
@@ -66,5 +67,5 @@ void CustomContextMenu::handleContextMenuAction()
     }
 }
 
-QPushButton* CustomContextMenu::temp_subcategory_button = nullptr;
-int CustomContextMenu::index = NULL;
+QPushButton* TeamContextMenu::temp_team_button = nullptr;
+int TeamContextMenu::index = NULL;

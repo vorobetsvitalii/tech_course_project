@@ -253,8 +253,11 @@ std::unique_ptr<QWidget> MenuButton::initializeIAContent()
     widget->layout()->deleteLater();
 
     IAContentLayout->addLayout(categoriesVLayout);
-    IAContentLayout->addSpacing(30);
+    IAContentLayout->addSpacing(40);
     IAContentLayout->addLayout(subcategoriesVLayout);
+    IAContentLayout->addSpacing(40);
+    IAContentLayout->addLayout(teamsVLayout);
+    IAContentLayout->addSpacing(40);
 
     widget->setLayout(IAContentLayout);
 
@@ -288,6 +291,11 @@ void MenuButton::setCategoriesLayout(QVBoxLayout *categoriesVLayout_)
 void MenuButton::setSubcategoriesLayout(QVBoxLayout *subcategoriesVLayout_)
 {
     subcategoriesVLayout = subcategoriesVLayout_;
+}
+
+void MenuButton::setTeamsLayout(QVBoxLayout *teamsVLayout_)
+{
+    teamsVLayout = teamsVLayout_;
 }
 
 QString MenuButton::GetItemName() {
@@ -393,3 +401,4 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
 
 QVBoxLayout* MenuButton::categoriesVLayout = nullptr;
 QVBoxLayout* MenuButton::subcategoriesVLayout = nullptr;
+QVBoxLayout* MenuButton::teamsVLayout = nullptr;

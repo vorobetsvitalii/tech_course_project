@@ -20,11 +20,13 @@
 #include "admininfowidget.h"
 #include "addcategory.h"
 #include "addsubcategory.h"
+#include "addteams.h"
 #include "execution"
 #include "client.h"
 #include "menubutton.h"
 #include "hmenu.h"
 #include "customcontextmenu.h"
+#include "teamcontextmenu.h"
 
 class MenuButton;
 
@@ -48,6 +50,7 @@ private:
     std::unique_ptr<QVBoxLayout> headerVLayout;
     std::unique_ptr<QVBoxLayout> categoriesVLayout;
     std::unique_ptr<QVBoxLayout> subcategoriesVLayout;
+    std::unique_ptr<QVBoxLayout> teamsVLayout;
     std::unique_ptr<QVBoxLayout> itemsMenuVLayout;
 
     std::unique_ptr<QWidget> topHWidget;
@@ -83,11 +86,14 @@ private:
     std::unique_ptr<QPushButton> pushButton_7;
     std::unique_ptr<QPushButton> pushButton_8;
     std::unique_ptr<QPushButton> pushButton_9;
+
     std::unique_ptr<QPushButton> addCategoryButton;
     std::unique_ptr<QPushButton> addSubcategoryButton;
+    std::unique_ptr<QPushButton> addTeamButton;
 
     QPushButton* previousButton = nullptr;
     QPushButton* previousSubcategory = nullptr;
+    QPushButton* previousTeam = nullptr;
 
     std::unique_ptr<QLabel> pageLabel;
 
@@ -95,19 +101,27 @@ private:
 
     std::unique_ptr<AddCategory> addCategoryWindow;
     std::unique_ptr<AddSubcategory> addSubcategoryWindow;
+    std::unique_ptr<AddTeams> addTeamWindow;
+
     std::unique_ptr<CustomContextMenu> contextMenu;
+    std::unique_ptr<TeamContextMenu> teamContextMenu;
 
     int tempCategoryId = NULL;
     int tempSubcategoryId = NULL;
-    bool saveCategoryChanges = false;
-    bool saveSubcategoryChanges = false;
+    int tempTeamId = NULL;
 
     QString tempCategory = "";
     QString tempSubcategory = "";
+    QString tempTeam = "";
+
+    bool saveCategoryChanges = false;
+    bool saveSubcategoryChanges = false;
 
     std::vector<Category> categories;
     QMap<QString, int> subcategories_map;
     QMap<QString, int> subcategories_map_id;
+    QMap<QString, int> teams_map;
+    QMap<QString, int> teams_map_id;
 
     void initializeLayouts();
     void initializeWidgets();
@@ -121,19 +135,23 @@ private:
     void primaryContentArea();
     void appendCategories();
     void appendSubcategories();
+    void appendTeams();
     bool checkIfStringEmpty(const QString& temp_string);
 
 public slots:
     void onLogoutDone();
     void on_add_category_clicked();
     void on_add_subcategory_clicked();
+    void on_add_team_clicked();
     void on_save_changes_clicked();
     void handleNewButtonAdded();
     void handleNewSubcategoryAdded();
+    void handleNewTeamAdded();
     void OnMenuItemClicked(MenuButton*);
     void onCategorySelected(Category* category);
     void onCategoryClicked();
     void onSubcategoryClicked();
+    void onTeamClicked();
 
 signals:
     void adminPageResized();

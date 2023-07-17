@@ -50,6 +50,11 @@ set(PROJECT_SOURCES
     tableWidget.cpp
     resizableWidget.h
     resizableWidget.cpp
+    addteams.cpp
+    addteams.h
+    addteams.ui
+    teamcontextmenu.cpp
+    teamcontextmenu.h
 )
 
 
