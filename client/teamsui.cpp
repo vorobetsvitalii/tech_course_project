@@ -1,5 +1,9 @@
 #include "teamsui.h"
 
+std::map<int,std::string> TeamsUI::LocationMap;
+std::map<int,std::string> TeamsUI::CategoriesMap;
+std::vector<Subcategory> TeamsUI::SubCategoriesAll;
+
 QString TeamsUI::comboBoxStyle = "QComboBox {"
                         "background-color: white;"
                         "color: black;"
@@ -327,6 +331,8 @@ TeamsUI::TeamsUI()
     Layout = std::make_unique<QVBoxLayout>(this);
 
 
+    SubCategoriesAll = GetSubCategories();
+    LocationMap = GetLocations();
 
     Layout->addWidget(LocationLabel.get());
     Layout->addWidget(LocationDrop.get());

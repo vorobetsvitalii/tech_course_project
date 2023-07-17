@@ -75,11 +75,11 @@ protected:
 
 
 public:
-    std::map<int,std::string> LocationMap = GetLocations();
-    std::map<int,std::string> CategoriesMap;
+    static std::map<int,std::string> LocationMap;
+    static std::map<int,std::string> CategoriesMap;
     std::vector<Subcategory> SubCategoriesVector;
 
-    std::vector<Subcategory> SubCategoriesAll = GetSubCategories();
+    static std::vector<Subcategory> SubCategoriesAll;
     void initializeLocationDrop();
     void initializeCategoryDrop();
     void initializeSubCategoryDrop();

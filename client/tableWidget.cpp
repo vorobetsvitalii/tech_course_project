@@ -3,23 +3,17 @@
 
 TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
 {
-    // Встановлюємо кількість колонок та рядків
     setColumnCount(columnNumber);
-    setRowCount(5);
-
-    width = 700;
+    width = 730;
     resizeTable();
-    // Вимикаємо відображення сітки
     setShowGrid(false);
 
     verticalHeader()->setVisible(false);
-    // Встановлюємо назви стовпців
     QStringList headerLabels = {"Teams", "Location", "Added at", "Category", "Subcategory", "", ""};
     setHorizontalHeaderLabels(headerLabels);
 
     fillWithData();
 
-    // Налаштовуємо вигляд заголовків
     QHeaderView* header = horizontalHeader();
     header->setStyleSheet("QHeaderView::section {"
                           "    background-color: #EAEAEA;"
@@ -28,11 +22,8 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
                           "    padding-left: 10px;"
                           "}");
 
-    // Додаткові налаштування для вигляду таблиці
     setSelectionBehavior(QAbstractItemView::SelectRows); // Виділення по рядках
     setEditTriggers(QAbstractItemView::NoEditTriggers); // Вимикаємо можливість редагування
-
-    ///////////////
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -40,13 +31,11 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
     TableCellDelegate* delegate = new TableCellDelegate();
     setItemDelegate(delegate);
 
-    // Set the background color for table rows
     QString rowStyle = "QTableWidget::item {"
                        "    background-color: #F2F2F2;"
                        "}";
     setStyleSheet(rowStyle);
 
-    // Set textAlignment left for the column headers
     for (int col = 0; col < columnNumber; ++col) {
         QTableWidgetItem* headerItem = horizontalHeaderItem(col);
         if (headerItem) {
@@ -58,7 +47,6 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
 
 void TableWidget::resize()
 {
-    // Отримуємо новий розмір віджета
     width = parentWidget()->width();
     resizeTable();
 }
@@ -66,7 +54,6 @@ void TableWidget::resize()
 void TableWidget::fillWithData()
 {
     std::vector<team> teams = Client::getInstance().GetTeams();
-    // Встановлюємо кількість рядків у таблиці
     setRowCount(teams.size());
 
     for (int row = 0; row < rowCount(); ++row) {
@@ -83,18 +70,24 @@ void TableWidget::fillWithData()
     {
         qDebug() << teams[i].getTeamName() +" "+QString::number(teams[i].getTeamLocation())+" "+teams[i].getDate()+" "+QString::number(teams[i].getSubcategoryId())+" "+QString::number(teams[i].getSubcategoryId())+" ";
 
-        // Додати значення відповідно до стовпців
+        int locationId = teams[i].getTeamLocation();
+        int subcategoryId = teams[i].getSubcategoryId();
+        int categoryId;
+        QString locationName = FindLocationById(locationId);
+        QString subcategoryName = FindSubcategoryById(subcategoryId, &categoryId);
+        QString categoryName = FindCategoryById(categoryId);
+
         setItem(i, 0, new QTableWidgetItem(teams[i].getTeamName()));
-        setItem(i, 1, new QTableWidgetItem(QString::number(teams[i].getTeamLocation())));
-        setItem(i, 2, new QTableWidgetItem(teams[i].getDate()));
-        setItem(i, 3, new QTableWidgetItem(QString::number(teams[i].getSubcategoryId())));
-        setItem(i, 4, new QTableWidgetItem(QString::number(teams[i].getSubcategoryId())));
+        setItem(i, 1, new QTableWidgetItem(locationName));
+        setItem(i, 2, new QTableWidgetItem(teams[i].getDate().left(10)));
+        setItem(i, 3, new QTableWidgetItem(categoryName));
+        setItem(i, 4, new QTableWidgetItem(subcategoryName));
     }
 }
 
 void TableWidget::resizeTable()
 {
-    int desireWidth = width - 20;
+    int desireWidth = width - 10;
     setFixedWidth(desireWidth);
     double columnRatios[] = {0.2, 0.2, 0.15, 0.15, 0.15, 0.075, 0.075};
 
@@ -103,3 +96,34 @@ void TableWidget::resizeTable()
         setColumnWidth(i, columnWidth);
     }
 }
+
+QString FindLocationById(int id) {
+    QString locationName;
+    if (TeamsUI::LocationMap.find(id) != TeamsUI::LocationMap.end())
+    {
+        locationName = QString::fromStdString(TeamsUI::LocationMap[id]);
+    }
+    return locationName;
+}
+
+QString FindSubcategoryById(int id, int* categoryId) {
+    QString subcategoryName;
+    for (const auto& subCategory : TeamsUI::SubCategoriesAll) {
+        if (subCategory.getId() == id) {
+            *categoryId = subCategory.getCategoryId();
+            subcategoryName = QString::fromStdString(subCategory.getName());
+            break;
+        }
+    }
+    return subcategoryName;
+}
+
+QString FindCategoryById(int id) {
+    QString categoryName;
+    if (TeamsUI::CategoriesMap.find(id) != TeamsUI::CategoriesMap.end())
+    {
+        categoryName = QString::fromStdString(TeamsUI::CategoriesMap[id]);
+    }
+    return categoryName;
+}
+

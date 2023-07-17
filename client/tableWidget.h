@@ -5,11 +5,11 @@
 #include <QHeaderView>
 #include <QTableWidgetItem>
 #include <QDebug>
+#include <QStyledItemDelegate>
 
 #include "../common/model/team.h"
 #include "client.h"
-
-#include <QStyledItemDelegate>
+#include "teamsui.h"
 
 // Custom delegate class for adding left padding to table cells
 class TableCellDelegate : public QStyledItemDelegate
@@ -39,5 +39,10 @@ private:
     const int columnNumber = 7;
     int width;
 };
+
+
+QString FindLocationById(int id);
+QString FindSubcategoryById(int id, int* categoryId);
+QString FindCategoryById(int id);
 
 #endif // TABLEWIDGET_H
