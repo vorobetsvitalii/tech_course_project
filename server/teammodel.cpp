@@ -28,8 +28,8 @@ void TeamModel::UpdateTeam()
 {
     QString updateQuery = "UPDATE " + GetTable() + " SET TeamName='" + this->getTeamName() + "', SubcategoryId="
                           + QString::number(this->getSubcategoryId()) + ", TeamLocation=" + QString::number(this->getTeamLocation()) +
-                          ", TeamLogo='" + this->getTeamLogoBlob() + "' WHERE TeamId=" + QString::number(this->getTeamId());
-    Update(updateQuery);
+                          ", TeamLogo=CAST('" + this->getTeamLogoBlob() + "' AS VARBINARY(MAX)) WHERE TeamId=" + QString::number(this->getTeamId());
+                          Update(updateQuery);
 }
 
 void TeamModel::DeleteTeam()
