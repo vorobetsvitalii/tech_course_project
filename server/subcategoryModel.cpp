@@ -37,6 +37,7 @@ void SubcategoriesModel::UpdateSubcategory()
 {
     QString updateQuery = "UPDATE " + GetTable() + " SET SubcategoryName='" + QString::fromStdString(this->getName()) + "', CategoryID=" + QString::number(this->getCategoryId()) + " WHERE SubcategoryId=" + QString::number(this->getId());
     Update(updateQuery);
+    qDebug() << "Subcategory Model updated!";
 }
 
 void SubcategoriesModel::DeleteSubcategory()

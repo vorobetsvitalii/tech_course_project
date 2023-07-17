@@ -5,8 +5,7 @@ const std::string Constants::logoutApi = "/api/logout";
 const std::string Constants::categoriesApi = "/api/categories";
 const std::string Constants::subcategoriesApi = "/api/subcategories";
 const std::string Constants::locationsGet = "/getLocations";
-const std::string Constants::teamSelect ="/GetTeams";
-const std::string Constants::teamInsert ="/teamInsert";
+const std::string Constants::teamApi ="/api/teams";
 
 //JSON
 const std::string Constants::categoriesArrayJson = "categories";

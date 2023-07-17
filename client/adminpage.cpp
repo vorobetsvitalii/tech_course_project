@@ -632,3 +632,11 @@ void AdminPage::onSubcategoryClicked()
     CustomContextMenu::setTempSubcategoryButton(clickedButton);
     CustomContextMenu::setSubcategoryIndex(tempSubcategoryId);
 }
+
+
+void AdminPage::resizeEvent(QResizeEvent *event) {
+    emit adminPageResized();
+    qDebug() << "Admin Resized";
+
+    QWidget::resizeEvent(event);
+}
