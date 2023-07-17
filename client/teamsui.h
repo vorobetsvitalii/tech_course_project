@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QComboBox>
+#include <QMessageBox>
 #include <QListView>
 #include <QFileDialog>
 #include <QEvent>
@@ -39,7 +40,7 @@ private:
     std::unique_ptr<QLineEdit>TeamInput;
 
 
-    std::unique_ptr<QPushButton>ApplyButton;
+    QScopedPointer<QPushButton>ApplyButton;
     std::unique_ptr<QPushButton>CancelButton;
 
     std::unique_ptr<QLabel>LocationLabel;
@@ -95,7 +96,7 @@ public:
 
     void initializeTeamImage();
 
-
+    void ApplyButtonCheck();
 
     TeamsUI();
 

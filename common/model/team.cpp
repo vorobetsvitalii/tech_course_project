@@ -25,6 +25,11 @@ QString team::getTeamName()
     return this->TeamName;
 }
 
+QString team::getDate()
+{
+    return this->CreatingDate;
+}
+
 void team::setTeamId(int id)
 {
     this->TeamId = id;
@@ -50,6 +55,11 @@ void team::setTeamName(QString name)
     this->TeamName= name;
 }
 
+void team::setDate(QString Date)
+{
+    this->CreatingDate=Date;
+}
+
 QJsonObject team::GetJsonObject()
 {
     QJsonObject jsonObject;
@@ -58,6 +68,7 @@ QJsonObject team::GetJsonObject()
     jsonObject["TeamId"] = this->getTeamId();
     jsonObject["TeamLocation"] = this->getTeamLocation();
     jsonObject["TeamName"] = this->getTeamName();
+    jsonObject["CreatingDate"] = this->getDate();
     return jsonObject;
 }
 
@@ -67,6 +78,19 @@ void team::LoadJsonObject(QJsonObject Json)
         this->SubcategoryId = Json["SubcategoryId"].toInt();
     }
 
+
+    if(Json.contains("TeamId")){
+        this->TeamId = Json["TeamId"].toInt();
+    }
+    if(Json.contains("TeamLocation")){
+        this->TeamLocation = Json["TeamLocation"].toInt();
+    }
+    if(Json.contains("TeamName")){
+        this->TeamName = Json["TeamName"].toString();
+    }
+    if(Json.contains("CreatingDate")){
+        this->CreatingDate = Json["CreatingDate"].toString();
+    }
     if(Json.contains("TeamLogoBlob")){
         this->TeamLogoBlob = Json["TeamLogoBlob"].toString();
         QImage image(this->getTeamLogoBlob());
@@ -90,15 +114,6 @@ void team::LoadJsonObject(QJsonObject Json)
         //QByteArray byteArray = QByteArray::fromBase64(this->getTeamLogoBlob().toLatin1());
         //bool isIdentical = (byteArray == imageData);
 
-    }
-    if(Json.contains("TeamId")){
-        this->TeamId = Json["TeamId"].toInt();
-    }
-    if(Json.contains("TeamLocation")){
-        this->TeamLocation = Json["TeamLocation"].toInt();
-    }
-    if(Json.contains("TeamName")){
-        this->TeamName = Json["TeamName"].toString();
     }
 }
 

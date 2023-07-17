@@ -38,6 +38,10 @@ QString TeamsUI::listViewStyle="QListView::item {"
                                  "outline: 0px;"
                                  "border: 1px solid rgba(215, 33, 48, 0.11);"
                                  "}";
+
+
+
+
 void TeamsUI::initializeLocationDrop()
 {
     LocationDrop = std::make_unique<QComboBox>();
@@ -107,11 +111,11 @@ void TeamsUI::onCategoryActivated(int index)
 
     for (auto tmp : SubCategoriesAll)
     {
-        qDebug() << QString::number(tmp.getCategoryId()) + "   " + QString::fromStdString(this->CategoriesMap[tmp.getCategoryId()]);
+       // qDebug() << QString::number(tmp.getCategoryId()) + "   " + QString::fromStdString(this->CategoriesMap[tmp.getCategoryId()]);
         if (this->CategoriesMap[tmp.getCategoryId()].compare(category.toStdString()) == 0)
         {
             this->SubCategoriesVector.push_back(tmp);
-            qDebug() <<QString("PUSH BACK\n");
+            //qDebug() <<QString("PUSH BACK\n");
         }
 
     }
@@ -119,10 +123,10 @@ void TeamsUI::onCategoryActivated(int index)
     for (int i = 0; i < SubCount; i++) {
         SubCategoryDrop->removeItem(0);
     }
-    qDebug() << QString("SubCategoriesVector:");
-    for (const auto& tmp : SubCategoriesVector) {
-        qDebug() << QString::fromStdString(tmp.getName());
-    }
+    //qDebug() << QString("SubCategoriesVector:");
+    //for (const auto& tmp : SubCategoriesVector) {
+    //    qDebug() << QString::fromStdString(tmp.getName());
+    //}
 
 
 
@@ -169,22 +173,19 @@ void TeamsUI::initializeTeamInput()
 
 void TeamsUI::initializeApplyButton()
 {
-    ApplyButton = std::make_unique<QPushButton>();
+    ApplyButton.reset(new QPushButton());
     ApplyButton->setText("Apply");
-    ApplyButton->setFixedSize(246,32);
+    ApplyButton->setFixedSize(246, 32);
     ApplyButton->setStyleSheet("QPushButton {"
-                               "background-color: rgba(247, 211, 214, 1);"
+                               "background-color: rgba(224, 34, 50, 1);"
                                "color: white;"
                                "border: 0px;"
-                               "}"
-                               "QPushButton:hover {"
-                               "background-color: rgba(224, 34, 50, 1);"
                                "}"
                                "QPushButton:pressed {"
                                "background-color: rgba(200, 5, 21, 1);"
                                "}");
-    connect(ApplyButton.get(), &QPushButton::clicked, this, &TeamsUI::CreateTeam);
 
+    connect(ApplyButton.data(), &QPushButton::clicked, this, &TeamsUI::CreateTeam);
 }
 
 void TeamsUI::initializeCancelButton()
@@ -283,6 +284,32 @@ void TeamsUI::initializeTeamImage()
 
 }
 
+void TeamsUI::ApplyButtonCheck()
+{
+    /*try{
+    QString CategoryText = this->CategoryDrop->currentText();
+    QString SubCategoryText = this->SubCategoryDrop->currentText();
+    QString LocationText = this->LocationDrop->currentText();
+    QString TeamName = this->TeamInput->text();
+    QString Image = this->ImagePath;
+
+    if(!CategoryText.isNull() && !SubCategoryText.isNull() && !LocationText.isEmpty() && !TeamName.isNull() && !Image.isNull()){
+            this->ApplyButton->setStyleSheet("QPushButton {"
+                                         "background-color: rgba(247, 211, 214, 1);"
+                                         "color: white;"
+                                         "border: 0px;"
+                                         "}");
+    }
+    else{
+        /his->ApplyButton->setStyleSheet("QPushButton {"
+                                         "background-color: rgba(224, 34, 50, 1);"
+                                         "color: white;"
+                                         "border: 0px;"
+                                         "}");
+    }
+    }catch(std::exception exp){qDebug()<<exp.what();}*/
+}
+
 TeamsUI::TeamsUI()
 {
     initializeLocationDrop();
@@ -345,6 +372,7 @@ void TeamsUI::openFileExplorer()
         CameraIcon->setVisible(false);
         LogoText->setVisible(false);
     }
+
 }
 
 
@@ -354,6 +382,7 @@ void TeamsUI::enterEvent(QEnterEvent* event)
         TeamImage->setStyleSheet("background-color: rgba(196, 196, 196, 0.08);");
         CameraIcon->setVisible(true);
         LogoText->setVisible(true);
+        ApplyButtonCheck();
    }
 
    QWidget::enterEvent(event);
@@ -366,6 +395,7 @@ void TeamsUI::leaveEvent(QEvent* event)
         TeamImage->setStyleSheet(QString("QFrame { border: none; background-image: url(%1); background-repeat: no-repeat; background-position: center; background-origin: content; background-clip: content;}").arg(ImagePath));
         CameraIcon->setVisible(false);
         LogoText->setVisible(false);
+        ApplyButtonCheck();
     }
 
     QWidget::leaveEvent(event);
@@ -449,6 +479,8 @@ void TeamsUI::CreateTeam()
     QString LocationText = this->LocationDrop->currentText();
     QString TeamName = this->TeamInput->text();
 
+    if(!CategoryText.isNull() && !SubCategoryText.isNull() && !LocationText.isEmpty() && !TeamName.isNull() && !this->ImagePath.isNull()){QMessageBox::information(nullptr, "Apply", "Конанду додано");}
+    else{QMessageBox::information(nullptr, "Apply", "Конанду не додано"); return;}
     if(!SubCategoryText.isEmpty()){
     for(const auto tmp: this->SubCategoriesVector)
     {

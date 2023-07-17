@@ -60,10 +60,14 @@ std::vector<team> TeamModel::SelectTeam()
     for (const QString& teamId : teamIdTokens) {
 
 
-    QString selectQuery = QString("SELECT * FROM %1 WHERE TeamId = %2").arg(TM->GetTable()).arg(teamId);
+    QString selectQuery = QString("SELECT [TeamId],[TeamName],[SubcategoryId],[TeamLocation],[CreatingDate],[TeamLogo] FROM %1 WHERE TeamId = %2").arg(TM->GetTable()).arg(teamId);
     QString result = TM->Select(selectQuery);
     qDebug() << result;
-    QRegularExpression regex(R"((.*?), (.*?), (.*?), (.*?), (.*))");
+
+
+
+    QRegularExpression regex(R"((.*?), (.*?), (.*?), (.*?), (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}), (.*))");
+
 
     // Використовуємо QRegularExpressionMatchIterator для знаходження всіх входжень, що відповідають регулярному виразу
     QRegularExpressionMatchIterator regexIterator = regex.globalMatch(result);
@@ -77,9 +81,8 @@ std::vector<team> TeamModel::SelectTeam()
         QString teamName = match.captured(2);
         QString subcategoryId = match.captured(3);
         QString teamLocation = match.captured(4);
-        QString teamLogo = match.captured(5);
-
-
+        QString Date = match.captured(5);
+        QString teamLogo = match.captured(6);
 
         // Створюємо новий екземпляр Team і додаємо його до вектора
         team Team;
@@ -88,8 +91,10 @@ std::vector<team> TeamModel::SelectTeam()
         Team.setSubcategoryId(subcategoryId.toInt());
         Team.setTeamLocation(teamLocation.toInt());
         Team.setTeamLogoBlob(teamLogo);
+        Team.setDate(Date);
         TeamVector.push_back(Team);
     }
+
     }
     return TeamVector;
 }
