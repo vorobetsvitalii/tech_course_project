@@ -842,3 +842,11 @@ void AdminPage::onTeamClicked()
     TeamContextMenu::setTempTeamButton(clickedButton);
     TeamContextMenu::setTeamIndex(tempTeamId);
 }
+
+void AdminPage::resizeEvent(QResizeEvent *event)
+{
+    emit adminPageResized();
+    qDebug() << "Admin Resized";
+
+    QWidget::resizeEvent(event);
+}

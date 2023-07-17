@@ -11,8 +11,7 @@ public:
     static const std::string categoriesApi;
     static const std::string subcategoriesApi;
     static const std::string locationsGet;
-    static const std::string teamInsert;
-    static const std::string teamSelect;
+    static const std::string teamApi;
     //JSON
     static const std::string categoriesArrayJson;
     static const std::string subcategoriesArrayJson;

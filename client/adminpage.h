@@ -157,15 +157,7 @@ signals:
     void adminPageResized();
 
 protected:
-    void resizeEvent(QResizeEvent *event) override
-    {
-        // Відправка сигналу про зміну розміру
-        emit adminPageResized();
-        qDebug() << "Admin Resized";
-
-        // Виклик базової реалізації resizeEvent
-        QWidget::resizeEvent(event);
-    }
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 #endif // ADMINPAGE_H
