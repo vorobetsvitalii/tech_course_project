@@ -88,9 +88,11 @@ void team::LoadJsonObject(QJsonObject Json)
     if(Json.contains("TeamName")){
         this->TeamName = Json["TeamName"].toString();
     }
+
     if(Json.contains("CreatingDate")){
         this->CreatingDate = Json["CreatingDate"].toString();
     }
+
     if(Json.contains("TeamLogoBlob")){
         this->TeamLogoBlob = Json["TeamLogoBlob"].toString();
         QImage image(this->getTeamLogoBlob());
@@ -116,7 +118,6 @@ void team::LoadJsonObject(QJsonObject Json)
 
     }
 }
-
 team::team()
 {
 

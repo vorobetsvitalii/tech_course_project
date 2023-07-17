@@ -12,6 +12,8 @@
 #include "../common/model/subcategory.h"
 #include "../common/constants.h"
 #include "teammodel.h"
+#include "subcategoryModel.h"
+#include "dbmodel.h"
 
 
 #include <QJsonDocument>
@@ -103,6 +105,7 @@ private:
     std::string GetLogin(Poco::Net::HTTPServerRequest& request);
     std::string GetFirstName(Poco::Net::HTTPServerRequest& request);
     std::string GetLastName(Poco::Net::HTTPServerRequest& request);
+
     bool DataBase_Login(const std::string ,const std::string); // Логін
     void ApiLogin(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void ApiLogout(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
@@ -113,6 +116,7 @@ private:
     void GetLocations(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void PostTeam(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void GetTeams(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
+    void ReceiveSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 
 };
 

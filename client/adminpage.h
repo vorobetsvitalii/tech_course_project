@@ -26,6 +26,8 @@
 #include "hmenu.h"
 #include "customcontextmenu.h"
 
+class MenuButton;
+
 namespace Ui {
 class AdminPage;
 }
@@ -85,6 +87,7 @@ private:
     std::unique_ptr<QPushButton> addSubcategoryButton;
 
     QPushButton* previousButton = nullptr;
+    QPushButton* previousSubcategory = nullptr;
 
     std::unique_ptr<QLabel> pageLabel;
 
@@ -96,6 +99,8 @@ private:
 
     int tempCategoryId = NULL;
     int tempSubcategoryId = NULL;
+    bool saveCategoryChanges = false;
+    bool saveSubcategoryChanges = false;
 
     QString tempCategory = "";
     QString tempSubcategory = "";
@@ -129,6 +134,20 @@ public slots:
     void onCategorySelected(Category* category);
     void onCategoryClicked();
     void onSubcategoryClicked();
+
+signals:
+    void adminPageResized();
+
+protected:
+    void resizeEvent(QResizeEvent *event) override
+    {
+        // Відправка сигналу про зміну розміру
+        emit adminPageResized();
+        qDebug() << "Admin Resized";
+
+        // Виклик базової реалізації resizeEvent
+        QWidget::resizeEvent(event);
+    }
 };
 
 #endif // ADMINPAGE_H

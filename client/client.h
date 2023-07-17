@@ -61,17 +61,20 @@ public:
     static void PostCategory(const std::string& categoryName);
     static void PostSubcategory(const std::string& categoryName, int categoryId);
     static void PostTeam(team&);
+    static bool sendSubcategoryId(int subcategoryId, std::string query_type, std::string subcategory_to_edit);
 private:
     Client();
 
-    const std::string IP_ADDRESS = "127.0.0.1";
-    const int PORT = 8080;
+    static std::string IP_ADDRESS;
+    static int PORT;
 
     HTTPRequestManager hTTPRequestManager;
 
     std::unique_ptr<Poco::Net::HTTPClientSession> clientSession;
     std::unique_ptr<Poco::Net::HTTPRequest> serverRequest;
     std::unique_ptr<Poco::Net::HTTPResponse> serverResponse;
+
+    static std::vector<Subcategory> subcategories;
 
     QString retriveRequestBody() const;
     std::string retriveResponseBody() const;
