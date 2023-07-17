@@ -67,6 +67,16 @@ void team::LoadJsonObject(QJsonObject Json)
         this->SubcategoryId = Json["SubcategoryId"].toInt();
     }
 
+
+    if(Json.contains("TeamId")){
+        this->TeamId = Json["TeamId"].toInt();
+    }
+    if(Json.contains("TeamLocation")){
+        this->TeamLocation = Json["TeamLocation"].toInt();
+    }
+    if(Json.contains("TeamName")){
+        this->TeamName = Json["TeamName"].toString();
+    }
     if(Json.contains("TeamLogoBlob")){
         this->TeamLogoBlob = Json["TeamLogoBlob"].toString();
         QImage image(this->getTeamLogoBlob());
@@ -91,17 +101,7 @@ void team::LoadJsonObject(QJsonObject Json)
         //bool isIdentical = (byteArray == imageData);
 
     }
-    if(Json.contains("TeamId")){
-        this->TeamId = Json["TeamId"].toInt();
-    }
-    if(Json.contains("TeamLocation")){
-        this->TeamLocation = Json["TeamLocation"].toInt();
-    }
-    if(Json.contains("TeamName")){
-        this->TeamName = Json["TeamName"].toString();
-    }
 }
-
 team::team()
 {
 
