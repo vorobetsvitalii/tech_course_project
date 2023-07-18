@@ -11,6 +11,19 @@
 #include "client.h"
 #include "teamsui.h"
 
+#include "deletepopup.h"
+#include "editpopup.h"
+
+#include <QVector>
+#include <QIcon>
+#include <QLabel>
+#include <QEvent>
+#include <QMouseEvent>
+#include <QResizeEvent>
+#include <QStackedWidget>
+#include <QStackedLayout>
+#include <QPainterPath>
+
 // Custom delegate class for adding left padding to table cells
 class TableCellDelegate : public QStyledItemDelegate
 {
@@ -35,9 +48,24 @@ public:
 private:
     void fillWithData();
     void resizeTable();
+     bool viewportEvent(QEvent* event);
 
     const int columnNumber = 7;
     int width;
+
+    std::vector<QIcon> deleteIcons;
+    bool isRowHovered;
+    int hoveredRow = -1;
+    std::vector<QStackedWidget*> rowStackedWidgets;
+
+    void setupRowWidgets(int row);
+    void updateRowWidgetsVisibility(int row);
+
+public slots:
+    void editButtonClicked(int row);
+    void deleteButtonClicked(int row);
+
+
 };
 
 
