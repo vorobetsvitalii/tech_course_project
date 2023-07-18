@@ -208,15 +208,14 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     std::unique_ptr<ResizableWidget> widget = std::make_unique<ResizableWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     TeamsUI* teamui = new TeamsUI();
-    TableWidget* tableWidget = new TableWidget(); // Створюємо табличку
+    TableWidget* tableWidget = new TableWidget();
 
     layout->addWidget(teamui);
-    layout->addWidget(tableWidget); // Додаємо табличку до layout
+    layout->addWidget(tableWidget);
 
     widget->setLayout(layout);
     widget->setWindowTitle("Teams");
 
-    // Підписка на сигнал adminPageResized
     QObject::connect(adminpage, &AdminPage::adminPageResized, widget.get(), &ResizableWidget::resize);
     QObject::connect(adminpage, &AdminPage::adminPageResized, tableWidget, &TableWidget::resize);
 
