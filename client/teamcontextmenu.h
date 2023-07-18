@@ -5,6 +5,11 @@
 #include <QAction>
 #include <QPushButton>
 
+#include "../common/model/team.h"
+#include "client.h"
+#include "deletepopup.h"
+#include "editpopup.h"
+
 class TeamContextMenu  : public QMenu
 {
     Q_OBJECT
@@ -14,8 +19,12 @@ public:
 
     static void setTeamIndex(const int& index_);
     static void setTempTeamButton(QPushButton* temp_team_button_);
+
+    void onTeamNameUpdated(const QString& newName);
 private:
     static QPushButton* temp_team_button;
+
+    std::vector<team> teamsList;
 
     static int index;
 

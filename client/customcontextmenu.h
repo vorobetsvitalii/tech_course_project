@@ -5,6 +5,10 @@
 #include <QAction>
 #include <QPushButton>
 
+#include "../common/model/subcategory.h"
+#include "deletepopup.h"
+#include "editpopup.h"
+
 class CustomContextMenu : public QMenu
 {
     Q_OBJECT
@@ -14,8 +18,12 @@ public:
 
     static void setSubcategoryIndex(const int& index_);
     static void setTempSubcategoryButton(QPushButton* temp_subcategory_button_);
+
+    void onSubcategoryNameUpdated(const QString& newName);
 private:
     static QPushButton* temp_subcategory_button;
+
+    std::vector<Subcategory> subcategoriesList;
 
     static int index;
 

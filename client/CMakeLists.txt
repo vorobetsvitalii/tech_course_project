@@ -55,6 +55,12 @@ set(PROJECT_SOURCES
     addteams.ui
     teamcontextmenu.cpp
     teamcontextmenu.h
+    deletepopup.h
+    deletepopup.ui
+    deletepopup.cpp
+    editpopup.h
+    editpopup.cpp
+
 )
 
 

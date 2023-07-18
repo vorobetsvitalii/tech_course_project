@@ -26,6 +26,7 @@ TeamContextMenu::TeamContextMenu(QWidget *parent)  : QMenu(parent)
                         "font-size: 9pt;"
                         "font-weight: bold;"
                         "");
+    teamsList = Client::GetTeams();
 }
 
 void TeamContextMenu::setTeamIndex(const int &index_)
@@ -42,7 +43,10 @@ void TeamContextMenu::handleContextMenuRequested(const QPoint &pos)
 {
     emit contextMenuRequested(pos);
 }
-
+void TeamContextMenu::onTeamNameUpdated(const QString& newName)
+{
+ temp_team_button->setText(newName);
+}
 void TeamContextMenu::handleContextMenuAction()
 {
     QAction *senderAction = qobject_cast<QAction*>(sender());
@@ -57,11 +61,47 @@ void TeamContextMenu::handleContextMenuAction()
         {
             if(temp_team_button != nullptr)
             {
+                team selectedTeam;
+                for (team& Team : teamsList)
+                {
+                    if (Team.getTeamName() == temp_team_button->text())
+                    {
+                        // Store the selected team
+                        selectedTeam = Team;
 
+                    }
+                }
+                DeletePopup deletePopup(deletePopup.getTableTeam(), this);
+                deletePopup.setSelectedTeam(selectedTeam);
+                deletePopup.setStyleSheet("border: none");
+                deletePopup.exec();
+                if(deletePopup.exec()== QDialog::Accepted){
+                    temp_team_button->parentWidget()->deleteLater();
+                }
             }
         }
         else if (senderAction->text() == "Edit")
         {
+
+                team selectedTeam;
+                for (team& Team : teamsList)
+                {
+                    if (Team.getTeamName() == temp_team_button->text())
+                    {
+                        // Store the selected team
+                        selectedTeam = Team;
+
+                    }
+                }
+
+             QString existingTeamName = temp_team_button->text();
+             EditPopup editPopup(existingTeamName, editPopup.getTableTeam(), this);
+             editPopup.setSelectedTeam(selectedTeam);
+             editPopup.setStyleSheet("border: none");
+             // Connect a slot to handle the nameUpdated signal emitted from EditPopup
+             connect(&editPopup, &EditPopup::NameUpdated , this, &TeamContextMenu::onTeamNameUpdated);
+             editPopup.exec();
+
 
         }
     }
