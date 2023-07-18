@@ -11,14 +11,13 @@
 #include "client.h"
 #include "teamsui.h"
 
-// Custom delegate class for adding left padding to table cells
 class TableCellDelegate : public QStyledItemDelegate
 {
 public:
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
     {
         QStyleOptionViewItem modifiedOption = option;
-        modifiedOption.rect.adjust(10, 0, 0, 0);  // Add 15px left padding to the cell rectangle
+        modifiedOption.rect.adjust(10, 0, 0, 0);
         QStyledItemDelegate::paint(painter, modifiedOption, index);
     }
 };

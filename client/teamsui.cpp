@@ -48,14 +48,10 @@ QString TeamsUI::listViewStyle="QListView::item {"
 
 void TeamsUI::initializeLocationDrop()
 {
+    LocationMap = GetLocations();
     LocationDrop = std::make_unique<QComboBox>();
 
-
-
-
     LocationDrop->setFixedSize(246,36);
-
-
 
     LocationDrop->setStyleSheet(comboBoxStyle);
     QListView * listView = new QListView();
@@ -142,6 +138,8 @@ void TeamsUI::onCategoryActivated(int index)
 
 void TeamsUI::initializeSubCategoryDrop()
 {
+    SubCategoriesAll = GetSubCategories();
+
     SubCategoryDrop = std::make_unique<QComboBox>();
 
 
@@ -329,10 +327,6 @@ TeamsUI::TeamsUI()
     initializeCancelButton();
 
     Layout = std::make_unique<QVBoxLayout>(this);
-
-
-    SubCategoriesAll = GetSubCategories();
-    LocationMap = GetLocations();
 
     Layout->addWidget(LocationLabel.get());
     Layout->addWidget(LocationDrop.get());
