@@ -119,14 +119,15 @@ void EditPopup::saveClicked()
     if (result == QMessageBox::Yes) {
         //close();
         if(table_name==table_subcategory){
-             selectedSubcategory.setName(newName.toStdString());
+            selectedSubcategory.setName(newName.toStdString());
             Client::getInstance().EditSubcategory(selectedSubcategory);
         }else if (table_name == table_team) {
-             selectedTeam.setTeamName(newName);
+            selectedTeam.setTeamName(newName);
             Client::getInstance().EditTeam(selectedTeam);
         }else if (table_name == table_category) {
             selectedCategory.setName(newName.toStdString());
             Client::getInstance().EditCategory(selectedCategory);
+        }
         emit NameUpdated(newName); // Emit the nameUpdated signal with the new name
         close();
         QMessageBox successBox;
@@ -136,7 +137,6 @@ void EditPopup::saveClicked()
         applyCustomMessageBoxStyle(successBox);
         successBox.exec();
         accept();
-        }
     }
 }
 
@@ -177,6 +177,7 @@ void EditPopup::setSelectedSubcategory(const Subcategory& subcategory)
 {
     selectedSubcategory = subcategory;
 }
+
 
 void EditPopup::setSelectedTeam(const Team& team)
 {

@@ -163,7 +163,7 @@ std::vector<std::unique_ptr<Entity>> Client::GetEntity(const std::string& url, c
     return entities;
 }
 
-void Client::PostEntity(const std::string& url, Entity& object, Creator& creator)
+void Client::PostEntity(const std::string& url, Entity& object)
 {
     QJsonObject categoryObject = object.GetJsonObject();
     QJsonDocument jsonDocument(categoryObject);
@@ -277,27 +277,24 @@ std::vector<Team> Client::GetTeams()
 
 void Client::PostCategory(const std::string& categoryName)
 {
-    CategoryCreator categoryCreator;
-    Category* category = new Category();
+    std::unique_ptr<Category> category = std::make_unique<Category>();
     category->setName(categoryName);
-    Client::getInstance().PostEntity(Constants::categoriesApi, *category, categoryCreator);
+    Client::getInstance().PostEntity(Constants::categoriesApi, *category);
 }
 
 void Client::PostSubcategory(const std::string& subcategoryName, int categoryId)
 {
-    SubcategoryCreator subcategoryCreator;
-    Subcategory* subcategory = new Subcategory();
+    std::unique_ptr<Subcategory> subcategory = std::make_unique<Subcategory>();
     subcategory->setName(subcategoryName);
     subcategory->setCategoryId(categoryId);
-    Client::getInstance().PostEntity(Constants::subcategoriesApi, *subcategory, subcategoryCreator);
+    Client::getInstance().PostEntity(Constants::subcategoriesApi, *subcategory);
 }
 
 void Client::PostTeam(Team& team)
 {
-    TeamCreator teamCreator;
-    //team* Team= new team();
-    Client::getInstance().PostEntity(Constants::teamApi, team , teamCreator);
+    Client::getInstance().PostEntity(Constants::teamApi, team );
 }
+
 void Client::EditCategory(Category &category) {
     Client::getInstance().EditEntity(Constants::categoriesApi, category);
 }
@@ -306,8 +303,10 @@ void Client::EditSubcategory(Subcategory &subcategory) {
     Client::getInstance().EditEntity(Constants::subcategoriesApi, subcategory);
 }
 
+
 void Client::EditTeam(Team & team) {
     Client::getInstance().EditEntity(Constants::teamApi, team);
+
 }
 
 void Client::DeleteCategory(Category &category) {
@@ -319,6 +318,7 @@ void Client::DeleteSubcategory(Subcategory &subcategory) {
     int subcategoryId = subcategory.getId();
     Client::getInstance().DeleteEntity(Constants::subcategoriesApi, std::to_string(subcategoryId));
 }
+
 
 void Client::DeleteTeam(Team &team) {
     int teamId = team.getTeamId();

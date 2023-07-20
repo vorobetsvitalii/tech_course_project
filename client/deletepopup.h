@@ -44,7 +44,9 @@ public:
                              "}";
     void setSelectedCategory(const Category& category);
     void setSelectedSubcategory(const Subcategory& subcategory);
+
     void setSelectedTeam(const Team& team);
+
     static QString getTableCategory() {
         return table_category;
     }
@@ -81,7 +83,9 @@ private:
     static QString table_subcategory;
     static QString table_team;
     Subcategory selectedSubcategory;
+
     Team selectedTeam;
+
     Category selectedCategory;
 private slots:
     void deleteClicked();

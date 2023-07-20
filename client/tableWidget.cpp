@@ -65,6 +65,7 @@ void TableWidget::resize()
 void TableWidget::fillWithData()
 {
     std::vector<Team> teams = Client::getInstance().GetTeams();
+
     setRowCount(teams.size());
 
 
@@ -147,6 +148,7 @@ void TableWidget::editButtonClicked(int row)
     // Get the data from the selected row
     QString teamName = item(row, 0)->text();
 
+
     Team selectedTeam;
     std::vector<Team> teamsList = Client::GetTeams();
     for (Team& team : teamsList)
@@ -154,6 +156,7 @@ void TableWidget::editButtonClicked(int row)
         if (team.getTeamName() == teamName)
         {
             selectedTeam = team;
+
         }
     }
     EditPopup editPopup(teamName,editPopup.getTableTeam(), this);
@@ -181,6 +184,7 @@ void TableWidget::deleteButtonClicked(int row)
 
     QString teamName = nameItem->text();
 
+
         Team selectedTeam;
         std::vector<Team> teamsList= Client::GetTeams();
         for (Team& team : teamsList)
@@ -189,7 +193,6 @@ void TableWidget::deleteButtonClicked(int row)
             {
                 // Store the selected team
                 selectedTeam = team;
-
             }
         }
         DeletePopup deletePopup(deletePopup.getTableTeam(), this);

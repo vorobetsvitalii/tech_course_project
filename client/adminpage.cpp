@@ -431,6 +431,7 @@ void AdminPage::appendTeams()
         teams_map_id.insert(el.getTeamName(), el.getTeamId());
     }
 
+
     std::transform(teams.begin(), teams.end(), buttons.begin(), [](Team& team) {
         return (new QPushButton(team.getTeamName()));
     });
@@ -513,7 +514,8 @@ void AdminPage::on_add_subcategory_clicked()
 
 void AdminPage::on_add_team_clicked()
 {
-    if(tempTeamId != NULL)
+
+    if(tempSubcategoryId != NULL)
     {
         addTeamWindow->setModal(true);
         addTeamWindow->show();
@@ -626,6 +628,7 @@ void AdminPage::handleNewSubcategoryAdded()
     }
 }
 
+
 void AdminPage::handleNewTeamAdded()
 {
     tempTeam = addTeamWindow->getTeamName();
@@ -686,7 +689,6 @@ void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)
 
 void AdminPage::onCategorySelected(Category *category)
 {
-   // обробка вибраної сторінки
     pageLabel->setText(QString::fromStdString(category->getName()));
     qDebug() << "Category: " << category->getName() << "\n";
 }
@@ -779,6 +781,7 @@ void AdminPage::onSubcategoryClicked()
 
     previousSubcategory = clickedButton;
 
+
     tempSubcategoryId = subcategories_map_id[clickedButton->text()];
 
     for(int i = 1; i < teamsVLayout->count(); i++)
@@ -793,7 +796,11 @@ void AdminPage::onSubcategoryClicked()
             {
                 teams_widget->hide();
             }
-            else { teams_widget->show(); };
+            else
+            {
+                teams_widget->show();
+            };
+
         }
         else { teams_widget->hide(); }
     }
