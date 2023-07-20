@@ -54,7 +54,7 @@ public:
     bool handleLoginRequest(const std::string& email, const std::string& password);
     bool handleLogoutRequest();
     std::vector<std::unique_ptr<Entity>> GetEntity(const std::string& url, const std::string& jsonName, Creator& creator);
-    void PostEntity(const std::string& url, Entity& object, Creator& creator);
+    void PostEntity(const std::string& url, Entity& object);
     void EditEntity(const std::string& url, Entity& object);
     void DeleteEntity(const std::string& url, const std::string& objectId);
     static std::vector<Category> GetCategories();
