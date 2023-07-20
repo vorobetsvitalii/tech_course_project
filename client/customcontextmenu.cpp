@@ -2,8 +2,6 @@
 
 CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
 {
-    addCategoryWindow = new AddCategory();
-
     QAction *action1 = new QAction("Hide", this);
     QAction *action2 = new QAction("Delete", this);
     QAction *action3 = new QAction("Edit", this);
@@ -27,6 +25,8 @@ CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
                         "font-size: 9pt;"
                         "font-weight: bold;"
                         "");
+    subcategoriesList = Client::GetSubcategories();
+
 }
 
 void CustomContextMenu::setSubcategoryIndex(const int &index_)
@@ -43,7 +43,10 @@ void CustomContextMenu::handleContextMenuRequested(const QPoint &pos)
 {
     emit contextMenuRequested(pos);
 }
-
+void CustomContextMenu::onSubcategoryNameUpdated(const QString& newName)
+{
+    temp_subcategory_button->setText(newName);
+}
 void CustomContextMenu::handleContextMenuAction()
 {
     QAction *senderAction = qobject_cast<QAction*>(sender());
@@ -58,14 +61,46 @@ void CustomContextMenu::handleContextMenuAction()
         {
             if(temp_subcategory_button != nullptr)
             {
-                temp_subcategory_button->parentWidget()->deleteLater();
-            }
+                Subcategory selectedSubcategory;
+                for (const Subcategory& subcategory : subcategoriesList)
+                {
+                    if (subcategory.getName() == temp_subcategory_button->text().toStdString())
+                    {
+                        // Store the selected subcategory
+                        selectedSubcategory = subcategory;
 
-            //Client::sendSubcategoryId(index, "Delete", "None");
+                    }
+                }
+                DeletePopup deletePopup(deletePopup.getTableSubcategory(), this);
+                deletePopup.setSelectedSubcategory(selectedSubcategory);
+                deletePopup.setStyleSheet("border: none");
+                deletePopup.exec();
+                if(deletePopup.exec()== QDialog::Accepted){
+                temp_subcategory_button->parentWidget()->deleteLater();
+                }
+            }
         }
         else if (senderAction->text() == "Edit")
         {
-            //Client::sendSubcategoryId(index, "Edit", "Test4");
+              Subcategory selectedSubcategory;
+                for (const Subcategory& subcategory : subcategoriesList)
+                {
+                    if (subcategory.getName() == temp_subcategory_button->text().toStdString())
+                    {
+                        // Store the selected subcategory
+                        selectedSubcategory = subcategory;
+
+                    }
+                }
+                QString existingSubcategoryName = temp_subcategory_button->text();
+                EditPopup editPopup(existingSubcategoryName, editPopup.getTableSubcategory(), this);
+                editPopup.setSelectedSubcategory(selectedSubcategory);
+                // Connect a slot to handle the nameUpdated signal emitted from EditPopup
+                editPopup.setStyleSheet("border: none");
+                connect(&editPopup, &EditPopup::NameUpdated , this, &CustomContextMenu::onSubcategoryNameUpdated);
+                editPopup.exec();
+
+
         }
     }
 }

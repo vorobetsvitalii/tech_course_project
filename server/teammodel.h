@@ -12,7 +12,7 @@
 #include <sstream>
 #include <string>
 
-class TeamModel: public DbModel , public team
+class TeamModel: public DbModel , public Team
 {
 
 public:
@@ -22,11 +22,11 @@ public:
     void UpdateTeam();
     void DeleteTeam();
 
-    static std::vector<team> SelectTeam();
+    static std::vector<Team> SelectTeams();
 
     QString SelectLocations();
 
-    static std::vector<team> SelectTeams();
+
     static void EditTeams(std::vector<TeamModel> items);
     static void DeleteTeams(std::vector<TeamModel> items);
 

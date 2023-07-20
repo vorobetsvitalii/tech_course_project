@@ -208,15 +208,14 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     std::unique_ptr<ResizableWidget> widget = std::make_unique<ResizableWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     TeamsUI* teamui = new TeamsUI();
-    TableWidget* tableWidget = new TableWidget(); // Створюємо табличку
+    TableWidget* tableWidget = new TableWidget();
 
     layout->addWidget(teamui);
-    layout->addWidget(tableWidget); // Додаємо табличку до layout
+    layout->addWidget(tableWidget);
 
     widget->setLayout(layout);
     widget->setWindowTitle("Teams");
 
-    // Підписка на сигнал adminPageResized
     QObject::connect(adminpage, &AdminPage::adminPageResized, widget.get(), &ResizableWidget::resize);
     QObject::connect(adminpage, &AdminPage::adminPageResized, tableWidget, &TableWidget::resize);
 
@@ -253,8 +252,11 @@ std::unique_ptr<QWidget> MenuButton::initializeIAContent()
     widget->layout()->deleteLater();
 
     IAContentLayout->addLayout(categoriesVLayout);
-    IAContentLayout->addSpacing(30);
+    IAContentLayout->addSpacing(40);
     IAContentLayout->addLayout(subcategoriesVLayout);
+    IAContentLayout->addSpacing(40);
+    IAContentLayout->addLayout(teamsVLayout);
+    IAContentLayout->addSpacing(40);
 
     widget->setLayout(IAContentLayout);
 
@@ -288,6 +290,11 @@ void MenuButton::setCategoriesLayout(QVBoxLayout *categoriesVLayout_)
 void MenuButton::setSubcategoriesLayout(QVBoxLayout *subcategoriesVLayout_)
 {
     subcategoriesVLayout = subcategoriesVLayout_;
+}
+
+void MenuButton::setTeamsLayout(QVBoxLayout *teamsVLayout_)
+{
+    teamsVLayout = teamsVLayout_;
 }
 
 QString MenuButton::GetItemName() {
@@ -393,3 +400,4 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
 
 QVBoxLayout* MenuButton::categoriesVLayout = nullptr;
 QVBoxLayout* MenuButton::subcategoriesVLayout = nullptr;
+QVBoxLayout* MenuButton::teamsVLayout = nullptr;

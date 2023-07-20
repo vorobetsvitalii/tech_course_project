@@ -1,66 +1,66 @@
 #include "team.h"
 
-int team::getTeamId()
+int Team::getTeamId()
 {
     return this->TeamId;
 }
 
-int team::getTeamLocation()
+int Team::getTeamLocation()
 {
     return this->TeamLocation;
 }
 
-int team::getSubcategoryId()
+int Team::getSubcategoryId()
 {
     return this->SubcategoryId;
 }
 
-QString team::getTeamLogoBlob()
+QString Team::getTeamLogoBlob()
 {
     return this->TeamLogoBlob;
 }
 
-QString team::getTeamName()
+QString Team::getTeamName()
 {
     return this->TeamName;
 }
 
-QString team::getDate()
+QString Team::getDate()
 {
     return this->CreatingDate;
 }
 
-void team::setTeamId(int id)
+void Team::setTeamId(int id)
 {
     this->TeamId = id;
 }
 
-void team::setTeamLocation(int LocationId)
+void Team::setTeamLocation(int LocationId)
 {
     this->TeamLocation = LocationId;
 }
 
-void team::setSubcategoryId(int SubcategoryId)
+void Team::setSubcategoryId(int SubcategoryId)
 {
     this->SubcategoryId = SubcategoryId;
 }
 
-void team::setTeamLogoBlob(QString blob)
+void Team::setTeamLogoBlob(QString blob)
 {
     this->TeamLogoBlob = blob;
 }
 
-void team::setTeamName(QString name)
+void Team::setTeamName(QString name)
 {
     this->TeamName= name;
 }
 
-void team::setDate(QString Date)
+void Team::setDate(QString Date)
 {
     this->CreatingDate=Date;
 }
 
-QJsonObject team::GetJsonObject()
+QJsonObject Team::GetJsonObject()
 {
     QJsonObject jsonObject;
     jsonObject["SubcategoryId"] = this->getSubcategoryId();
@@ -72,7 +72,7 @@ QJsonObject team::GetJsonObject()
     return jsonObject;
 }
 
-void team::LoadJsonObject(QJsonObject Json)
+void Team::LoadJsonObject(QJsonObject Json)
 {
     if(Json.contains("SubcategoryId")){
         this->SubcategoryId = Json["SubcategoryId"].toInt();
@@ -118,7 +118,4 @@ void team::LoadJsonObject(QJsonObject Json)
 
     }
 }
-team::team()
-{
 
-}

@@ -50,6 +50,17 @@ set(PROJECT_SOURCES
     tableWidget.cpp
     resizableWidget.h
     resizableWidget.cpp
+    addteams.cpp
+    addteams.h
+    addteams.ui
+    teamcontextmenu.cpp
+    teamcontextmenu.h
+    deletepopup.h
+    deletepopup.ui
+    deletepopup.cpp
+    editpopup.h
+    editpopup.cpp
+
 )
 
 
@@ -104,7 +115,8 @@ install(TARGETS Client
 #Poco installation start
 
 # Set the POCO library directory
-set(POCO_DIR "D:/MSYS/mingw64")
+set(POCO_DIR "C:/msys64/mingw64")
+
 
 # Include directories for POCO
 

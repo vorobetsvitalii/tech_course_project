@@ -116,7 +116,10 @@ private:
     void GetLocations(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void PostTeam(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
     void GetTeams(Poco::Net::HTTPServerRequest& request , Poco::Net::HTTPServerResponse& response);
-    void ReceiveSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    void EditSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    void EditTeam(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    void DeleteSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    void DeleteTeam(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 
 };
 

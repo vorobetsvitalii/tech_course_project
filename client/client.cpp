@@ -184,6 +184,43 @@ void Client::PostEntity(const std::string& url, Entity& object, Creator& creator
     }
 }
 
+void Client::EditEntity(const std::string& url, Entity& object) {
+    QJsonObject entityObject = object.GetJsonObject();
+    QJsonDocument jsonDocument(entityObject);
+    QByteArray jsonData = jsonDocument.toJson();
+
+    std::string key = ClientSession::getInstance()->getKey();
+    try {
+        std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + url + "?key=" + key;
+        std::string response = hTTPRequestManager.sendHTTPPutRequest(apiUrl, jsonData.toStdString());
+
+        if (response.empty()) {
+            qDebug() << "Empty response received";
+        } else {
+            qDebug() << "Server response: " << QString::fromStdString(response);
+        }
+    } catch (const std::exception& ex) {
+        qDebug() << "Exception: " << ex.what();
+    }
+}
+
+void Client::DeleteEntity(const std::string& url, const std::string& objectId)
+{
+    std::string key = ClientSession::getInstance()->getKey();
+    try {
+        std::string apiUrl = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + url + "?id=" + objectId + "&key=" + key;
+        std::string response = hTTPRequestManager.sendHTTPDeleteRequest(apiUrl);
+
+        if (response.empty()) {
+            qDebug() << "Empty response received";
+        } else {
+            qDebug() << "Server response: " << QString::fromStdString(response);
+        }
+    } catch (const std::exception& ex) {
+        qDebug() << "Exception: " << ex.what();
+    }
+}
+
 std::vector<Category> Client::GetCategories()
 {
     CategoryCreator categoryCreator;
@@ -220,18 +257,18 @@ std::vector<Subcategory> Client::GetSubcategories()
     return subcategories;
 }
 
-std::vector<team> Client::GetTeams()
+std::vector<Team> Client::GetTeams()
 {
     TeamCreator teamCreator;
-    std::vector<std::unique_ptr<Entity>> entities = Client::getInstance().GetEntity(Constants::teamSelect, Constants::TeamsArrayJson, teamCreator);
+    std::vector<std::unique_ptr<Entity>> entities = Client::getInstance().GetEntity(Constants::teamApi, Constants::TeamsArrayJson, teamCreator);
 
-    std::vector<team> Teams;
+    std::vector<Team> Teams;
     for (std::unique_ptr<Entity>& entity : entities)
     {
-        team* Team = dynamic_cast<team*>(entity.get());
-        if (Team)
+        Team* team = dynamic_cast<Team*>(entity.get());
+        if (team)
         {
-            Teams.push_back(*Team);
+            Teams.push_back(*team);
         }
     }
 
@@ -255,44 +292,37 @@ void Client::PostSubcategory(const std::string& subcategoryName, int categoryId)
     Client::getInstance().PostEntity(Constants::subcategoriesApi, *subcategory, subcategoryCreator);
 }
 
-void Client::PostTeam(team& Team)
+void Client::PostTeam(Team& team)
 {
     TeamCreator teamCreator;
     //team* Team= new team();
-    Client::getInstance().PostEntity(Constants::teamInsert, Team , teamCreator);
+    Client::getInstance().PostEntity(Constants::teamApi, team , teamCreator);
+}
+void Client::EditCategory(Category &category) {
+    Client::getInstance().EditEntity(Constants::categoriesApi, category);
 }
 
-bool Client::sendSubcategoryId(int subcategoryId, std::string query_type, std::string subcategory_to_edit = "None") {
-    std::string subcategory_name;
+void Client::EditSubcategory(Subcategory &subcategory) {
+    Client::getInstance().EditEntity(Constants::subcategoriesApi, subcategory);
+}
 
-    for(const auto& el : subcategories)
-    {
-        if(el.getId() == subcategoryId)
-        {
-            subcategory_name = el.getName();
-            break;
-        }
-    }
+void Client::EditTeam(Team & team) {
+    Client::getInstance().EditEntity(Constants::teamApi, team);
+}
 
-    std::string url = "http://" + IP_ADDRESS + ":" + std::to_string(PORT) + "/api/subcategories/send";
+void Client::DeleteCategory(Category &category) {
+    int categoryId = category.getId();
+    Client::getInstance().DeleteEntity(Constants::categoriesApi, std::to_string(categoryId));
+}
 
-    Poco::URI url_s = Poco::URI(url);
+void Client::DeleteSubcategory(Subcategory &subcategory) {
+    int subcategoryId = subcategory.getId();
+    Client::getInstance().DeleteEntity(Constants::subcategoriesApi, std::to_string(subcategoryId));
+}
 
-    url_s.addQueryParameter("id", std::to_string(subcategoryId));
-    url_s.addQueryParameter("query_type", query_type);
-    url_s.addQueryParameter("subcategory_name", subcategory_name);
-    url_s.addQueryParameter("subcategory_to_edit", subcategory_to_edit);
-
-    Poco::Net::HTTPClientSession session(IP_ADDRESS, PORT);
-    Poco::Net::HTTPRequest request = Poco::Net::HTTPRequest(Poco::Net::HTTPRequest::HTTP_GET, url_s.getPathAndQuery());
-    session.sendRequest(request);
-    Poco::Net::HTTPResponse response;
-    session.receiveResponse(response);
-    if(response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK){
-        // to do
-        return true;
-    }
-    return false;
+void Client::DeleteTeam(Team &team) {
+    int teamId = team.getTeamId();
+    Client::getInstance().DeleteEntity(Constants::teamApi, std::to_string(teamId));
 }
 
 std::string Client::IP_ADDRESS = "127.0.0.1";

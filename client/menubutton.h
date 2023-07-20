@@ -46,8 +46,10 @@ public:
 
     void setButtonIcon(const QIcon& icon);
     QIcon convertToGrayIcon(const QIcon& icon);
+
     static void setCategoriesLayout(QVBoxLayout* categoriesVLayout_);
     static void setSubcategoriesLayout(QVBoxLayout* subcategoriesVLayout_);
+    static void setTeamsLayout(QVBoxLayout* teamsVLayout_);
 
 private:
 
@@ -87,6 +89,7 @@ private:
 
     static QVBoxLayout* categoriesVLayout;
     static QVBoxLayout* subcategoriesVLayout;
+    static QVBoxLayout* teamsVLayout;
 
 protected:
     bool eventFilter(QObject* object, QEvent* event) override;

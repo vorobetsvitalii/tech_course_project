@@ -14,7 +14,10 @@ AdminPage::AdminPage(QWidget *parent) :
 
     addCategoryWindow = std::make_unique<AddCategory>();
     addSubcategoryWindow  = std::make_unique<AddSubcategory>();
+    addTeamWindow = std::make_unique<AddTeams>();
+
     contextMenu = std::make_unique<CustomContextMenu>();
+    teamContextMenu = std::make_unique<TeamContextMenu>();
 
     initializeLayouts(); // Tools initialization
     initializeButton();
@@ -35,6 +38,7 @@ AdminPage::AdminPage(QWidget *parent) :
 
     appendCategories();
     appendSubcategories();
+    appendTeams();
 
     genericGridLayout->addWidget(topHWidget.get(), 0, 0); // Generic grid layout forming
     genericGridLayout->addLayout(configurationHLayout.get(), 1, 0);
@@ -46,8 +50,10 @@ AdminPage::AdminPage(QWidget *parent) :
     connect(&Client::getInstance(), &Client::logoutDoneEvent, this, &AdminPage::onLogoutDone);
     connect(addCategoryButton.get(), &QPushButton::clicked, this, &AdminPage::on_add_category_clicked);
     connect(addSubcategoryButton.get(), &QPushButton::clicked, this, &AdminPage::on_add_subcategory_clicked);
+    connect(addTeamButton.get(), &QPushButton::clicked, this, &AdminPage::on_add_team_clicked);
     connect(addCategoryWindow.get(), &AddCategory::newButtonAdded, this, &AdminPage::handleNewButtonAdded);
     connect(addSubcategoryWindow.get(), &AddSubcategory::newButtonAdded, this, &AdminPage::handleNewSubcategoryAdded);
+    connect(addTeamWindow.get(), &AddTeams::newButtonAdded, this, &AdminPage::handleNewTeamAdded);
     connect(saveChangesButton.get(), &QPushButton::clicked, this, &AdminPage::on_save_changes_clicked);
 }
 
@@ -68,6 +74,7 @@ void AdminPage::initializeLayouts()
     itemsMenuVLayout = std::make_unique<QVBoxLayout>();
     categoriesVLayout = std::make_unique<QVBoxLayout>();
     subcategoriesVLayout = std::make_unique<QVBoxLayout>();
+    teamsVLayout = std::make_unique<QVBoxLayout>();
 }
 
 void AdminPage::initializeWidgets()
@@ -102,6 +109,7 @@ void AdminPage::initializeButton()
 
     addCategoryButton = std::make_unique<QPushButton>();
     addSubcategoryButton = std::make_unique<QPushButton>();
+    addTeamButton = std::make_unique<QPushButton>();
 }
 
 
@@ -283,6 +291,13 @@ void AdminPage::itemsMenuVerticalLayout()
     subcategoriesVLayout->setAlignment(Qt::AlignTop);
     subcategoriesVLayout->insertWidget(0, addSubcategoryButton.get());
 
+    addTeamButton->setText("+ Add team");
+    addTeamButton->setMinimumSize(95, 20);
+    addTeamButton->setStyleSheet(" QPushButton { border: 2px dashed grey; color: black; font-size: 12px; } ");
+
+    teamsVLayout->setAlignment(Qt::AlignTop);
+    teamsVLayout->insertWidget(0, addTeamButton.get());
+
     itemsMenuVLayout->addSpacerItem(itemsMenuSpacer_1.get());
 }
 
@@ -401,6 +416,76 @@ void AdminPage::appendSubcategories()
     MenuButton::setSubcategoriesLayout(subcategoriesVLayout.get());
 }
 
+void AdminPage::appendTeams()
+{
+    auto future = std::async(std::launch::async, [](){
+        return Client::getInstance().GetTeams();
+    });
+
+    auto teams = future.get();
+    std::vector<QPushButton*> buttons(teams.size());
+
+    for(auto& el : teams)
+    {
+        teams_map.insert(el.getTeamName(), el.getSubcategoryId());
+        teams_map_id.insert(el.getTeamName(), el.getTeamId());
+    }
+
+    std::transform(teams.begin(), teams.end(), buttons.begin(), [](Team& team) {
+        return (new QPushButton(team.getTeamName()));
+    });
+
+    for (auto* button : buttons) {
+        QWidget* buttons_widget = new QWidget();
+        QHBoxLayout* buttons_layout = new QHBoxLayout();
+        QPushButton* context_menu_button = new QPushButton();
+
+        button->setStyleSheet("QPushButton {"
+                              "border: 1px solid gray;"
+                              "border-right: none;"
+                              "border-radius: 3px;"
+                              "padding: 5px;"
+                              "font-weight: bold;"
+                              "color: gray;"
+                              "image: none;"
+                              "}"
+                              "QPushButton:hover {"
+                              "color: red;"
+                              "}");
+
+        context_menu_button->setFixedWidth(15);
+        context_menu_button->setContextMenuPolicy(Qt::CustomContextMenu);
+        context_menu_button->setMenu(teamContextMenu.get());
+        context_menu_button->setEnabled(false);
+        context_menu_button->setStyleSheet("QPushButton {"
+                                           "border: 1px solid gray;"
+                                           "border-left: none;"
+                                           "border-radius: 3px;"
+                                           "padding: 5px;"
+                                           "font-weight: bold;"
+                                           "color: gray;"
+                                           "text-align: right;"
+                                           "}");
+
+        connect(context_menu_button, &QPushButton::customContextMenuRequested, [=](const QPoint &pos) {
+            contextMenu->exec(button->mapToGlobal(pos));
+        });
+
+        connect(context_menu_button, &QPushButton::clicked, this, &AdminPage::onTeamClicked);
+        connect(button, &QPushButton::released, this, &AdminPage::onTeamClicked);
+
+        buttons_layout->addWidget(button);
+        buttons_layout->addWidget(context_menu_button);
+        buttons_layout->setSpacing(0);
+
+        buttons_widget->setLayout(buttons_layout);
+        buttons_widget->hide();
+        teamsVLayout->insertWidget(1, buttons_widget);
+    }
+
+    MenuButton::setTeamsLayout(teamsVLayout.get());
+}
+
 bool AdminPage::checkIfStringEmpty(const QString &temp_string)
 {
     return (temp_string == "");
@@ -426,6 +511,16 @@ void AdminPage::on_add_subcategory_clicked()
     else { QMessageBox::warning(this, "CategoryError", "You need to choose some category first or save a new one!"); }
 }
 
+void AdminPage::on_add_team_clicked()
+{
+    if(tempTeamId != NULL)
+    {
+        addTeamWindow->setModal(true);
+        addTeamWindow->show();
+    }
+    else { QMessageBox::warning(this, "TeamError", "You need to choose some team first or save a new one!"); }
+}
+
 void AdminPage::on_save_changes_clicked()
 {
     if(!checkIfStringEmpty(tempCategory) or (!checkIfStringEmpty(tempSubcategory)) and (tempCategoryId != NULL))
@@ -441,6 +536,13 @@ void AdminPage::on_save_changes_clicked()
             subcategories_map_id.insert(tempSubcategory, Client::getInstance().GetSubcategories().at(Client::getInstance().GetSubcategories().size() - 1).getId());
             Client::getInstance().PostSubcategory(tempSubcategory.toStdString(), tempCategoryId);
             tempSubcategory = "";
+        }
+
+        if((!checkIfStringEmpty(tempTeam)) and (tempTeamId != NULL))
+        {
+            teams_map_id.insert(tempTeam, Client::getInstance().GetTeams().at(Client::getInstance().GetTeams().size() - 1).getTeamId());
+            Client::getInstance().PostSubcategory(tempSubcategory.toStdString(), tempCategoryId);
+            tempTeam = "";
         }
 
         QMessageBox::information(this, "SaveSuccess", "All changes succesfully saved!");
@@ -520,7 +622,58 @@ void AdminPage::handleNewSubcategoryAdded()
         });
 
         buttons_widget->setLayout(buttons_layout);
-        subcategoriesVLayout->insertWidget(1, buttons_widget);
+        teamsVLayout->insertWidget(1, buttons_widget);
+    }
+}
+
+void AdminPage::handleNewTeamAdded()
+{
+    tempTeam = addTeamWindow->getTeamName();
+
+    if(!checkIfStringEmpty(tempTeam))
+    {
+        QPushButton* newButton = new QPushButton(tempTeam);
+        QWidget* buttons_widget = new QWidget();
+        QHBoxLayout* buttons_layout = new QHBoxLayout();
+        QPushButton* context_menu_button = new QPushButton();
+
+        newButton->setStyleSheet("QPushButton {"
+                                 "border: 1px solid gray;"
+                                 "border-right: none;"
+                                 "border-radius: 3px;"
+                                 "padding: 5px;"
+                                 "font-weight: bold;"
+                                 "color: gray;"
+                                 "}"
+                                 "QPushButton:hover {"
+                                 "color: red;"
+                                 "}");
+
+        context_menu_button->setFixedWidth(15);
+        context_menu_button->setContextMenuPolicy(Qt::CustomContextMenu);
+        context_menu_button->setMenu(teamContextMenu.get());
+        context_menu_button->setEnabled(false);
+        context_menu_button->setStyleSheet("QPushButton {"
+                                           "border: 1px solid gray;"
+                                           "border-left: none;"
+                                           "border-radius: 3px;"
+                                           "padding: 5px;"
+                                           "font-weight: bold;"
+                                           "color: gray;"
+                                           "}");
+
+        teams_map.insert(tempTeam, tempSubcategoryId);
+
+        buttons_layout->addWidget(newButton);
+        buttons_layout->addWidget(context_menu_button);
+        buttons_layout->setSpacing(0);
+
+        connect(context_menu_button, &QPushButton::customContextMenuRequested, [=](const QPoint &pos) {
+            contextMenu->exec(context_menu_button->mapToGlobal(pos));
+        });
+
+        buttons_widget->setLayout(buttons_layout);
+        teamsVLayout->insertWidget(1, buttons_widget);
     }
 }
 
@@ -628,7 +781,72 @@ void AdminPage::onSubcategoryClicked()
 
     tempSubcategoryId = subcategories_map_id[clickedButton->text()];
 
+    for(int i = 1; i < teamsVLayout->count(); i++)
+    {
+        QPushButton* button = qobject_cast<QPushButton*>(teamsVLayout->itemAt(i)->widget()->layout()->itemAt(0)->widget());
+        QPushButton* context_menu_button = qobject_cast<QPushButton*>(teamsVLayout->itemAt(i)->widget()->layout()->itemAt(1)->widget());
+        QWidget* teams_widget = qobject_cast<QWidget*>(teamsVLayout->itemAt(i)->widget());
+
+        if(teams_map[button->text()] == tempSubcategoryId)
+        {
+            if(tempSubcategoryId == NULL)
+            {
+                teams_widget->hide();
+            }
+            else { teams_widget->show(); };
+        }
+        else { teams_widget->hide(); }
+    }
+
     qobject_cast<QPushButton*>(subcategory_widget->layout()->itemAt(1)->widget())->setEnabled(true);
     CustomContextMenu::setTempSubcategoryButton(clickedButton);
     CustomContextMenu::setSubcategoryIndex(tempSubcategoryId);
+}
+
+void AdminPage::onTeamClicked()
+{
+    QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());
+    QWidget* team_widget = clickedButton->parentWidget();
+
+    clickedButton->setStyleSheet("QPushButton {"
+                                 "border: 1px solid gray;"
+                                 "border-right: none;"
+                                 "border-radius: 3px;"
+                                 "padding: 5px;"
+                                 "font-weight: bold;"
+                                 "color: red;"
+                                 "}");
+
+    if (previousTeam != nullptr)
+    {
+        previousTeam->setStyleSheet("QPushButton {"
+                                           "border: 1px solid gray;"
+                                           "border-right: none;"
+                                           "border-radius: 3px;"
+                                           "padding: 5px;"
+                                           "font-weight: bold;"
+                                           "color: gray;"
+                                           "image: none;"
+                                           "}"
+                                           "QPushButton:hover {"
+                                           "color: red;"
+                                           "}");
+        qobject_cast<QPushButton*>(previousTeam->parentWidget()->layout()->itemAt(1)->widget())->setEnabled(false);
+    }
+
+    previousTeam = clickedButton;
+
+    tempTeamId = teams_map_id[clickedButton->text()];
+
+    qobject_cast<QPushButton*>(team_widget->layout()->itemAt(1)->widget())->setEnabled(true);
+    TeamContextMenu::setTempTeamButton(clickedButton);
+    TeamContextMenu::setTeamIndex(tempTeamId);
+}
+
+void AdminPage::resizeEvent(QResizeEvent *event)
+{
+    emit adminPageResized();
+    qDebug() << "Admin Resized";
+
+    QWidget::resizeEvent(event);
 }

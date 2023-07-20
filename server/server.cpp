@@ -27,9 +27,6 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             else if(uri.find(Constants::subcategoriesApi) != std::string::npos)
             {
                 GetSubcategories(request, response);
-                if(uri.find("/send") != std::string::npos)
-                    ReceiveSubcategory(request, response);
-                else GetSubcategories(request, response);
             }
             else if(uri.find(Constants::locationsGet) != std::string::npos)
             {
@@ -37,11 +34,9 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
             }
             else if(uri.find(Constants::subcategoriesApi) != std::string::npos)
             {
-                if(uri.find("/send") != std::string::npos)
-                    ReceiveSubcategory(request, response);
                 GetSubcategories(request, response);
             }
-            else if(uri.find(Constants::teamSelect) != std::string::npos)
+            else if(uri.find(Constants::teamApi) != std::string::npos)
             {
                 GetTeams(request, response);
 
@@ -76,7 +71,7 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
                 qDebug() << "subcategories\n";
                 PostSubcategories(request, response);
             }
-            if(uri.find(Constants::teamInsert)!=std::string::npos)
+            if(uri.find(Constants::teamApi)!=std::string::npos)
             {
                 qDebug()<< "team";
                 PostTeam(request, response);
@@ -87,7 +82,33 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
                 response.send();
             }
         }
-    }catch(std::exception* exp){
+        else if(method == "PUT")
+        {
+            if (uri.find(Constants::subcategoriesApi) != std::string::npos)
+            {
+                qDebug() << "Put subcategory\n";
+                EditSubcategory(request, response);
+            }
+            else if (uri.find(Constants::teamApi) != std::string::npos)
+            {
+                qDebug() << "Put team\n";
+                EditTeam(request, response);
+            }
+        }
+        else if(method == "DELETE")
+        {
+            if (uri.find(Constants::subcategoriesApi) != std::string::npos)
+            {
+                qDebug() << "Delete subcategory\n";
+                DeleteSubcategory(request, response);
+            }
+            else if (uri.find(Constants::teamApi) != std::string::npos)
+            {
+                qDebug() << "Delete team\n";
+                DeleteTeam(request, response);
+            }
+        }
+    } catch(std::exception* exp){
         response.setStatus(Poco::Net::HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
         qDebug() << exp->what();
         response.send();
@@ -570,44 +591,6 @@ void RequestHandler::PostSubcategories(Poco::Net::HTTPServerRequest& request, Po
     }
 }
 
-void RequestHandler::ReceiveSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
-{
-    Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
-
-    std::string id = parameters[0].second;
-    std::string query_type = parameters[1].second;
-    std::string subcategory_name = parameters[2].second;
-    std::string subcategory_to_edit = parameters[3].second;
-
-    try {
-        qDebug() << "Received ID: " << id << "           Received QueryTyoe: " << query_type << "           Received subcategory_name: " << subcategory_name << "           Received subcategory_name: " << subcategory_to_edit;
-        if(query_type == "Delete")
-        {
-            SubcategoriesModel* model = new SubcategoriesModel(subcategory_name, QString::fromStdString(id).toInt());
-            model->DeleteSubcategory();
-        }
-        else if(query_type == "Edit")
-        {
-            SubcategoriesModel* model = new SubcategoriesModel(subcategory_to_edit, QString::fromStdString(id).toInt());
-            std::vector<SubcategoriesModel> vector;
-
-            vector.push_back(*model);
-
-            model->EditSubcategories(vector);
-        }
-        else if(query_type == "Hide")
-        {
-
-        }
-
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
-    }
-    catch(std::exception& ex){
-        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
-    }
-    response.send();
-}
-
 void RequestHandler::GetLocations(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response)
 {
     TeamModel Team;
@@ -687,11 +670,11 @@ void RequestHandler::GetTeams(Poco::Net::HTTPServerRequest &request, Poco::Net::
         std::string key = parameters[0].second;
         if(CheckToken(key))
         {
-            std::vector<team> TeamsVector = TeamModel::SelectTeam();
+            std::vector<Team> TeamsVector = TeamModel::SelectTeams();
 
             QJsonArray TeamsArray;
-            for (team& Team : TeamsVector) {
-                QJsonObject teamObject = Team.GetJsonObject();
+            for (Team& team : TeamsVector) {
+                QJsonObject teamObject = team.GetJsonObject();
                 TeamsArray.append(teamObject);
             }
 
@@ -728,6 +711,181 @@ void RequestHandler::GetTeams(Poco::Net::HTTPServerRequest &request, Poco::Net::
 
     }
 }
+
+void RequestHandler::EditSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        std::istream& requestBody = request.stream();
+        std::string body;
+        Poco::StreamCopier::copyToString(requestBody, body);
+
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(QByteArray::fromStdString(body));
+        if (jsonDocument.isNull()) {
+            throw std::runtime_error("Invalid JSON data");
+        }
+
+        QJsonObject subcategoryObject = jsonDocument.object();
+        if (CheckToken(key)) {
+            qDebug() << subcategoryObject << "\n";
+
+            std::unique_ptr<SubcategoriesModel> model = std::make_unique<SubcategoriesModel>();
+            model->LoadJsonObject(subcategoryObject);
+            model->UpdateSubcategory();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Subcategory updated successfully", 31);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
+void RequestHandler::EditTeam(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        std::istream& requestBody = request.stream();
+        std::string body;
+        Poco::StreamCopier::copyToString(requestBody, body);
+
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(QByteArray::fromStdString(body));
+        if (jsonDocument.isNull()) {
+            throw std::runtime_error("Invalid JSON data");
+        }
+
+        QJsonObject teamObject = jsonDocument.object();
+        if (CheckToken(key)) {
+            qDebug() << teamObject << "\n";
+
+            std::unique_ptr<TeamModel> model = std::make_unique<TeamModel>();
+            model->LoadJsonObject(teamObject);
+            model->UpdateTeam();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Team updated successfully", 31);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
+void RequestHandler::DeleteSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string subcategoryId = parameters[0].second;
+        std::string key = parameters[1].second;
+
+        qDebug() << "DeleteSubcategory id = " << subcategoryId << "key = " << key ;
+
+        if (CheckToken(key)) {
+            std::unique_ptr<SubcategoriesModel> model = std::make_unique<SubcategoriesModel>();
+            model->setId(std::stoi(subcategoryId));
+            model->DeleteSubcategory();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Subcategory deleted successfully", 31);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
+void RequestHandler::DeleteTeam(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string teamId = parameters[0].second;
+        std::string key = parameters[1].second;
+
+        qDebug() << "DeleteTeam id = " << teamId << "key = " << key ;
+
+        if (CheckToken(key)) {
+            std::unique_ptr<TeamModel> model = std::make_unique<TeamModel>();
+            model->setTeamId(std::stoi(teamId));
+            model->DeleteTeam();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Team deleted successfully", 24);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
 
 
 Poco::Net::HTTPRequestHandler* RequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest&)

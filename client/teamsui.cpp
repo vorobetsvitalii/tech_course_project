@@ -1,5 +1,9 @@
 #include "teamsui.h"
 
+std::map<int,std::string> TeamsUI::LocationMap;
+std::map<int,std::string> TeamsUI::CategoriesMap;
+std::vector<Subcategory> TeamsUI::SubCategoriesAll;
+
 QString TeamsUI::comboBoxStyle = "QComboBox {"
                         "background-color: white;"
                         "color: black;"
@@ -44,14 +48,10 @@ QString TeamsUI::listViewStyle="QListView::item {"
 
 void TeamsUI::initializeLocationDrop()
 {
+    LocationMap = GetLocations();
     LocationDrop = std::make_unique<QComboBox>();
 
-
-
-
     LocationDrop->setFixedSize(246,36);
-
-
 
     LocationDrop->setStyleSheet(comboBoxStyle);
     QListView * listView = new QListView();
@@ -138,6 +138,8 @@ void TeamsUI::onCategoryActivated(int index)
 
 void TeamsUI::initializeSubCategoryDrop()
 {
+    SubCategoriesAll = GetSubCategories();
+
     SubCategoryDrop = std::make_unique<QComboBox>();
 
 
@@ -284,31 +286,7 @@ void TeamsUI::initializeTeamImage()
 
 }
 
-void TeamsUI::ApplyButtonCheck()
-{
-    /*try{
-    QString CategoryText = this->CategoryDrop->currentText();
-    QString SubCategoryText = this->SubCategoryDrop->currentText();
-    QString LocationText = this->LocationDrop->currentText();
-    QString TeamName = this->TeamInput->text();
-    QString Image = this->ImagePath;
 
-    if(!CategoryText.isNull() && !SubCategoryText.isNull() && !LocationText.isEmpty() && !TeamName.isNull() && !Image.isNull()){
-            this->ApplyButton->setStyleSheet("QPushButton {"
-                                         "background-color: rgba(247, 211, 214, 1);"
-                                         "color: white;"
-                                         "border: 0px;"
-                                         "}");
-    }
-    else{
-        /his->ApplyButton->setStyleSheet("QPushButton {"
-                                         "background-color: rgba(224, 34, 50, 1);"
-                                         "color: white;"
-                                         "border: 0px;"
-                                         "}");
-    }
-    }catch(std::exception exp){qDebug()<<exp.what();}*/
-}
 
 TeamsUI::TeamsUI()
 {
@@ -325,8 +303,6 @@ TeamsUI::TeamsUI()
     initializeCancelButton();
 
     Layout = std::make_unique<QVBoxLayout>(this);
-
-
 
     Layout->addWidget(LocationLabel.get());
     Layout->addWidget(LocationDrop.get());
@@ -382,7 +358,7 @@ void TeamsUI::enterEvent(QEnterEvent* event)
         TeamImage->setStyleSheet("background-color: rgba(196, 196, 196, 0.08);");
         CameraIcon->setVisible(true);
         LogoText->setVisible(true);
-        ApplyButtonCheck();
+
    }
 
    QWidget::enterEvent(event);
@@ -395,7 +371,7 @@ void TeamsUI::leaveEvent(QEvent* event)
         TeamImage->setStyleSheet(QString("QFrame { border: none; background-image: url(%1); background-repeat: no-repeat; background-position: center; background-origin: content; background-clip: content;}").arg(ImagePath));
         CameraIcon->setVisible(false);
         LogoText->setVisible(false);
-        ApplyButtonCheck();
+
     }
 
     QWidget::leaveEvent(event);
@@ -404,6 +380,7 @@ void TeamsUI::leaveEvent(QEvent* event)
 std::map<int,std::string> TeamsUI::GetLocations()
 {
 
+    //std::string apiUrl = "http://" + Client::IP_ADDRESS + ":" + std::to_string(Client::PORT) + url + "?key=" + Client::key;
     std::string path = "http://localhost:8080"+Constants::locationsGet;
 
     HTTPRequestManager manager;
@@ -473,7 +450,7 @@ std::vector<Subcategory> TeamsUI::GetSubCategories()
 void TeamsUI::CreateTeam()
 {
     qDebug()<<"CreateTeam";
-    team Team;
+    Team team;
     QString CategoryText = this->CategoryDrop->currentText();
     QString SubCategoryText = this->SubCategoryDrop->currentText();
     QString LocationText = this->LocationDrop->currentText();
@@ -511,7 +488,7 @@ void TeamsUI::CreateTeam()
     {
         if(tmp.getName()==SubCategoryText.toStdString())
         {
-            Team.setSubcategoryId(tmp.getId());
+            team.setSubcategoryId(tmp.getId());
             break;
         }
     }}else{return;}
@@ -519,22 +496,22 @@ void TeamsUI::CreateTeam()
     if(!LocationText.isEmpty()){
     for (const auto pair : this->LocationMap) {
         if (pair.second == LocationText.toStdString()) {
-            Team.setTeamLocation(pair.first);
+            team.setTeamLocation(pair.first);
             break;
         }
     }}else{return;}
 
     if(!TeamName.isEmpty()){
-        Team.setTeamName(TeamName);
+        team.setTeamName(TeamName);
     }else{return;}
 
     if(!this->ImagePath.isEmpty())
     {
-        Team.setTeamLogoBlob(this->ImagePath);
+        team.setTeamLogoBlob(this->ImagePath);
 
     }else{return;}
-    qDebug()<<SubCategoryText+"  "+QString::number( Team.getSubcategoryId())+  " " +LocationText+"  "+QString::number(Team.getTeamLocation())+"  "+Team.getTeamName()+"   "+this->ImagePath;
-    Client::getInstance().PostTeam(Team);
+    qDebug()<<SubCategoryText+"  "+QString::number( team.getSubcategoryId())+  " " +LocationText+"  "+QString::number(team.getTeamLocation())+"  "+team.getTeamName()+"   "+this->ImagePath;
+    Client::getInstance().PostTeam(team);
 }
 
 void TeamsUI::Cancel()
