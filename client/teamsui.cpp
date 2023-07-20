@@ -479,8 +479,33 @@ void TeamsUI::CreateTeam()
     QString LocationText = this->LocationDrop->currentText();
     QString TeamName = this->TeamInput->text();
 
-    if(!CategoryText.isNull() && !SubCategoryText.isNull() && !LocationText.isEmpty() && !TeamName.isNull() && !this->ImagePath.isNull()){QMessageBox::information(nullptr, "Apply", "Конанду додано");}
-    else{QMessageBox::information(nullptr, "Apply", "Конанду не додано"); return;}
+
+
+    if (!CategoryText.isNull() && !SubCategoryText.isNull() && !LocationText.isEmpty() && !TeamName.isNull() && !this->ImagePath.isNull()) {
+        QMessageBox applyMessageBox;
+        applyMessageBox.setText("Команду додано");
+        applyMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+        applyMessageBox.setStyleSheet(
+            "QMessageBox {"
+            "   background-color: rgba(248, 248, 248, 1);"
+            "   font-size: 14px;"  // Розмір шрифту
+            "}");
+        ;
+        applyMessageBox.exec();
+    } else {
+        QMessageBox applyMessageBox;
+        applyMessageBox.setText("Команду не додано");
+        applyMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+        applyMessageBox.setStyleSheet(
+            "QMessageBox {"
+            "   background-color: rgba(248, 248, 248, 1);"
+            "   font-size: 14px;"  // Розмір шрифту
+            "}");
+;
+        applyMessageBox.exec();
+        return;
+    }
+
     if(!SubCategoryText.isEmpty()){
     for(const auto tmp: this->SubCategoriesVector)
     {
