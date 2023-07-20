@@ -63,6 +63,8 @@ public:
     static void PostCategory(const std::string& categoryName);
     static void PostSubcategory(const std::string& subcategoryName, int categoryId);
     static void PostTeam(team& Team);
+    static void EditCategory(Category& category);
+    static void DeleteCategory(Category& category);
     static void EditSubcategory(Subcategory& subcategory);
     static void EditTeam(team& Team);
     static void DeleteSubcategory(Subcategory& subcategory);

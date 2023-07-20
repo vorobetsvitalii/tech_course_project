@@ -124,7 +124,9 @@ void EditPopup::saveClicked()
         }else if (table_name == table_team) {
              selectedTeam.setTeamName(newName);
             Client::getInstance().EditTeam(selectedTeam);
-        }
+        }else if (table_name == table_category) {
+            selectedCategory.setName(newName.toStdString());
+            Client::getInstance().EditCategory(selectedCategory);
         emit NameUpdated(newName); // Emit the nameUpdated signal with the new name
         close();
         QMessageBox successBox;
@@ -165,7 +167,11 @@ void EditPopup::applyCustomMessageBoxStyle(QMessageBox& messageBox)
                              "}");
     messageBox.setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
 }
+void EditPopup::setSelectedCategory(const Category& category){
 
+    selectedCategory = category;
+
+}
 void EditPopup::setSelectedSubcategory(const Subcategory& subcategory)
 {
     selectedSubcategory = subcategory;

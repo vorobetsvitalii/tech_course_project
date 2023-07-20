@@ -42,6 +42,7 @@ public:
                              "QMessageBox QPushButton:hover {"
                              "  background-color: darkred;"
                              "}";
+    void setSelectedCategory(const Category& category);
     void setSelectedSubcategory(const Subcategory& subcategory);
     void setSelectedTeam(const team& team);
     static QString getTableCategory() {

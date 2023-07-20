@@ -40,6 +40,7 @@ public:
 
     void ShadowEffect();
 
+    void setSelectedCategory(const Category& category);
     void setSelectedSubcategory(const Subcategory& subcategory);
     void setSelectedTeam(const team& team);
 

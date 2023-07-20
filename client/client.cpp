@@ -298,6 +298,9 @@ void Client::PostTeam(team& Team)
     //team* Team= new team();
     Client::getInstance().PostEntity(Constants::teamApi, Team , teamCreator);
 }
+void Client::EditCategory(Category &category) {
+    Client::getInstance().EditEntity(Constants::categoriesApi, category);
+}
 
 void Client::EditSubcategory(Subcategory &subcategory) {
     Client::getInstance().EditEntity(Constants::subcategoriesApi, subcategory);
@@ -305,6 +308,11 @@ void Client::EditSubcategory(Subcategory &subcategory) {
 
 void Client::EditTeam(team & Team) {
     Client::getInstance().EditEntity(Constants::teamApi, Team);
+}
+
+void Client::DeleteCategory(Category &category) {
+    int categoryId = category.getId();
+    Client::getInstance().DeleteEntity(Constants::categoriesApi, std::to_string(categoryId));
 }
 
 void Client::DeleteSubcategory(Subcategory &subcategory) {
