@@ -127,6 +127,7 @@ void EditPopup::saveClicked()
         }else if (table_name == table_category) {
             selectedCategory.setName(newName.toStdString());
             Client::getInstance().EditCategory(selectedCategory);
+        }
         emit NameUpdated(newName); // Emit the nameUpdated signal with the new name
         close();
         QMessageBox successBox;

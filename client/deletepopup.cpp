@@ -160,21 +160,21 @@ void DeletePopup::deleteClicked()
         deletionBox.exec();
         accept();
     }
+  }
 }
 
 void DeletePopup::setSelectedCategory(const Category& category){
 
-    selectedCategory = category;
+  selectedCategory = category;
 
 }
-void DeletePopup::setSelectedSubcategory(const Subcategory& subcategory)
-{
-    selectedSubcategory = subcategory;
+void DeletePopup::setSelectedSubcategory(const Subcategory& subcategory){
+  selectedSubcategory = subcategory;
 }
 
 void DeletePopup::setSelectedTeam(const team& team)
 {
-    selectedTeam = team;
+  selectedTeam = team;
 }
 
 /*void DeletePopup::setSelectedCategory(const Category& category)
@@ -184,5 +184,5 @@ void DeletePopup::setSelectedTeam(const team& team)
 
 void DeletePopup::cancelClicked()
 {
-    close();
+  close();
 }
