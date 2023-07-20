@@ -55,7 +55,17 @@ void TeamContextMenu::handleContextMenuAction()
     {
         if (senderAction->text() == "Hide")
         {
-            qDebug() << "Hide action triggered!";
+            if(temp_team_button->parentWidget()->layout()->count() <= 2)
+            {
+                QLabel* hiddenLabel = new QLabel("X");
+
+                hiddenLabel->setStyleSheet("color: red; padding-left: 2px;");
+                temp_team_button->parentWidget()->layout()->addWidget(hiddenLabel);
+            }
+            else
+            {
+                temp_team_button->parentWidget()->layout()->itemAt(2)->widget()->deleteLater();
+            }
         }
         else if (senderAction->text() == "Delete")
         {

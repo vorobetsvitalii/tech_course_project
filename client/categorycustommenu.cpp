@@ -1,14 +1,14 @@
-#include "customcontextmenu.h"
+#include "categorycustommenu.h"
 
-CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
+CategoryCustomMenu::CategoryCustomMenu(QWidget *parent) : QMenu(parent)
 {
     QAction *action1 = new QAction("Hide", this);
     QAction *action2 = new QAction("Delete", this);
     QAction *action3 = new QAction("Edit", this);
 
-    connect(action1, &QAction::triggered, this, &CustomContextMenu::handleContextMenuAction);
-    connect(action2, &QAction::triggered, this, &CustomContextMenu::handleContextMenuAction);
-    connect(action3, &QAction::triggered, this, &CustomContextMenu::handleContextMenuAction);
+    connect(action1, &QAction::triggered, this, &CategoryCustomMenu::handleContextMenuAction);
+    connect(action2, &QAction::triggered, this, &CategoryCustomMenu::handleContextMenuAction);
+    connect(action3, &QAction::triggered, this, &CategoryCustomMenu::handleContextMenuAction);
 
     addAction(action1);
     addSeparator();
@@ -29,25 +29,25 @@ CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
 
 }
 
-void CustomContextMenu::setSubcategoryIndex(const int &index_)
+void CategoryCustomMenu::setCategoryIndex(const int &index_)
 {
     index = index_;
 }
 
-void CustomContextMenu::setTempSubcategoryButton(QPushButton* temp_subcategory_button_)
+void CategoryCustomMenu::setTempCategoryButton(QPushButton* temp_category_button_)
 {
-    temp_subcategory_button = temp_subcategory_button_;
+    temp_category_button = temp_category_button_;
 }
 
-void CustomContextMenu::handleContextMenuRequested(const QPoint &pos)
+void CategoryCustomMenu::handleContextMenuRequested(const QPoint &pos)
 {
     emit contextMenuRequested(pos);
 }
-void CustomContextMenu::onSubcategoryNameUpdated(const QString& newName)
+void CategoryCustomMenu::onCategoryNameUpdated(const QString& newName)
 {
-    temp_subcategory_button->setText(newName);
+    temp_category_button->setText(newName);
 }
-void CustomContextMenu::handleContextMenuAction()
+void CategoryCustomMenu::handleContextMenuAction()
 {
     QAction *senderAction = qobject_cast<QAction*>(sender());
 
@@ -86,34 +86,34 @@ void CustomContextMenu::handleContextMenuAction()
                 deletePopup.setStyleSheet("border: none");
                 deletePopup.exec();
                 if(deletePopup.exec()== QDialog::Accepted){
-                temp_subcategory_button->parentWidget()->deleteLater();
+                    temp_subcategory_button->parentWidget()->deleteLater();
                 }
             }
         }
         else if (senderAction->text() == "Edit")
         {
-              Subcategory selectedSubcategory;
-                for (const Subcategory& subcategory : subcategoriesList)
+            Subcategory selectedSubcategory;
+            for (const Subcategory& subcategory : subcategoriesList)
+            {
+                if (subcategory.getName() == temp_subcategory_button->text().toStdString())
                 {
-                    if (subcategory.getName() == temp_subcategory_button->text().toStdString())
-                    {
-                        // Store the selected subcategory
-                        selectedSubcategory = subcategory;
+                    // Store the selected subcategory
+                    selectedSubcategory = subcategory;
 
-                    }
                 }
-                QString existingSubcategoryName = temp_subcategory_button->text();
-                EditPopup editPopup(existingSubcategoryName, editPopup.getTableSubcategory(), this);
-                editPopup.setSelectedSubcategory(selectedSubcategory);
-                // Connect a slot to handle the nameUpdated signal emitted from EditPopup
-                editPopup.setStyleSheet("border: none");
-                connect(&editPopup, &EditPopup::NameUpdated , this, &CustomContextMenu::onSubcategoryNameUpdated);
-                editPopup.exec();
+            }
+            QString existingSubcategoryName = temp_subcategory_button->text();
+            EditPopup editPopup(existingSubcategoryName, editPopup.getTableSubcategory(), this);
+            editPopup.setSelectedSubcategory(selectedSubcategory);
+            // Connect a slot to handle the nameUpdated signal emitted from EditPopup
+            editPopup.setStyleSheet("border: none");
+            connect(&editPopup, &EditPopup::NameUpdated , this, &CustomContextMenu::onSubcategoryNameUpdated);
+            editPopup.exec();
 
 
         }
     }
 }
 
-QPushButton* CustomContextMenu::temp_subcategory_button = nullptr;
-int CustomContextMenu::index = NULL;
+QPushButton* CategoryCustomMenu::temp_subcategory_button = nullptr;
+int CategoryCustomMenu::index = NULL;

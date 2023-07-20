@@ -1,5 +1,5 @@
-#ifndef CUSTOMCONTEXTMENU_H
-#define CUSTOMCONTEXTMENU_H
+#ifndef CATEGORYCUSTOMMENU_H
+#define CATEGORYCUSTOMMENU_H
 
 #include <QMenu>
 #include <QAction>
@@ -9,21 +9,21 @@
 #include "deletepopup.h"
 #include "editpopup.h"
 
-class CustomContextMenu : public QMenu
+class CategoryCustomMenu : public QMenu
 {
     Q_OBJECT
 
 public:
-    explicit CustomContextMenu(QWidget *parent = nullptr);
+    explicit CategoryCustomMenu(QWidget *parent = nullptr);
 
-    static void setSubcategoryIndex(const int& index_);
-    static void setTempSubcategoryButton(QPushButton* temp_subcategory_button_);
+    static void setCategoryIndex(const int& index_);
+    static void setTempCategoryButton(QPushButton* temp_category_button_);
 
     void onSubcategoryNameUpdated(const QString& newName);
 private:
-    static QPushButton* temp_subcategory_button;
+    static QPushButton* temp_category_button;
 
-    std::vector<Subcategory> subcategoriesList;
+    std::vector<Category> categoriesList;
 
     QAction *action1;
     QAction *action2;
@@ -41,4 +41,4 @@ private slots:
     void handleContextMenuAction();
 };
 
-#endif // CUSTOMCONTEXTMENU_H
+#endif // CATEGORYCUSTOMMENU_H
