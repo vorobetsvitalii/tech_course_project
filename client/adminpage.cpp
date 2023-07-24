@@ -16,6 +16,7 @@ AdminPage::AdminPage(QWidget *parent) :
     addSubcategoryWindow  = std::make_unique<AddSubcategory>();
     addTeamWindow = std::make_unique<AddTeams>();
 
+    categoryCustomMenu = std::make_unique<CategoryCustomMenu>();
     contextMenu = std::make_unique<CustomContextMenu>();
     teamContextMenu = std::make_unique<TeamContextMenu>();
 
@@ -321,11 +322,20 @@ void AdminPage::appendCategories()
     categories = future.get();
     std::vector<QPushButton*> buttons(categories.size());
 
+    for(auto& el : categories)
+    {
+        subcategories_map_id.insert(QString::fromStdString(el.getName()), el.getId());
+    }
+
     std::transform(categories.begin(), categories.end(), buttons.begin(), [](const Category& category) {
         return (new QPushButton(QString::fromStdString(category.getName())));
     });
 
     for (auto* button : buttons) {
+        QWidget* buttons_widget = new QWidget();
+        QHBoxLayout* buttons_layout = new QHBoxLayout();
+        QPushButton* context_menu_button = new QPushButton();
+
         button->setStyleSheet("QPushButton {"
                               "border: 1px solid gray;"
                               "border-radius: 3px;"
@@ -337,8 +347,34 @@ void AdminPage::appendCategories()
                               "color: red;"
                               "}");
 
+        context_menu_button->setFixedWidth(15);
+        context_menu_button->setContextMenuPolicy(Qt::CustomContextMenu);
+        context_menu_button->setMenu(categoryCustomMenu.get());
+        context_menu_button->setEnabled(false);
+        context_menu_button->setStyleSheet("QPushButton {"
+                                           "border: 1px solid gray;"
+                                           "border-left: none;"
+                                           "border-radius: 3px;"
+                                           "padding: 5px;"
+                                           "font-weight: bold;"
+                                           "color: gray;"
+                                           "text-align: right;"
+                                           "}");
+
+        connect(context_menu_button, &QPushButton::customContextMenuRequested, [=](const QPoint &pos) {
+            categoryCustomMenu->exec(button->mapToGlobal(pos));
+        });
+
+        connect(context_menu_button, &QPushButton::clicked, this, &AdminPage::onCategoryClicked);
+
         connect(button, &QPushButton::clicked, this, &AdminPage::onCategoryClicked);
-        categoriesVLayout->insertWidget(1, button);
+
+        buttons_layout->addWidget(button);
+        buttons_layout->addWidget(context_menu_button);
+        buttons_layout->setSpacing(0);
+
+        buttons_widget->setLayout(buttons_layout);
+        categoriesVLayout->insertWidget(1, buttons_widget);
     }
 
     categoriesVLayout->setSpacing(20);
@@ -402,7 +438,7 @@ void AdminPage::appendSubcategories()
 
         connect(context_menu_button, &QPushButton::clicked, this, &AdminPage::onSubcategoryClicked);
 
-        connect(button, &QPushButton::released, this, &AdminPage::onSubcategoryClicked);
+        connect(button, &QPushButton::clicked, this, &AdminPage::onSubcategoryClicked);
 
         buttons_layout->addWidget(button);
         buttons_layout->addWidget(context_menu_button);
@@ -523,31 +559,35 @@ void AdminPage::on_add_team_clicked()
 
 void AdminPage::on_save_changes_clicked()
 {
-    if(!checkIfStringEmpty(tempCategory) or (!checkIfStringEmpty(tempSubcategory)) and (tempCategoryId != NULL))
+    int count = 0;
+
+    if(!checkIfStringEmpty(tempCategory))
     {
-        if(!checkIfStringEmpty(tempCategory))
-        {
-            Client::getInstance().PostCategory(tempCategory.toStdString());
-            tempCategory = "";
-        }
+        Client::getInstance().PostCategory(tempCategory.toStdString());
+        tempCategory = "";
+        count++;
+    }
 
-        if((!checkIfStringEmpty(tempSubcategory)) and (tempCategoryId != NULL))
-        {
-            subcategories_map_id.insert(tempSubcategory, Client::getInstance().GetSubcategories().at(Client::getInstance().GetSubcategories().size() - 1).getId());
-            Client::getInstance().PostSubcategory(tempSubcategory.toStdString(), tempCategoryId);
-            tempSubcategory = "";
-        }
+    if((!checkIfStringEmpty(tempSubcategory)) and (tempCategoryId != NULL))
+    {
+        subcategories_map_id.insert(tempSubcategory, Client::getInstance().GetSubcategories().at(Client::getInstance().GetSubcategories().size() - 1).getId());
+        Client::getInstance().PostSubcategory(tempSubcategory.toStdString(), tempCategoryId);
+        tempSubcategory = "";
+        count++;
+    }
 
-        if((!checkIfStringEmpty(tempTeam)) and (tempTeamId != NULL))
-        {
-            teams_map_id.insert(tempTeam, Client::getInstance().GetTeams().at(Client::getInstance().GetTeams().size() - 1).getTeamId());
-            Client::getInstance().PostSubcategory(tempSubcategory.toStdString(), tempCategoryId);
-            tempTeam = "";
-        }
+    if((!checkIfStringEmpty(tempTeam)) and (tempSubcategoryId != NULL))
+    {
+        teams_map_id.insert(tempTeam, Client::getInstance().GetTeams().at(Client::getInstance().GetTeams().size() - 1).getTeamId());
+        Client::getInstance().PostSubcategory(tempTeam.toStdString(), tempSubcategoryId);
+        tempTeam = "";
+        count++;
+    }
 
+    if(count != 0)
+    {
         QMessageBox::information(this, "SaveSuccess", "All changes succesfully saved!");
     }
-    else { QMessageBox::warning(this, "SaveError", "Changes weren`t saved!"); };
 }
 
 void AdminPage::handleNewButtonAdded()
@@ -557,6 +597,9 @@ void AdminPage::handleNewButtonAdded()
     if(!checkIfStringEmpty(tempCategory))
     {
         QPushButton* newButton = new QPushButton(tempCategory);
+        QWidget* buttons_widget = new QWidget();
+        QHBoxLayout* buttons_layout = new QHBoxLayout();
+        QPushButton* context_menu_button = new QPushButton();
 
         newButton->setStyleSheet("QPushButton {"
                                  "border: 1px solid gray;"
@@ -569,8 +612,33 @@ void AdminPage::handleNewButtonAdded()
                                  "color: red;"
                                  "}");
 
+        context_menu_button->setFixedWidth(15);
+        context_menu_button->setContextMenuPolicy(Qt::CustomContextMenu);
+        context_menu_button->setMenu(contextMenu.get());
+        context_menu_button->setEnabled(false);
+        context_menu_button->setStyleSheet("QPushButton {"
+                                           "border: 1px solid gray;"
+                                           "border-left: none;"
+                                           "border-radius: 3px;"
+                                           "padding: 5px;"
+                                           "font-weight: bold;"
+                                           "color: gray;"
+                                           "}");
+
+        subcategories_map.insert(tempSubcategory, tempCategoryId);
+
+        buttons_layout->addWidget(newButton);
+        buttons_layout->addWidget(context_menu_button);
+        buttons_layout->setSpacing(0);
+
         connect(newButton, &QPushButton::clicked, this, &AdminPage::onCategoryClicked);
-        categoriesVLayout->insertWidget(1, newButton);
+
+        connect(context_menu_button, &QPushButton::customContextMenuRequested, [=](const QPoint &pos) {
+            contextMenu->exec(context_menu_button->mapToGlobal(pos));
+        });
+
+        buttons_widget->setLayout(buttons_layout);
+        subcategoriesVLayout->insertWidget(1, buttons_widget);
         tempCategoryId = NULL;
     }
 }
@@ -616,6 +684,8 @@ void AdminPage::handleNewSubcategoryAdded()
         buttons_layout->addWidget(newButton);
         buttons_layout->addWidget(context_menu_button);
         buttons_layout->setSpacing(0);
+
+        connect(newButton, &QPushButton::clicked, this, &AdminPage::onSubcategoryClicked);
 
         connect(context_menu_button, &QPushButton::customContextMenuRequested, [=](const QPoint &pos) {
             contextMenu->exec(context_menu_button->mapToGlobal(pos));
@@ -668,6 +738,8 @@ void AdminPage::handleNewTeamAdded()
         buttons_layout->addWidget(context_menu_button);
         buttons_layout->setSpacing(0);
 
+        connect(newButton, &QPushButton::clicked, this, &AdminPage::onTeamClicked);
+
         connect(context_menu_button, &QPushButton::customContextMenuRequested, [=](const QPoint &pos) {
             contextMenu->exec(context_menu_button->mapToGlobal(pos));
         });
@@ -693,6 +765,7 @@ void AdminPage::onCategorySelected(Category *category)
 void AdminPage::onCategoryClicked()
 {
     QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());
+    QWidget* category_widget = clickedButton->parentWidget();
 
     clickedButton->setStyleSheet("QPushButton {"
                                  "border: 1px solid gray;"
@@ -714,9 +787,12 @@ void AdminPage::onCategoryClicked()
                                       "QPushButton:hover {"
                                       "color: red;"
                                       "}");
+
+        qobject_cast<QPushButton*>(previousButton->parentWidget()->layout()->itemAt(1)->widget())->setEnabled(false);
     }
 
     previousButton = clickedButton;
+    tempSubcategoryId = categories_map_id[clickedButton->text()];
 
     for(const auto& el : categories)
     {
@@ -743,6 +819,10 @@ void AdminPage::onCategoryClicked()
         }
         else { subcategories_widget->hide(); }
     }
+
+    qobject_cast<QPushButton*>(category_widget->layout()->itemAt(1)->widget())->setEnabled(true);
+    CategoryCustomMenu::setTempCategoryButton(clickedButton);
+    CategoryCustomMenu::setCategoryIndex(tempCategoryId);
 }
 
 void AdminPage::onSubcategoryClicked()
@@ -777,9 +857,8 @@ void AdminPage::onSubcategoryClicked()
     }
 
     previousSubcategory = clickedButton;
-
-
     tempSubcategoryId = subcategories_map_id[clickedButton->text()];
+    tempTeamId = teams_map_id[clickedButton->text()];
 
     for(int i = 1; i < teamsVLayout->count(); i++)
     {
@@ -838,7 +917,6 @@ void AdminPage::onTeamClicked()
     }
 
     previousTeam = clickedButton;
-
     tempTeamId = teams_map_id[clickedButton->text()];
 
     qobject_cast<QPushButton*>(team_widget->layout()->itemAt(1)->widget())->setEnabled(true);

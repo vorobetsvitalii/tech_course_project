@@ -81,6 +81,7 @@ void CustomContextMenu::handleContextMenuAction()
 
                     }
                 }
+
                 DeletePopup deletePopup(deletePopup.getTableSubcategory(), this);
                 deletePopup.setSelectedSubcategory(selectedSubcategory);
                 deletePopup.setStyleSheet("border: none");

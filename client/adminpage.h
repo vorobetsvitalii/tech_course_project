@@ -25,6 +25,7 @@
 #include "client.h"
 #include "menubutton.h"
 #include "hmenu.h"
+#include "categorycustommenu.h"
 #include "customcontextmenu.h"
 #include "teamcontextmenu.h"
 
@@ -103,6 +104,7 @@ private:
     std::unique_ptr<AddSubcategory> addSubcategoryWindow;
     std::unique_ptr<AddTeams> addTeamWindow;
 
+    std::unique_ptr<CategoryCustomMenu> categoryCustomMenu;
     std::unique_ptr<CustomContextMenu> contextMenu;
     std::unique_ptr<TeamContextMenu> teamContextMenu;
 
@@ -118,6 +120,7 @@ private:
     bool saveSubcategoryChanges = false;
 
     std::vector<Category> categories;
+    QMap<QString, int> categories_map_id;
     QMap<QString, int> subcategories_map;
     QMap<QString, int> subcategories_map_id;
     QMap<QString, int> teams_map;

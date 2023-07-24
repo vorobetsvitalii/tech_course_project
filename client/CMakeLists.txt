@@ -60,6 +60,8 @@ set(PROJECT_SOURCES
     deletepopup.cpp
     editpopup.h
     editpopup.cpp
+    categorycustommenu.cpp
+    categorycustommenu.h
 )
 
 
