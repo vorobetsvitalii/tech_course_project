@@ -217,7 +217,7 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     widget->setWindowTitle("Teams");
 
     QObject::connect(adminpage, &AdminPage::adminPageResized, widget.get(), &ResizableWidget::resize);
-    QObject::connect(adminpage, &AdminPage::adminPageResized, tableWidget, &TableWidget::resize);
+    QObject::connect(widget.get(), &ResizableWidget::resizableWidgetResized, tableWidget, &TableWidget::resize);
 
     return widget;
 }

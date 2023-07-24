@@ -1,31 +1,31 @@
 #include "team.h"
 
-int Team::getTeamId()
+int Team::getTeamId() const
 {
     return this->TeamId;
 }
 
-int Team::getTeamLocation()
+int Team::getTeamLocation() const
 {
     return this->TeamLocation;
 }
 
-int Team::getSubcategoryId()
+int Team::getSubcategoryId() const
 {
     return this->SubcategoryId;
 }
 
-QString Team::getTeamLogoBlob()
+QString Team::getTeamLogoBlob() const
 {
     return this->TeamLogoBlob;
 }
 
-QString Team::getTeamName()
+QString Team::getTeamName() const
 {
     return this->TeamName;
 }
 
-QString Team::getDate()
+QString Team::getDate() const
 {
     return this->CreatingDate;
 }

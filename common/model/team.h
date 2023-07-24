@@ -16,12 +16,12 @@ private:
     QString CreatingDate;
 
 public:
-    int getTeamId();
-    int getTeamLocation();
-    int getSubcategoryId();
-    QString getTeamLogoBlob();
-    QString getTeamName();
-    QString getDate();
+    int getTeamId() const;
+    int getTeamLocation() const;
+    int getSubcategoryId() const;
+    QString getTeamLogoBlob() const;
+    QString getTeamName() const;
+    QString getDate() const;
 
     void setTeamId(int);
     void setTeamLocation(int);
