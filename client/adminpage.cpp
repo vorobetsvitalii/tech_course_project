@@ -467,8 +467,9 @@ void AdminPage::appendTeams()
         teams_map_id.insert(el.getTeamName(), el.getTeamId());
     }
 
-    std::transform(teams.begin(), teams.end(), buttons.begin(), [](team& Team) {
-        return (new QPushButton(Team.getTeamName()));
+
+    std::transform(teams.begin(), teams.end(), buttons.begin(), [](Team& team) {
+        return (new QPushButton(team.getTeamName()));
     });
 
     for (auto* button : buttons) {
@@ -549,6 +550,7 @@ void AdminPage::on_add_subcategory_clicked()
 
 void AdminPage::on_add_team_clicked()
 {
+
     if(tempSubcategoryId != NULL)
     {
         addTeamWindow->setModal(true);
@@ -578,8 +580,13 @@ void AdminPage::on_save_changes_clicked()
 
     if((!checkIfStringEmpty(tempTeam)) and (tempSubcategoryId != NULL))
     {
+        Team team;
+
+        team.setTeamName(tempTeam);
+        team.setTeamId(tempTeamId);
+
         teams_map_id.insert(tempTeam, Client::getInstance().GetTeams().at(Client::getInstance().GetTeams().size() - 1).getTeamId());
-        Client::getInstance().PostSubcategory(tempTeam.toStdString(), tempSubcategoryId);
+        Client::getInstance().PostTeam(team);
         tempTeam = "";
         count++;
     }
@@ -692,9 +699,10 @@ void AdminPage::handleNewSubcategoryAdded()
         });
 
         buttons_widget->setLayout(buttons_layout);
-        subcategoriesVLayout->insertWidget(1, buttons_widget);
+        teamsVLayout->insertWidget(1, buttons_widget);
     }
 }
+
 
 void AdminPage::handleNewTeamAdded()
 {
@@ -876,6 +884,7 @@ void AdminPage::onSubcategoryClicked()
             {
                 teams_widget->show();
             };
+
         }
         else { teams_widget->hide(); }
     }

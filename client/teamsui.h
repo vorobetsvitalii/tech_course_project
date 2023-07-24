@@ -96,7 +96,6 @@ public:
 
     void initializeTeamImage();
 
-    void ApplyButtonCheck();
 
     TeamsUI();
 

@@ -5,7 +5,7 @@
 #include <QImage>
 #include <QByteArray>
 #include <QBuffer>
-class team : public Entity
+class Team : public Entity
 {
 private:
     int TeamId;
@@ -16,12 +16,12 @@ private:
     QString CreatingDate;
 
 public:
-    int getTeamId();
-    int getTeamLocation();
-    int getSubcategoryId();
-    QString getTeamLogoBlob();
-    QString getTeamName();
-    QString getDate();
+    int getTeamId() const;
+    int getTeamLocation() const;
+    int getSubcategoryId() const;
+    QString getTeamLogoBlob() const;
+    QString getTeamName() const;
+    QString getDate() const;
 
     void setTeamId(int);
     void setTeamLocation(int);
@@ -32,7 +32,7 @@ public:
 
     virtual QJsonObject GetJsonObject() override;
     virtual void LoadJsonObject(QJsonObject) override;
-    team();
+    Team() { TeamId=0; SubcategoryId=0; TeamLocation=0; TeamLogoBlob=""; TeamName=""; CreatingDate=""; }
 };
 
 #endif // TEAM_H

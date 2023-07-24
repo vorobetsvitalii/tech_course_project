@@ -257,18 +257,18 @@ std::vector<Subcategory> Client::GetSubcategories()
     return subcategories;
 }
 
-std::vector<team> Client::GetTeams()
+std::vector<Team> Client::GetTeams()
 {
     TeamCreator teamCreator;
     std::vector<std::unique_ptr<Entity>> entities = Client::getInstance().GetEntity(Constants::teamApi, Constants::TeamsArrayJson, teamCreator);
 
-    std::vector<team> Teams;
+    std::vector<Team> Teams;
     for (std::unique_ptr<Entity>& entity : entities)
     {
-        team* Team = dynamic_cast<team*>(entity.get());
-        if (Team)
+        Team* team = dynamic_cast<Team*>(entity.get());
+        if (team)
         {
-            Teams.push_back(*Team);
+            Teams.push_back(*team);
         }
     }
 
@@ -290,10 +290,11 @@ void Client::PostSubcategory(const std::string& subcategoryName, int categoryId)
     Client::getInstance().PostEntity(Constants::subcategoriesApi, *subcategory);
 }
 
-void Client::PostTeam(team& Team)
+void Client::PostTeam(Team& team)
 {
-    Client::getInstance().PostEntity(Constants::teamApi, Team);
+    Client::getInstance().PostEntity(Constants::teamApi, team );
 }
+
 void Client::EditCategory(Category &category) {
     Client::getInstance().EditEntity(Constants::categoriesApi, category);
 }
@@ -302,8 +303,10 @@ void Client::EditSubcategory(Subcategory &subcategory) {
     Client::getInstance().EditEntity(Constants::subcategoriesApi, subcategory);
 }
 
-void Client::EditTeam(team & Team) {
-    Client::getInstance().EditEntity(Constants::teamApi, Team);
+
+void Client::EditTeam(Team & team) {
+    Client::getInstance().EditEntity(Constants::teamApi, team);
+
 }
 
 void Client::DeleteCategory(Category &category) {
@@ -316,8 +319,9 @@ void Client::DeleteSubcategory(Subcategory &subcategory) {
     Client::getInstance().DeleteEntity(Constants::subcategoriesApi, std::to_string(subcategoryId));
 }
 
-void Client::DeleteTeam(team &Team) {
-    int teamId = Team.getTeamId();
+
+void Client::DeleteTeam(Team &team) {
+    int teamId = team.getTeamId();
     Client::getInstance().DeleteEntity(Constants::teamApi, std::to_string(teamId));
 }
 

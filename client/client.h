@@ -54,21 +54,28 @@ public:
     bool handleLoginRequest(const std::string& email, const std::string& password);
     bool handleLogoutRequest();
     std::vector<std::unique_ptr<Entity>> GetEntity(const std::string& url, const std::string& jsonName, Creator& creator);
+
+
+
     void PostEntity(const std::string& url, Entity& object);
+
     void EditEntity(const std::string& url, Entity& object);
     void DeleteEntity(const std::string& url, const std::string& objectId);
     static std::vector<Category> GetCategories();
     static std::vector<Subcategory> GetSubcategories();
-    static std::vector<team> GetTeams();
+    static std::vector<Team> GetTeams();
     static void PostCategory(const std::string& categoryName);
     static void PostSubcategory(const std::string& subcategoryName, int categoryId);
-    static void PostTeam(team& Team);
+
+    static void PostTeam(Team& team);
     static void EditCategory(Category& category);
     static void DeleteCategory(Category& category);
     static void EditSubcategory(Subcategory& subcategory);
-    static void EditTeam(team& Team);
+    static void EditTeam(Team& team);
     static void DeleteSubcategory(Subcategory& subcategory);
-    static void DeleteTeam(team& Team);
+    static void DeleteTeam(Team& team);
+
+
 
 private:
     Client();

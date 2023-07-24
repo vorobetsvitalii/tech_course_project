@@ -27,6 +27,7 @@ void CategoriesModel::UpdateCategory()
 {
     QString updateQuery = "UPDATE " + GetTable() + " SET CategoryName='" + QString::fromStdString(this->getName()) + "' WHERE CategoryId=" + QString::number(this->getId());
     Update(updateQuery);
+    qDebug() << "Category Model updated!";
 }
 
 void CategoriesModel::DeleteCategory()

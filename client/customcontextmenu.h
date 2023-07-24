@@ -25,9 +25,11 @@ private:
 
     std::vector<Subcategory> subcategoriesList;
 
+
     QAction *action1;
     QAction *action2;
     QAction *action3;
+
 
     static int index;
 

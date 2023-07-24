@@ -49,72 +49,72 @@ void TeamContextMenu::onTeamNameUpdated(const QString& newName)
 }
 void TeamContextMenu::handleContextMenuAction()
 {
-    QAction *senderAction = qobject_cast<QAction*>(sender());
+ QAction *senderAction = qobject_cast<QAction*>(sender());
 
-    if (senderAction)
-    {
-        if (senderAction->text() == "Hide")
-        {
-            if(temp_team_button->parentWidget()->layout()->count() <= 2)
-            {
-                QLabel* hiddenLabel = new QLabel("X");
+ if (senderAction)
+ {
+     if (senderAction->text() == "Hide")
+     {
+         if(temp_team_button->parentWidget()->layout()->count() <= 2)
+         {
+             QLabel* hiddenLabel = new QLabel("X");
 
-                hiddenLabel->setStyleSheet("color: red; padding-left: 2px;");
-                temp_team_button->parentWidget()->layout()->addWidget(hiddenLabel);
-            }
-            else
-            {
-                temp_team_button->parentWidget()->layout()->itemAt(2)->widget()->deleteLater();
-            }
-        }
-        else if (senderAction->text() == "Delete")
-        {
-            if(temp_team_button != nullptr)
-            {
-                team selectedTeam;
-                for (team& Team : teamsList)
-                {
-                    if (Team.getTeamName() == temp_team_button->text())
-                    {
-                        // Store the selected team
-                        selectedTeam = Team;
+             hiddenLabel->setStyleSheet("color: red; padding-left: 2px;");
+             temp_team_button->parentWidget()->layout()->addWidget(hiddenLabel);
+         }
+         else
+         {
+             temp_team_button->parentWidget()->layout()->itemAt(2)->widget()->deleteLater();
+         }
+     }
+     else if (senderAction->text() == "Delete")
+     {
+         if(temp_team_button != nullptr)
+         {
+             Team selectedTeam;
+             for (Team& team : teamsList)
+             {
+                 if (team.getTeamName() == temp_team_button->text())
+                 {
+                     // Store the selected team
+                     selectedTeam = team;
 
-                    }
-                }
-                DeletePopup deletePopup(deletePopup.getTableTeam(), this);
-                deletePopup.setSelectedTeam(selectedTeam);
-                deletePopup.setStyleSheet("border: none");
-                deletePopup.exec();
-                if(deletePopup.exec()== QDialog::Accepted){
-                    temp_team_button->parentWidget()->deleteLater();
-                }
-            }
-        }
-        else if (senderAction->text() == "Edit")
-        {
+                 }
+             }
+             DeletePopup deletePopup(deletePopup.getTableTeam(), this);
+             deletePopup.setSelectedTeam(selectedTeam);
+             deletePopup.setStyleSheet("border: none");
+             deletePopup.exec();
+             if(deletePopup.exec()== QDialog::Accepted){
+                 temp_team_button->parentWidget()->deleteLater();
+             }
+         }
+     }
+     else if (senderAction->text() == "Edit")
+     {
 
-                team selectedTeam;
-                for (team& Team : teamsList)
-                {
-                    if (Team.getTeamName() == temp_team_button->text())
-                    {
-                        // Store the selected team
-                        selectedTeam = Team;
+         Team selectedTeam;
+         for (Team& team : teamsList)
+         {
+             if (team.getTeamName() == temp_team_button->text())
+             {
+                 // Store the selected team
+                 selectedTeam = team;
 
-                    }
-                }
+             }
+         }
 
-             QString existingTeamName = temp_team_button->text();
-             EditPopup editPopup(existingTeamName, editPopup.getTableTeam(), this);
-             editPopup.setSelectedTeam(selectedTeam);
-             editPopup.setStyleSheet("border: none");
-             // Connect a slot to handle the nameUpdated signal emitted from EditPopup
-             connect(&editPopup, &EditPopup::NameUpdated , this, &TeamContextMenu::onTeamNameUpdated);
-             editPopup.exec();
+         QString existingTeamName = temp_team_button->text();
+         EditPopup editPopup(existingTeamName, editPopup.getTableTeam(), this);
+         editPopup.setSelectedTeam(selectedTeam);
+         editPopup.setStyleSheet("border: none");
+         // Connect a slot to handle the nameUpdated signal emitted from EditPopup
+         connect(&editPopup, &EditPopup::NameUpdated , this, &TeamContextMenu::onTeamNameUpdated);
+         editPopup.exec();
 
 
-        }
-    }
+     }
+ }
 }
 
 QPushButton* TeamContextMenu::temp_team_button = nullptr;

@@ -39,13 +39,13 @@ void TeamModel::DeleteTeam()
 }
 
 
-std::vector<team> TeamModel::SelectTeam()
+std::vector<Team> TeamModel::SelectTeams()
 {
     std::unique_ptr<TeamModel> TM = std::make_unique<TeamModel>();
 
     QString IdSelect = QString("SELECT TeamId FROM %1").arg(TM->GetTable());
 
-    std::vector<team>TeamVector;
+    std::vector<Team>TeamVector;
 
 
     QRegularExpression regexID(R"(\s*,\s*)");
@@ -85,14 +85,14 @@ std::vector<team> TeamModel::SelectTeam()
         QString teamLogo = match.captured(6);
 
         // Створюємо новий екземпляр Team і додаємо його до вектора
-        team Team;
-        Team.setTeamId(teamId.toInt());
-        Team.setTeamName(teamName);
-        Team.setSubcategoryId(subcategoryId.toInt());
-        Team.setTeamLocation(teamLocation.toInt());
-        Team.setTeamLogoBlob(teamLogo);
-        Team.setDate(Date);
-        TeamVector.push_back(Team);
+        Team team;
+        team.setTeamId(teamId.toInt());
+        team.setTeamName(teamName);
+        team.setSubcategoryId(subcategoryId.toInt());
+        team.setTeamLocation(teamLocation.toInt());
+        team.setTeamLogoBlob(teamLogo);
+        team.setDate(Date);
+        TeamVector.push_back(team);
     }
 
     }
@@ -108,29 +108,6 @@ QString TeamModel::SelectLocations()
     return result;
 }
 
-std::vector<team> TeamModel::SelectTeams()
-{
-    std::unique_ptr<TeamModel> tm = std::make_unique<TeamModel>();
-    QString selectQuery = "SELECT TeamId, TeamName, SubcategoryId, TeamLocation, TeamLogo FROM " + tm->GetTable();
-    QString result = tm->Select(selectQuery);
-
-    std::vector<team> items;
-    QStringList dataVector = result.split(", ");
-    for(int i = 0; i < dataVector.count(); i += 5)
-    {
-        team t = TeamModel();
-        t.setTeamId(dataVector[i].toInt());
-        t.setTeamName(dataVector[i+1]);
-        t.setSubcategoryId(dataVector[i+2].toInt());
-        t.setTeamLocation(dataVector[i+3].toInt());
-        t.setTeamLogoBlob(dataVector[i+4]);
-        items.push_back(t);
-
-    }
-
-    return items;
-
-}
 
 void TeamModel::EditTeams(std::vector<TeamModel> items)
 {
@@ -163,7 +140,7 @@ QJsonObject TeamModel::LocationJson(QString str)
         jsonObject[key] = value;
     }
 
-    return jsonObject;
+    return std::move(jsonObject);
 }
 
 TeamModel::TeamModel()

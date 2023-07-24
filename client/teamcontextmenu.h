@@ -24,7 +24,9 @@ public:
 private:
     static QPushButton* temp_team_button;
 
-    std::vector<team> teamsList;
+
+    std::vector<Team> teamsList;
+
 
     static int index;
 

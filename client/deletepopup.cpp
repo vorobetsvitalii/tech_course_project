@@ -143,38 +143,38 @@ void DeletePopup::deleteClicked()
 
     if (result == QDialog::Accepted) {
         if(table_name==table_subcategory){
-             Client::getInstance().DeleteSubcategory(selectedSubcategory);
+            Client::getInstance().DeleteSubcategory(selectedSubcategory);
         }else if (table_name == table_team) {
-             // Delete the selected team
-             Client::getInstance().DeleteTeam(selectedTeam);
+            // Delete the selected team
+            Client::getInstance().DeleteTeam(selectedTeam);
         }else if (table_name == table_category) {
-             Client::getInstance().DeleteCategory(selectedCategory);
-        // Delete the selected category, subcategory, or team
-        QMessageBox deletionBox(this);
-        deletionBox.setWindowTitle("Deleted");
-        deletionBox.setText("Selected "+ table_name +" has been deleted.");
-        deletionBox.setIcon(QMessageBox::Information);
+            Client::getInstance().DeleteCategory(selectedCategory);
+            // Delete the selected category, subcategory, or team
+        }
+            QMessageBox deletionBox(this);
+            deletionBox.setWindowTitle("Deleted");
+            deletionBox.setText("Selected "+ table_name +" has been deleted.");
+            deletionBox.setIcon(QMessageBox::Information);
 
-        applyCustomMessageBoxStyle(deletionBox);
-        deletionBox.setMinimumSize(600,300);
-        deletionBox.exec();
-        accept();
+            applyCustomMessageBoxStyle(deletionBox);
+            deletionBox.setMinimumSize(600,300);
+            deletionBox.exec();
+            accept();
     }
-  }
 }
 
-void DeletePopup::setSelectedCategory(const Category& category){
-
-  selectedCategory = category;
-
-}
-void DeletePopup::setSelectedSubcategory(const Subcategory& subcategory){
-  selectedSubcategory = subcategory;
-}
-
-void DeletePopup::setSelectedTeam(const team& team)
+void DeletePopup::setSelectedCategory(const Category& category)
 {
-  selectedTeam = team;
+    selectedCategory = category;
+}
+void DeletePopup::setSelectedSubcategory(const Subcategory& subcategory)
+{
+    selectedSubcategory = subcategory;
+}
+
+void DeletePopup::setSelectedTeam(const Team& team)
+{
+    selectedTeam = team;
 }
 
 /*void DeletePopup::setSelectedCategory(const Category& category)
@@ -184,5 +184,5 @@ void DeletePopup::setSelectedTeam(const team& team)
 
 void DeletePopup::cancelClicked()
 {
-  close();
+    close();
 }
