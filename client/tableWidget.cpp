@@ -142,9 +142,9 @@ void TableWidget::resizeTable()
 
 void TableWidget::showEvent(QShowEvent* event)
 {
+    resize();
     qDebug() << "showEvent";
     QTableWidget::showEvent(event);
-    resize();
 }
 
 void TableWidget::initializeCells() {
