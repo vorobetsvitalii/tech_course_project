@@ -62,6 +62,8 @@ set(PROJECT_SOURCES
     editpopup.cpp
     categorycustommenu.cpp
     categorycustommenu.h
+    searchline.h 
+    searchline.cpp
 )
 
 

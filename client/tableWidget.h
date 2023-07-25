@@ -71,6 +71,7 @@ public slots:
     void editButtonClicked(int row);
     void deleteButtonClicked(int row);
     void filterTeams(int locationId, int categoryId, int subcategoryId);
+    void searchTeamByName(const QString& name);
 };
 
 

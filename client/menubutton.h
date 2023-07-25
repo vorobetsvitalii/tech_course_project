@@ -17,6 +17,7 @@
 #include <map>
 #include "teamsui.h"
 #include "tableWidget.h"
+#include "searchline.h"
 #include "resizableWidget.h"
 #include "adminpage.h"
 

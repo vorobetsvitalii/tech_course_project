@@ -128,6 +128,18 @@ void TableWidget::filterTeams(int locationId, int categoryId, int subcategoryId)
     fillWithData();
 }
 
+void TableWidget::searchTeamByName(const QString& name)
+{
+    filteredTeams.clear();
+    for(Team& team : teams) 
+    {
+        if(team.getTeamName().indexOf(name) != -1)
+            filteredTeams.push_back(team);
+    }
+
+    fillWithData();
+}
+
 void TableWidget::resizeTable()
 {
     int desireWidth = width - 20;
