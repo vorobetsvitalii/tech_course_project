@@ -48,6 +48,5 @@ std::string HTTPRequestManager::sendHTTPPutRequest(const std::string &url, const
 
 std::string HTTPRequestManager::sendHTTPDeleteRequest(const std::string &url)
 {
-    qDebug() << "sendHTTPDeleteRequest " << url;
     return sendHTTPRequest(url, "DELETE", "");
 }
