@@ -207,10 +207,12 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
 {
     std::unique_ptr<ResizableWidget> widget = std::make_unique<ResizableWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
-    TeamsUI* teamui = new TeamsUI();
+    TeamsUI* teamui = new TeamsUI(true);
     TableWidget* tableWidget = new TableWidget();
+    TeamUIFilter* teamfilter= new TeamUIFilter();
 
     layout->addWidget(teamui);
+    layout->addWidget(teamfilter);
     layout->addWidget(tableWidget);
 
     widget->setLayout(layout);

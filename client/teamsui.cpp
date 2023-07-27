@@ -290,6 +290,48 @@ void TeamsUI::initializeTeamImage()
 
 TeamsUI::TeamsUI()
 {
+/*
+    initializeLocationDrop();
+    initializeCategoryDrop();
+    initializeLocationLabel();
+    initializeSubCategoryLabel();
+    initializeCategoryLabel();
+    initializeSubCategoryDrop();
+    initializeTeamLabel();
+    initializeTeamInput();
+    initializeTeamImage();
+    initializeApplyButton();
+    initializeCancelButton();
+
+    Layout = std::make_unique<QVBoxLayout>(this);
+
+    Layout->addWidget(LocationLabel.get());
+    Layout->addWidget(LocationDrop.get());
+
+    Layout->addWidget(CategoryLabel.get());
+    Layout->addWidget(CategoryDrop.get());
+
+    Layout->addWidget(SubCategoryLabel.get());
+    Layout->addWidget(SubCategoryDrop.get());
+
+    Layout->addWidget(TeamLabel.get());
+    Layout->addWidget(TeamInput.get());
+
+    Layout->addWidget(TeamImage.get());
+
+    Layout->addWidget(ApplyButton.get());
+    Layout->addWidget(CancelButton.get());
+
+    setStyleSheet("background-color: rgba(255, 255, 255, 1);");
+
+    setLayout(Layout.get());
+*/
+
+
+}
+
+TeamsUI::TeamsUI(const bool visible)
+{
     initializeLocationDrop();
     initializeCategoryDrop();
     initializeLocationLabel();
@@ -325,7 +367,7 @@ TeamsUI::TeamsUI()
 
     setLayout(Layout.get());
 
-
+    this->setVisible(visible);
 }
 
 
@@ -517,4 +559,72 @@ void TeamsUI::CreateTeam()
 void TeamsUI::Cancel()
 {
     qDebug()<<"Cancel";
+}
+
+void TeamUIFilter::initializeApplyButton()
+{
+    ApplyButton.reset(new QPushButton());
+    ApplyButton->setText("Apply");
+    ApplyButton->setFixedSize(246, 32);
+    ApplyButton->setStyleSheet("QPushButton {"
+                               "background-color: rgba(224, 34, 50, 1);"
+                               "color: white;"
+                               "border: 0px;"
+                               "}"
+                               "QPushButton:pressed {"
+                               "background-color: rgba(200, 5, 21, 1);"
+                               "}");
+}
+
+void TeamUIFilter::enterEvent(QEnterEvent *event)
+{
+
+}
+
+void TeamUIFilter::leaveEvent(QEvent *event)
+{
+
+}
+
+TeamUIFilter::TeamUIFilter()
+{
+
+    initializeLocationDrop();
+    initializeCategoryDrop();
+    initializeLocationLabel();
+    initializeSubCategoryLabel();
+    initializeCategoryLabel();
+    initializeSubCategoryDrop();
+
+    //initializeTeamLabel();
+    //initializeTeamInput();
+    //initializeTeamImage();
+    initializeApplyButton();
+    initializeCancelButton();
+
+    Frame = std::make_unique<QFrame>();
+    Frame->setFixedSize(246, 155);
+
+    Layout = std::make_unique<QVBoxLayout>(this);
+
+    Layout->addWidget(LocationLabel.get());
+    Layout->addWidget(LocationDrop.get());
+
+    Layout->addWidget(CategoryLabel.get());
+    Layout->addWidget(CategoryDrop.get());
+
+    Layout->addWidget(SubCategoryLabel.get());
+    Layout->addWidget(SubCategoryDrop.get());
+
+    Layout->addWidget(Frame.get());
+    //Layout->addWidget(TeamInput.get());
+
+    //Layout->addWidget(TeamImage.get());
+
+    Layout->addWidget(ApplyButton.get());
+    Layout->addWidget(CancelButton.get());
+
+    setStyleSheet("background-color: rgba(255, 255, 255, 1);");
+
+    setLayout(Layout.get());
 }
