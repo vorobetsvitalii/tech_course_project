@@ -15,7 +15,6 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
     filteredTeams = teams;
 
     initializeCells();
-    fillWithData();
 
     QHeaderView* header = horizontalHeader();
     header->setStyleSheet("QHeaderView::section {"
@@ -47,15 +46,13 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
         }
     }
     isRowHovered = false;
-    for (int i = 0; i < rowCount(); ++i) {
-        setupRowWidgets(i);
-
-
-    }
+    
     // Install the event filter and enable mouse tracking once for the whole table
     installEventFilter(this);
     setMouseTracking(true);
     hoveredRow = -1;
+
+    fillWithData();
 
 }
 
@@ -92,7 +89,9 @@ void TableWidget::fillWithData()
         setItem(i, 3, new QTableWidgetItem(categoryName));
         setItem(i, 4, new QTableWidgetItem(subcategoryName));
 
-       deleteIcons.push_back(deleteIcon);
+        deleteIcons.push_back(deleteIcon);
+
+        setupRowWidgets(i);
 
     }
 }
