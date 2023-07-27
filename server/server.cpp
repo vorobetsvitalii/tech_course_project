@@ -84,7 +84,11 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
         }
         else if(method == "PUT")
         {
-            if (uri.find(Constants::subcategoriesApi) != std::string::npos)
+            if(uri.find(Constants::categoriesApi) != std::string::npos)
+            {
+                EditCategory(request, response);
+            }
+            else if (uri.find(Constants::subcategoriesApi) != std::string::npos)
             {
                 qDebug() << "Put subcategory\n";
                 EditSubcategory(request, response);
@@ -97,7 +101,12 @@ void RequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::
         }
         else if(method == "DELETE")
         {
-            if (uri.find(Constants::subcategoriesApi) != std::string::npos)
+            if (uri.find(Constants::categoriesApi) != std::string::npos)
+            {
+                qDebug() << "Delete category\n";
+                DeleteCategory(request, response);
+            }
+            else if (uri.find(Constants::subcategoriesApi) != std::string::npos)
             {
                 qDebug() << "Delete subcategory\n";
                 DeleteSubcategory(request, response);
@@ -423,18 +432,11 @@ void RequestHandler::ApiGetCategories(Poco::Net::HTTPServerRequest &request, Poc
         }
         else
         {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -473,18 +475,11 @@ void RequestHandler::ApiPostCategories(Poco::Net::HTTPServerRequest& request, Po
             response.sendBuffer("Category added successfully", 26);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+           throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -521,18 +516,11 @@ void RequestHandler::GetSubcategories(Poco::Net::HTTPServerRequest &request, Poc
         }
         else
         {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+           throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -571,18 +559,11 @@ void RequestHandler::PostSubcategories(Poco::Net::HTTPServerRequest& request, Po
             response.sendBuffer("Category added successfully", 26);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -643,18 +624,11 @@ void RequestHandler::PostTeam(Poco::Net::HTTPServerRequest &request, Poco::Net::
             response.sendBuffer("Team added successfully", 26);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -691,18 +665,11 @@ void RequestHandler::GetTeams(Poco::Net::HTTPServerRequest &request, Poco::Net::
         }
         else
         {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -740,18 +707,11 @@ void RequestHandler::EditSubcategory(Poco::Net::HTTPServerRequest& request, Poco
             response.sendBuffer("Subcategory updated successfully", 31);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -788,18 +748,11 @@ void RequestHandler::EditCategory(Poco::Net::HTTPServerRequest& request, Poco::N
             response.sendBuffer("Category updated successfully", 31);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -836,18 +789,11 @@ void RequestHandler::EditTeam(Poco::Net::HTTPServerRequest& request, Poco::Net::
             response.sendBuffer("Team updated successfully", 31);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -875,18 +821,11 @@ void RequestHandler::DeleteSubcategory(Poco::Net::HTTPServerRequest& request, Po
             response.sendBuffer("Subcategory deleted successfully", 31);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -914,18 +853,11 @@ void RequestHandler::DeleteCategory(Poco::Net::HTTPServerRequest& request, Poco:
             response.sendBuffer("Category deleted successfully", 31);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -953,18 +885,11 @@ void RequestHandler::DeleteTeam(Poco::Net::HTTPServerRequest& request, Poco::Net
             response.sendBuffer("Team deleted successfully", 24);
         }
         else {
-            QJsonObject errorObject;
-            errorObject["error"] = "Unauthorized";
-            errorObject["message"] = "Invalid token";
-
-            QJsonDocument errorDocument(errorObject);
-            QByteArray errorData = errorDocument.toJson();
-
-            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setContentLength(errorData.length());
-            response.sendBuffer(errorData.data(), errorData.length());
+            throw UnauthorizedTokenError();
         }
+    }
+    catch (const UnauthorizedTokenError& e) {
+        handleUnauthorizedError(response);
     }
     catch (const std::exception& e) {
         response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -1030,4 +955,16 @@ std::string GenerateRandomKey()
     std::string readableKey = ss.str();
 
     return readableKey;
+}
+
+void RequestHandler::handleUnauthorizedError(Poco::Net::HTTPServerResponse& response) {
+    response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+    response.setContentType("application/json");
+    QJsonObject errorObject;
+    errorObject["error"] = "Unauthorized";
+    errorObject["message"] = UnauthorizedTokenError().what();
+    QJsonDocument errorDocument(errorObject);
+    QByteArray errorData = errorDocument.toJson();
+    response.setContentLength(errorData.length());
+    response.sendBuffer(errorData.data(), errorData.length());
 }
