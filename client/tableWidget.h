@@ -47,10 +47,17 @@ public:
 private:
     void fillWithData();
     void resizeTable();
-     bool viewportEvent(QEvent* event);
+    bool viewportEvent(QEvent* event);
+    void showEvent(QShowEvent* event);
+    void initializeCells();
+
+    void updateTableWithfilteredTeams(); ///
 
     const int columnNumber = 7;
     int width;
+
+    std::vector<Team> teams;
+    std::vector<Team> filteredTeams;
 
     std::vector<QIcon> deleteIcons;
     bool isRowHovered;
@@ -63,13 +70,14 @@ private:
 public slots:
     void editButtonClicked(int row);
     void deleteButtonClicked(int row);
-
-
+    void filterTeams(int locationId, int categoryId, int subcategoryId);
+    void searchTeamByName(const QString& name);
 };
 
 
 QString FindLocationById(int id);
 QString FindSubcategoryById(int id, int* categoryId);
 QString FindCategoryById(int id);
+int FindCategoryIdBySubcategoryId(int id);
 
 #endif // TABLEWIDGET_H

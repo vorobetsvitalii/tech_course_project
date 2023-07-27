@@ -4,7 +4,6 @@
 TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
 {
     setColumnCount(columnNumber);
-    width = 730;
     resizeTable();
     setShowGrid(false);
 
@@ -12,6 +11,10 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
     QStringList headerLabels = {"Teams", "Location", "Added at", "Category", "Subcategory", "", ""};
     setHorizontalHeaderLabels(headerLabels);
 
+    teams = Client::getInstance().GetTeams();
+    filteredTeams = teams;
+
+    initializeCells();
     fillWithData();
 
     QHeaderView* header = horizontalHeader();
@@ -59,41 +62,33 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
 void TableWidget::resize()
 {
     width = parentWidget()->width();
+    qDebug() << width << " Resize";
     resizeTable();
 }
 
 void TableWidget::fillWithData()
 {
-    std::vector<Team> teams = Client::getInstance().GetTeams();
-
-    setRowCount(teams.size());
-
-
     QIcon deleteIcon("../img/Delete_icon.png");
-    for (int row = 0; row < rowCount(); ++row) {
-        for (int col = 0; col < columnNumber - 2; ++col) {
-            QTableWidgetItem* tableItem = item(row, col);
-            if (tableItem) {
-                tableItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-            }
-        }
-    }
+
+    setRowCount(filteredTeams.size());
+
+    deleteIcons.clear();
 
     // Додати дані до таблиці
-    for (int i = 0; i < teams.size(); ++i)
+    for (int i = 0; i < filteredTeams.size(); ++i)
     {
-        qDebug() << teams[i].getTeamName() +" "+QString::number(teams[i].getTeamLocation())+" "+teams[i].getDate()+" "+QString::number(teams[i].getSubcategoryId())+" "+QString::number(teams[i].getSubcategoryId())+" ";
+        qDebug() << filteredTeams[i].getTeamName() +" "+QString::number(filteredTeams[i].getTeamLocation())+" "+filteredTeams[i].getDate()+" "+QString::number(filteredTeams[i].getSubcategoryId())+" "+QString::number(filteredTeams[i].getSubcategoryId())+" ";
 
-        int locationId = teams[i].getTeamLocation();
-        int subcategoryId = teams[i].getSubcategoryId();
+        int locationId = filteredTeams[i].getTeamLocation();
+        int subcategoryId = filteredTeams[i].getSubcategoryId();
         int categoryId;
         QString locationName = FindLocationById(locationId);
         QString subcategoryName = FindSubcategoryById(subcategoryId, &categoryId);
         QString categoryName = FindCategoryById(categoryId);
 
-        setItem(i, 0, new QTableWidgetItem(teams[i].getTeamName()));
+        setItem(i, 0, new QTableWidgetItem(filteredTeams[i].getTeamName()));
         setItem(i, 1, new QTableWidgetItem(locationName));
-        setItem(i, 2, new QTableWidgetItem(teams[i].getDate().left(10)));
+        setItem(i, 2, new QTableWidgetItem(filteredTeams[i].getDate().left(10)));
         setItem(i, 3, new QTableWidgetItem(categoryName));
         setItem(i, 4, new QTableWidgetItem(subcategoryName));
 
@@ -102,15 +97,76 @@ void TableWidget::fillWithData()
     }
 }
 
+void TableWidget::filterTeams(int locationId, int categoryId, int subcategoryId)
+{
+    auto isTeamMatching = [&](const Team& team) {
+        int teamLocationId = team.getTeamLocation();
+        int teamSubcategoryId = team.getSubcategoryId();
+        int teamCategoryId = FindCategoryIdBySubcategoryId(team.getSubcategoryId());
+
+        if (locationId != 0 && teamLocationId != locationId)
+            return false;
+
+        if (categoryId != 0 && teamCategoryId != categoryId)
+            return false;
+
+        if (subcategoryId != 0 && teamSubcategoryId != subcategoryId)
+            return false;
+
+        return true;
+    };
+
+    filteredTeams.clear();
+
+    for (const Team& team : teams)
+    {
+       if (isTeamMatching(team))
+       {
+            filteredTeams.push_back(team);
+       }
+    }
+    fillWithData();
+}
+
+void TableWidget::searchTeamByName(const QString& name)
+{
+    filteredTeams.clear();
+    for(Team& team : teams) 
+    {
+        if(team.getTeamName().indexOf(name) != -1)
+            filteredTeams.push_back(team);
+    }
+
+    fillWithData();
+}
+
 void TableWidget::resizeTable()
 {
-    int desireWidth = width - 10;
+    int desireWidth = width - 20;
     setFixedWidth(desireWidth);
     double columnRatios[] = {0.2, 0.2, 0.15, 0.15, 0.15, 0.075, 0.075};
 
     for (int i = 0; i < columnNumber; i++) {
         int columnWidth = columnRatios[i] * desireWidth;
         setColumnWidth(i, columnWidth);
+    }
+}
+
+void TableWidget::showEvent(QShowEvent* event)
+{
+    resize();
+    qDebug() << "showEvent";
+    QTableWidget::showEvent(event);
+}
+
+void TableWidget::initializeCells() {
+    for (int row = 0; row < rowCount(); ++row) {
+        for (int col = 0; col < columnNumber - 2; ++col) {
+            QTableWidgetItem* tableItem = item(row, col);
+            if (tableItem) {
+                tableItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            }
+        }
     }
 }
 
@@ -125,10 +181,10 @@ QString FindLocationById(int id) {
 
 QString FindSubcategoryById(int id, int* categoryId) {
     QString subcategoryName;
-    for (const auto& subCategory : TeamsUI::SubCategoriesAll) {
-        if (subCategory.getId() == id) {
-            *categoryId = subCategory.getCategoryId();
-            subcategoryName = QString::fromStdString(subCategory.getName());
+    for (const auto& subcategory : TeamsUI::SubCategoriesAll) {
+        if (subcategory.getId() == id) {
+            *categoryId = subcategory.getCategoryId();
+            subcategoryName = QString::fromStdString(subcategory.getName());
             break;
         }
     }
@@ -143,6 +199,18 @@ QString FindCategoryById(int id) {
     }
     return categoryName;
 }
+
+int FindCategoryIdBySubcategoryId(int id) {
+    int categoryId;
+    for (const auto& subcategory : TeamsUI::SubCategoriesAll) {
+        if (subcategory.getId() == id) {
+            categoryId = subcategory.getCategoryId();
+            break;
+        }
+    }
+    return categoryId;
+}
+
 void TableWidget::editButtonClicked(int row)
 {
     // Get the data from the selected row
@@ -184,26 +252,34 @@ void TableWidget::deleteButtonClicked(int row)
 
     QString teamName = nameItem->text();
 
-
-        Team selectedTeam;
-        std::vector<Team> teamsList= Client::GetTeams();
-        for (Team& team : teamsList)
+    Team selectedTeam;
+    for (int i = 0; i < teams.size(); ++i)
+    {
+        if (teams[i].getTeamName() == teamName)
         {
-            if (team.getTeamName() == teamName)
-            {
-                // Store the selected team
-                selectedTeam = team;
-            }
+            selectedTeam = teams[i];
+            teams.erase(teams.begin() + i);
+            break;
         }
-        DeletePopup deletePopup(deletePopup.getTableTeam(), this);
-        deletePopup.setSelectedTeam(selectedTeam);
-        deletePopup.setStyleSheet("border: none");
-        deletePopup.exec();
-        if (deletePopup.exec() == QDialog::Accepted) {
-            removeRow(row);
-        }
+    }
 
+    for (int i = 0; i < filteredTeams.size(); ++i)
+    {
+        if (filteredTeams[i].getTeamName() == teamName)
+        {
+            filteredTeams.erase(filteredTeams.begin() + i);
+            break;
+        }
+    }
+
+    DeletePopup deletePopup(deletePopup.getTableTeam(), this);
+    deletePopup.setSelectedTeam(selectedTeam);
+    deletePopup.setStyleSheet("border: none");
+    if (deletePopup.exec() == QDialog::Accepted) {
+        removeRow(row);
+    }
 }
+
 void TableWidget::setupRowWidgets(int row)
 {
     // QLabel для іконки видалення (по замовчуванню невидимий)

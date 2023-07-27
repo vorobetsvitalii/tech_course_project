@@ -60,7 +60,10 @@ set(PROJECT_SOURCES
     deletepopup.cpp
     editpopup.h
     editpopup.cpp
-
+    categorycustommenu.cpp
+    categorycustommenu.h
+    searchline.h 
+    searchline.cpp
 )
 
 
@@ -115,7 +118,7 @@ install(TARGETS Client
 #Poco installation start
 
 # Set the POCO library directory
-set(POCO_DIR "D:/MSYS/mingw64")
+set(POCO_DIR "C:/msys64/mingw64")
 
 # Include directories for POCO
 

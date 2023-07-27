@@ -19,7 +19,7 @@ public:
     static void setCategoryIndex(const int& index_);
     static void setTempCategoryButton(QPushButton* temp_category_button_);
 
-    void onSubcategoryNameUpdated(const QString& newName);
+    void onCategoryNameUpdated(const QString& newName);
 private:
     static QPushButton* temp_category_button;
 

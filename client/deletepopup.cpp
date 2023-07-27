@@ -150,6 +150,7 @@ void DeletePopup::deleteClicked()
         }else if (table_name == table_category) {
             Client::getInstance().DeleteCategory(selectedCategory);
             // Delete the selected category, subcategory, or team
+        }
             QMessageBox deletionBox(this);
             deletionBox.setWindowTitle("Deleted");
             deletionBox.setText("Selected "+ table_name +" has been deleted.");
@@ -159,7 +160,6 @@ void DeletePopup::deleteClicked()
             deletionBox.setMinimumSize(600,300);
             deletionBox.exec();
             accept();
-        }
     }
 }
 

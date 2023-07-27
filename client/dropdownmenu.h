@@ -7,6 +7,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QCursor>
+#include <QPixmap>
 #include <memory>
 
 #include "client.h"
@@ -31,7 +33,9 @@ private:
     std::unique_ptr<QHBoxLayout> buttonLayout;
     std::unique_ptr<QPushButton> logoutButton;
     std::unique_ptr<QWidget> buttonWidget;
-    std::unique_ptr<QPushButton> armIcon;
+
+    std::unique_ptr <QPixmap> cursorPixmap;
+    std::unique_ptr <QCursor> customCursor;
 
     void initializeNameLabel(QString name);
     void initializeSurnameLabel(QString surname);

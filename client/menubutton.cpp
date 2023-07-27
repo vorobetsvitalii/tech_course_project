@@ -207,19 +207,27 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
 {
     std::unique_ptr<ResizableWidget> widget = std::make_unique<ResizableWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
-    TeamsUI* teamui = new TeamsUI(true);
+    TeamsUI* teamui = new TeamsUI(false);
     TableWidget* tableWidget = new TableWidget();
+
     TeamUIFilter* teamfilter= new TeamUIFilter();
 
     layout->addWidget(teamui);
     layout->addWidget(teamfilter);
+
+    SearchLine* searchLine = new SearchLine();
+
+
+    layout->addWidget(searchLine);
+
     layout->addWidget(tableWidget);
 
     widget->setLayout(layout);
     widget->setWindowTitle("Teams");
 
     QObject::connect(adminpage, &AdminPage::adminPageResized, widget.get(), &ResizableWidget::resize);
-    QObject::connect(adminpage, &AdminPage::adminPageResized, tableWidget, &TableWidget::resize);
+    QObject::connect(widget.get(), &ResizableWidget::resizableWidgetResized, tableWidget, &TableWidget::resize);
+    QObject::connect(searchLine, &SearchLine::nameChanged, tableWidget, &TableWidget::searchTeamByName);
 
     return widget;
 }

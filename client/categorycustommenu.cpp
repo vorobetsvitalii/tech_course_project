@@ -25,7 +25,7 @@ CategoryCustomMenu::CategoryCustomMenu(QWidget *parent) : QMenu(parent)
                         "font-size: 9pt;"
                         "font-weight: bold;"
                         "");
-    subcategoriesList = Client::GetSubcategories();
+    categoriesList = Client::GetCategories();
 
 }
 
@@ -55,65 +55,63 @@ void CategoryCustomMenu::handleContextMenuAction()
     {
         if (senderAction->text() == "Hide")
         {
-            if(temp_subcategory_button->parentWidget()->layout()->count() <= 2)
+            if(temp_category_button->parentWidget()->layout()->count() <= 2)
             {
                 QLabel* hiddenLabel = new QLabel("X");
 
                 hiddenLabel->setStyleSheet("color: red; padding-left: 2px;");
-                temp_subcategory_button->parentWidget()->layout()->addWidget(hiddenLabel);
+                temp_category_button->parentWidget()->layout()->addWidget(hiddenLabel);
             }
             else
             {
-                temp_subcategory_button->parentWidget()->layout()->itemAt(2)->widget()->deleteLater();
+                temp_category_button->parentWidget()->layout()->itemAt(2)->widget()->deleteLater();
             }
         }
         else if (senderAction->text() == "Delete")
         {
-            if(temp_subcategory_button != nullptr)
+            if(temp_category_button != nullptr)
             {
-                Subcategory selectedSubcategory;
-                for (const Subcategory& subcategory : subcategoriesList)
+                Category selectedCategory;
+                for (const Category& category : categoriesList)
                 {
-                    if (subcategory.getName() == temp_subcategory_button->text().toStdString())
+                    if (category.getName() == temp_category_button->text().toStdString())
                     {
                         // Store the selected subcategory
-                        selectedSubcategory = subcategory;
+                        selectedCategory = category;
 
                     }
                 }
                 DeletePopup deletePopup(deletePopup.getTableSubcategory(), this);
-                deletePopup.setSelectedSubcategory(selectedSubcategory);
+                deletePopup.setSelectedCategory(selectedCategory);
                 deletePopup.setStyleSheet("border: none");
                 deletePopup.exec();
                 if(deletePopup.exec()== QDialog::Accepted){
-                    temp_subcategory_button->parentWidget()->deleteLater();
+                    temp_category_button->parentWidget()->deleteLater();
                 }
             }
         }
         else if (senderAction->text() == "Edit")
         {
-            Subcategory selectedSubcategory;
-            for (const Subcategory& subcategory : subcategoriesList)
+            Category selectedCategory;
+            for (const Category& category : categoriesList)
             {
-                if (subcategory.getName() == temp_subcategory_button->text().toStdString())
+                if (category.getName() == temp_category_button->text().toStdString())
                 {
                     // Store the selected subcategory
-                    selectedSubcategory = subcategory;
+                    selectedCategory = category;
 
                 }
             }
-            QString existingSubcategoryName = temp_subcategory_button->text();
+            QString existingSubcategoryName = temp_category_button->text();
             EditPopup editPopup(existingSubcategoryName, editPopup.getTableSubcategory(), this);
-            editPopup.setSelectedSubcategory(selectedSubcategory);
+            editPopup.setSelectedCategory(selectedCategory);
             // Connect a slot to handle the nameUpdated signal emitted from EditPopup
             editPopup.setStyleSheet("border: none");
-            connect(&editPopup, &EditPopup::NameUpdated , this, &CustomContextMenu::onSubcategoryNameUpdated);
+            connect(&editPopup, &EditPopup::NameUpdated , this, &CategoryCustomMenu::onCategoryNameUpdated);
             editPopup.exec();
-
-
         }
     }
 }
 
-QPushButton* CategoryCustomMenu::temp_subcategory_button = nullptr;
+QPushButton* CategoryCustomMenu::temp_category_button = nullptr;
 int CategoryCustomMenu::index = NULL;

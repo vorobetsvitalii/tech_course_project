@@ -760,6 +760,54 @@ void RequestHandler::EditSubcategory(Poco::Net::HTTPServerRequest& request, Poco
     }
 }
 
+void RequestHandler::EditCategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        std::istream& requestBody = request.stream();
+        std::string body;
+        Poco::StreamCopier::copyToString(requestBody, body);
+
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string key = parameters[0].second;
+
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(QByteArray::fromStdString(body));
+        if (jsonDocument.isNull()) {
+            throw std::runtime_error("Invalid JSON data");
+        }
+
+        QJsonObject categoryObject = jsonDocument.object();
+        if (CheckToken(key)) {
+            qDebug() << categoryObject << "\n";
+
+            std::unique_ptr<CategoriesModel> model = std::make_unique<CategoriesModel>();
+            model->LoadJsonObject(categoryObject);
+            model->UpdateCategory();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Category updated successfully", 31);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
 void RequestHandler::EditTeam(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
 {
     try {
@@ -825,6 +873,45 @@ void RequestHandler::DeleteSubcategory(Poco::Net::HTTPServerRequest& request, Po
             response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
             response.setContentType("text/plain");
             response.sendBuffer("Subcategory deleted successfully", 31);
+        }
+        else {
+            QJsonObject errorObject;
+            errorObject["error"] = "Unauthorized";
+            errorObject["message"] = "Invalid token";
+
+            QJsonDocument errorDocument(errorObject);
+            QByteArray errorData = errorDocument.toJson();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setContentLength(errorData.length());
+            response.sendBuffer(errorData.data(), errorData.length());
+        }
+    }
+    catch (const std::exception& e) {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType("text/plain");
+        response.sendBuffer(e.what(), std::strlen(e.what()));
+    }
+}
+
+void RequestHandler::DeleteCategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response)
+{
+    try {
+        Poco::URI::QueryParameters parameters = Poco::URI(request.getURI()).getQueryParameters();
+        std::string categoryId = parameters[0].second;
+        std::string key = parameters[1].second;
+
+        qDebug() << "DeleteCategory id = " << categoryId << "key = " << key ;
+
+        if (CheckToken(key)) {
+            std::unique_ptr<CategoriesModel> model = std::make_unique<CategoriesModel>();
+            model->setId(std::stoi(categoryId));
+            model->DeleteCategory();
+
+            response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+            response.setContentType("text/plain");
+            response.sendBuffer("Category deleted successfully", 31);
         }
         else {
             QJsonObject errorObject;
