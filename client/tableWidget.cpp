@@ -52,7 +52,9 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
     setMouseTracking(true);
     hoveredRow = -1;
 
-    fillWithData();
+    initPagination();
+
+    setPageResults(teams);
 
 }
 
@@ -63,29 +65,48 @@ void TableWidget::resize()
     resizeTable();
 }
 
-void TableWidget::fillWithData()
+void TableWidget::refreshPageResults(std::vector<Team> &teams_data)
+{
+    pagination->setItemsCount(teams_data.size());
+    setPageResults(teams_data);
+}
+
+void TableWidget::setPageResults(std::vector<Team> &teams_data)
+{
+    std::vector<Team> page;
+    int l = std::min((int)teams_data.size(), pagination->getCurrentPage() * pagination->getResultCount());
+    int rows = std::min((int)teams_data.size() - l, pagination->getResultCount());
+    for(int i = 0; i < rows; i++)
+        page.push_back(teams_data[l + i]);
+
+    fillWithData(page);
+}
+
+void TableWidget::fillWithData(std::vector<Team> &teams_page)
 {
     QIcon deleteIcon("../img/Delete_icon.png");
 
-    setRowCount(filteredTeams.size());
+    setRowCount(teams_page.size());
 
     deleteIcons.clear();
 
     // Додати дані до таблиці
-    for (int i = 0; i < filteredTeams.size(); ++i)
-    {
-        qDebug() << filteredTeams[i].getTeamName() +" "+QString::number(filteredTeams[i].getTeamLocation())+" "+filteredTeams[i].getDate()+" "+QString::number(filteredTeams[i].getSubcategoryId())+" "+QString::number(filteredTeams[i].getSubcategoryId())+" ";
 
-        int locationId = filteredTeams[i].getTeamLocation();
-        int subcategoryId = filteredTeams[i].getSubcategoryId();
+    for (int i = 0; i < rowCount(); ++i)
+    {
+        Team& team = teams_page[i];
+        qDebug() << team.getTeamName() +" "+QString::number(team.getTeamLocation())+" "+team.getDate()+" "+QString::number(team.getSubcategoryId())+" "+QString::number(team.getSubcategoryId())+" ";
+
+        int locationId = team.getTeamLocation();
+        int subcategoryId = team.getSubcategoryId();
         int categoryId;
         QString locationName = FindLocationById(locationId);
         QString subcategoryName = FindSubcategoryById(subcategoryId, &categoryId);
         QString categoryName = FindCategoryById(categoryId);
 
-        setItem(i, 0, new QTableWidgetItem(filteredTeams[i].getTeamName()));
+        setItem(i, 0, new QTableWidgetItem(team.getTeamName()));
         setItem(i, 1, new QTableWidgetItem(locationName));
-        setItem(i, 2, new QTableWidgetItem(filteredTeams[i].getDate().left(10)));
+        setItem(i, 2, new QTableWidgetItem(team.getDate().left(10)));
         setItem(i, 3, new QTableWidgetItem(categoryName));
         setItem(i, 4, new QTableWidgetItem(subcategoryName));
 
@@ -96,12 +117,15 @@ void TableWidget::fillWithData()
     }
 }
 
-void TableWidget::filterTeams(int locationId, int categoryId, int subcategoryId)
+void TableWidget::filterTeams(QString name = "", int locationId = 0, int categoryId = 0, int subcategoryId = 0)
 {
-    auto isTeamMatching = [&](const Team& team) {
+    auto isTeamMatching = [&](Team& team) {
         int teamLocationId = team.getTeamLocation();
         int teamSubcategoryId = team.getSubcategoryId();
         int teamCategoryId = FindCategoryIdBySubcategoryId(team.getSubcategoryId());
+
+        if(team.getTeamName().indexOf(name) == -1)
+            return false;
 
         if (locationId != 0 && teamLocationId != locationId)
             return false;
@@ -117,26 +141,20 @@ void TableWidget::filterTeams(int locationId, int categoryId, int subcategoryId)
 
     filteredTeams.clear();
 
-    for (const Team& team : teams)
+    for (Team& team : teams)
     {
        if (isTeamMatching(team))
        {
             filteredTeams.push_back(team);
        }
     }
-    fillWithData();
+
+    refreshPageResults(filteredTeams);
 }
 
 void TableWidget::searchTeamByName(const QString& name)
 {
-    filteredTeams.clear();
-    for(Team& team : teams) 
-    {
-        if(team.getTeamName().indexOf(name) != -1)
-            filteredTeams.push_back(team);
-    }
-
-    fillWithData();
+    filterTeams(name);
 }
 
 void TableWidget::resizeTable()
@@ -354,3 +372,24 @@ bool TableWidget::viewportEvent(QEvent* event)
     return QTableWidget::viewportEvent(event);
 }
 
+void TableWidget::initPagination()
+{
+    pagination = std::unique_ptr<PaginationWidget>(new PaginationWidget(filteredTeams.size(), 10));
+    connect(pagination.get(), &PaginationWidget::resultCountChanged, this, &TableWidget::onResultCountChanged);
+    connect(pagination.get(), &PaginationWidget::pageChanged, this, &TableWidget::onPageChanged);
+}
+
+PaginationWidget* TableWidget::getPagination()
+{
+    return pagination.get();
+}
+
+void TableWidget::onPageChanged()
+{
+    setPageResults(filteredTeams);
+}
+
+void TableWidget::onResultCountChanged()
+{
+    refreshPageResults(filteredTeams);
+}

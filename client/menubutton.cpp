@@ -209,18 +209,20 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
     TeamsUI* teamui = new TeamsUI(false);
     TableWidget* tableWidget = new TableWidget();
+    tableWidget->initPagination();
 
     TeamUIFilter* teamfilter= new TeamUIFilter();
 
+    SearchLine* searchLine = new SearchLine();
+    PaginationWidget* pagination = tableWidget->getPagination();
+
     layout->addWidget(teamui);
     layout->addWidget(teamfilter);
-
-    SearchLine* searchLine = new SearchLine();
-
-
+    
     layout->addWidget(searchLine);
 
     layout->addWidget(tableWidget);
+    layout->addWidget(pagination);
 
     widget->setLayout(layout);
     widget->setWindowTitle("Teams");
