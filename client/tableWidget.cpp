@@ -17,12 +17,7 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
     initializeCells();
 
     QHeaderView* header = horizontalHeader();
-    header->setStyleSheet("QHeaderView::section {"
-                          "    background-color: #EAEAEA;"
-                          "    border: none;              "
-                          "    alignment: AlignLeft;"
-                          "    padding-left: 10px;"
-                          "}");
+    header->setStyleSheet(headerStyle);
 
     setSelectionBehavior(QAbstractItemView::SelectRows); // Виділення по рядках
     setEditTriggers(QAbstractItemView::NoEditTriggers); // Вимикаємо можливість редагування
@@ -33,10 +28,6 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
     TableCellDelegate* delegate = new TableCellDelegate();
     setItemDelegate(delegate);
 
-    QString rowStyle = "QTableWidget::item {"
-                       "    background-color: #F2F2F2;"
-                        "    color: black;"
-                       "}";
     setStyleSheet(rowStyle);
 
     for (int col = 0; col < columnNumber; ++col) {
@@ -47,7 +38,6 @@ TableWidget::TableWidget(QWidget* parent) : QTableWidget(parent)
     }
     isRowHovered = false;
     
-    // Install the event filter and enable mouse tracking once for the whole table
     installEventFilter(this);
     setMouseTracking(true);
     hoveredRow = -1;

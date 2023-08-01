@@ -77,6 +77,17 @@ private:
     void setPageResults(std::vector<Team> &teams_data);
     void refreshPageResults(std::vector<Team> &teams_data);
 
+    const QString headerStyle = "QHeaderView::section {"
+                                "    background-color: #EAEAEA;"
+                                "    border: none;              "
+                                "    alignment: AlignLeft;"
+                                "    padding-left: 10px;"
+                                "}";
+    const QString rowStyle = "QTableWidget::item {"
+                             "    background-color: #F2F2F2;"
+                             "    color: black;"
+                             "}";
+
 public slots:
     void editButtonClicked(int row);
     void deleteButtonClicked(int row);

@@ -37,13 +37,13 @@ private:
     std::unique_ptr <QPixmap> cursorPixmap;
     std::unique_ptr <QCursor> customCursor;
 
-    QString nameStyle = "color: #000000; font-family: Open Sans; font-size: 12px; font-weight:600";
-    QString emailStyle = "color: #B2B2B2; font-family: Open Sans; font-size: 12px; font-weight:400;";
-    QString buttonWidgetNotHoverStyle = "#buttonWidget { background-color: white; }";
-    QString buttonWidgetHoverStyle = "#buttonWidget { background-color: rgba(215, 33, 48, 0.11); }";
-    QString logoutButtonHoverStyle = "color: #D72130; font-family: Open Sans; font-size: 12px; font-weight: 600; border: none; background-color: rgba(215, 33, 48, 0);";
-    QString logoutButtonNotHoverStyle = "color: #000000; font-family: Open Sans; font-size: 12px; font-weight: 600; border: none;";
-    QString greyColor = "color: #B2B2B2;";
+    const QString nameStyle = "color: #000000; font-family: Open Sans; font-size: 12px; font-weight:600";
+    const QString emailStyle = "color: #B2B2B2; font-family: Open Sans; font-size: 12px; font-weight:400;";
+    const QString buttonWidgetNotHoverStyle = "#buttonWidget { background-color: white; }";
+    const QString buttonWidgetHoverStyle = "#buttonWidget { background-color: rgba(215, 33, 48, 0.11); }";
+    const QString logoutButtonHoverStyle = "color: #D72130; font-family: Open Sans; font-size: 12px; font-weight: 600; border: none; background-color: rgba(215, 33, 48, 0);";
+    const QString logoutButtonNotHoverStyle = "color: #000000; font-family: Open Sans; font-size: 12px; font-weight: 600; border: none;";
+    const QString greyColor = "color: #B2B2B2;";
 
     void initializeNameLabel(QString name);
     void initializeSurnameLabel(QString surname);
