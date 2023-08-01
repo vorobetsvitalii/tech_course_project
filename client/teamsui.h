@@ -1,5 +1,6 @@
 #ifndef TEAMSUI_H
 #define TEAMSUI_H
+#pragma once
 
 #include <QWidget>
 #include <QMenu>
@@ -25,6 +26,7 @@
 #include <future>
 #include "HTTPRequestManager.h"
 #include "client.h"
+
 
 
 class TeamInterface: public QWidget
@@ -78,7 +80,7 @@ protected:
     std::map<int,std::string> GetCategories();
     std::vector<Subcategory> GetSubCategories();
     virtual void CreateTeam() final;
-    void Cancel();
+    virtual void Cancel();
 
 
 
@@ -124,8 +126,11 @@ class TeamUIFilter:public TeamsUI
     Q_OBJECT
 private:
 
+protected:
+    virtual void Cancel() override;
 public:
     virtual void initializeApplyButton() override;
+    virtual void initializeCancelButton() override;
     virtual void enterEvent(QEnterEvent* event) override;
     virtual void leaveEvent(QEvent* event) override;
 

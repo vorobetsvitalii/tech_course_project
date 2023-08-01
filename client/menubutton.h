@@ -24,6 +24,21 @@
 
 class AdminPage;
 
+
+
+class ButtonsForMenu : public QPushButton
+{
+    Q_OBJECT
+public:
+
+    static std::shared_ptr<QPushButton>TeamButton;
+    static std::shared_ptr<QPushButton>CSTButton;
+
+    static std::shared_ptr<QPushButton>TeamButtonInit();
+
+
+};
+
 class MenuButton : public QPushButton
 {
     Q_OBJECT
@@ -68,9 +83,13 @@ private:
 
     AdminPage* adminpage;
 
+
     QPushButton* button;
     QIcon originalIcon;
     QString buttonName;
+
+    static TeamsUI* teamui;
+    static TeamUIFilter* teamfilter;
 
     void showTooltip();
     void hideTooltip();
@@ -97,9 +116,12 @@ protected:
     bool eventFilter(QObject* object, QEvent* event) override;
 
 
-
+public slots:
+    static void addTeamButtonClicked();
+    static void showFilterForTeamTable();
 signals:
     void menuItemClicked(MenuButton* clickedButton);
+
 
 
 };

@@ -30,7 +30,10 @@ private:
     std::unique_ptr <QVBoxLayout> infoLayout;
     std::unique_ptr <QHBoxLayout> buttonLayout;
     std::unique_ptr <QHBoxLayout> mainLayout;
-    QString pathToImages = "../img/";
+    const QString pathToImages = "../img/";
+    const QString nameStyle = "color: #000000; font-family: Open Sans; font-size: 12px; font-weight:600";
+    const QString roleStyle = "color: #B2B2B2; font-family: Open Sans; font-size: 10px; font-weight:600";
+    const QString arrowStyle = "QPushButton { border: none; }";
 
     void initializePhotoLabel();
     void initializeNameLabel();

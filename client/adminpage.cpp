@@ -533,6 +533,44 @@ bool AdminPage::checkIfStringEmpty(const QString &temp_string)
     return (temp_string == "");
 }
 
+void AdminPage::createSaveChangesButton(const QString& PageName)
+{
+
+    // Видаляємо всі попередні зв'язки для події clicked
+    saveChangesButton->disconnect(SIGNAL(clicked()));
+
+    // Змінюємо текст і стиль існуючого saveChangesButton в залежності від PageName
+    if (PageName == "Information Architecture")
+    {
+        saveChangesButton->setText("Save");
+        saveChangesButton->setStyleSheet("QPushButton { \
+                                          background-color: rgb(208, 0, 0); \
+                                          color: rgb(255, 255, 255); border:none}");
+        connect(saveChangesButton.get(), &QPushButton::clicked, this, &AdminPage::on_save_changes_clicked);
+    }
+    else if (PageName == "Teams")
+    {
+        saveChangesButton->setText("+Add Team");
+        saveChangesButton->setStyleSheet("QPushButton { \
+                                          background-color: rgb(208, 0, 0); \
+                                          color: rgb(255, 255, 255); border:none}");
+        connect(saveChangesButton.get() ,&QPushButton::clicked , this,&AdminPage::handleTeamsClicked);
+    }
+    else
+    {
+        saveChangesButton->setText("Other");
+        saveChangesButton->setStyleSheet("QPushButton { \
+                                          background-color: rgb(208, 0, 0); \
+                                          color: rgb(255, 255, 255); border:none}");
+    }
+}
+
+void AdminPage::handleTeamsClicked()
+{
+    MenuButton::addTeamButtonClicked();
+}
+
+
 void AdminPage::onLogoutDone() {
     this->close();
 }
@@ -771,7 +809,9 @@ void AdminPage::OnMenuItemClicked(MenuButton*menuItemButton)
 {
     menuHWidget->resetCurrentCategory();
     pageLabel->setText(menuItemButton->GetItemName());
+    createSaveChangesButton(menuItemButton->GetItemName());
     handleMenuItemClick(menuItemButton, contentArea.get());
+
 }
 
 void AdminPage::onCategorySelected(Category *category)
