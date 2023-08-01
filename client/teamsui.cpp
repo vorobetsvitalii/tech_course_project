@@ -561,6 +561,8 @@ void TeamsUI::Cancel()
     qDebug()<<"Cancel";
 }
 
+
+
 void TeamUIFilter::initializeApplyButton()
 {
     ApplyButton.reset(new QPushButton());
@@ -576,6 +578,29 @@ void TeamUIFilter::initializeApplyButton()
                                "}");
 }
 
+void TeamUIFilter::initializeCancelButton()
+{
+    CancelButton = std::make_unique<QPushButton>();
+    CancelButton->setText("Cancel");
+    CancelButton->setFixedSize(246,32);
+    CancelButton->setStyleSheet("QPushButton {"
+                                "background-color: white;"
+                                "color: #D72130;"
+                                "border: 0px;"
+                                "}"
+                                "QPushButton:hover {"
+                                "background-color: rgba(248, 248, 248, 1);"
+                                "}"
+                                "QPushButton:pressed {"
+                                "background-color: white;"
+                                "}");
+    connect(CancelButton.get(), &QPushButton::clicked, this, &TeamUIFilter::Cancel);
+    //this->setVisible(false);
+}
+void TeamUIFilter::Cancel()
+{
+    this->setVisible(false);
+}
 void TeamUIFilter::enterEvent(QEnterEvent *event)
 {
 

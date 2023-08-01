@@ -43,6 +43,8 @@ public:
     explicit AdminPage(QWidget *parent = nullptr);
     ~AdminPage();
 
+    std::unique_ptr<QPushButton> saveChangesButton;
+
 private:
     Ui::AdminPage *ui;
 
@@ -76,7 +78,7 @@ private:
     std::unique_ptr<QPushButton> switchPushButton;
     std::unique_ptr<AdminInfoWidget> adminInfoWidget;
     std::unique_ptr<QPushButton> cancelPushButton;
-    std::unique_ptr<QPushButton> saveChangesButton;
+
     std::unique_ptr<QPushButton> homePushButton;
     std::unique_ptr<QPushButton> pushButton_1;
     std::unique_ptr<QPushButton> pushButton_2;
@@ -140,8 +142,11 @@ private:
     void appendSubcategories();
     void appendTeams();
     bool checkIfStringEmpty(const QString& temp_string);
+    void createSaveChangesButton(const QString&);
+
 
 public slots:
+    void handleTeamsClicked();
     void onLogoutDone();
     void on_add_category_clicked();
     void on_add_subcategory_clicked();

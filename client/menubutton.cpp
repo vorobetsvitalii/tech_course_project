@@ -1,11 +1,20 @@
 #include "menubutton.h"
 
+
+std::shared_ptr<QPushButton> ButtonsForMenu::CSTButton = nullptr;
+std::shared_ptr<QPushButton> ButtonsForMenu::TeamButton= nullptr;
+
+TeamsUI* MenuButton::teamui = nullptr;
+TeamUIFilter* MenuButton::teamfilter = nullptr;
+
 MenuButton::MenuButton(const QString& name, const QString& tooltip, const QIcon& icon, QWidget* parent, AdminPage* adminpage)
     : QPushButton(parent), originalIcon(icon)
 {
     button = this;
 
     this->adminpage = adminpage;
+    //ButtonsForMenu::CSTButton = std::move(adminpage->saveChangesButton);
+
 
     button->setFlat(true);
     button->setToolTip(tooltip);
@@ -41,6 +50,18 @@ bool MenuButton::eventFilter(QObject* object, QEvent* event)
         }
     }
     return QPushButton::eventFilter(object, event);
+}
+
+void MenuButton::addTeamButtonClicked()
+{
+    teamfilter->setVisible(false);
+    teamui->setVisible(true);
+}
+
+void MenuButton::showFilterForTeamTable()
+{
+    teamfilter->setVisible(true);
+    teamui->setVisible(false);
 }
 
 void MenuButton::SetAdvertising(MenuButton *clickedButton, QScrollArea *Content)
@@ -207,10 +228,13 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
 {
     std::unique_ptr<ResizableWidget> widget = std::make_unique<ResizableWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
-    TeamsUI* teamui = new TeamsUI(false);
+
+   // if(!teamui){
+    teamui = new TeamsUI(false);
+    teamfilter= new TeamUIFilter();
+    //}
     TableWidget* tableWidget = new TableWidget();
 
-    TeamUIFilter* teamfilter= new TeamUIFilter();
 
     layout->addWidget(teamui);
     layout->addWidget(teamfilter);
@@ -411,3 +435,16 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
 QVBoxLayout* MenuButton::categoriesVLayout = nullptr;
 QVBoxLayout* MenuButton::subcategoriesVLayout = nullptr;
 QVBoxLayout* MenuButton::teamsVLayout = nullptr;
+
+std::shared_ptr<QPushButton> ButtonsForMenu::TeamButtonInit()
+{
+    std::shared_ptr<QPushButton> button = std::make_shared<QPushButton>();
+    button->setText("Add team");
+    button->setFixedSize(110, 30);
+    button->setStyleSheet("QPushButton { \
+                        background-color: rgb(208, 0, 0); \
+                        color: rgb(255, 255, 255); border:none}");
+
+    return button;
+}
+
