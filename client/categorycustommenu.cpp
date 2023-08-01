@@ -97,13 +97,13 @@ void CategoryCustomMenu::handleContextMenuAction()
             {
                 if (category.getName() == temp_category_button->text().toStdString())
                 {
-                    // Store the selected subcategory
+                    // Store the selected category
                     selectedCategory = category;
 
                 }
             }
-            QString existingSubcategoryName = temp_category_button->text();
-            EditPopup editPopup(existingSubcategoryName, editPopup.getTableSubcategory(), this);
+            QString existingCategoryName = temp_category_button->text();
+            EditPopup editPopup(existingCategoryName, editPopup.getTableCategory(), this);
             editPopup.setSelectedCategory(selectedCategory);
             // Connect a slot to handle the nameUpdated signal emitted from EditPopup
             editPopup.setStyleSheet("border: none");

@@ -49,12 +49,12 @@ void TeamContextMenu::onTeamNameUpdated(const QString& newName)
 }
 void TeamContextMenu::handleContextMenuAction()
 {
- QAction *senderAction = qobject_cast<QAction*>(sender());
+    QAction *senderAction = qobject_cast<QAction*>(sender());
 
- if (senderAction)
- {
-     if (senderAction->text() == "Hide")
-     {
+    if (senderAction)
+    {
+         if (senderAction->text() == "Hide")
+         {
          if(temp_team_button->parentWidget()->layout()->count() <= 2)
          {
              QLabel* hiddenLabel = new QLabel("X");
