@@ -29,17 +29,17 @@ DropdownMenu::DropdownMenu(QHBoxLayout* mainLayout, QWidget* parent) : QMenu(par
 
 void DropdownMenu::initializeNameLabel(QString name) {
     nameLabel = std::make_unique<QLabel>(name, this);
-    nameLabel->setStyleSheet("color: #000000; font-family: Open Sans; font-size: 12px; font-weight:600");
+    nameLabel->setStyleSheet(nameStyle);
 }
 
 void DropdownMenu::initializeSurnameLabel(QString surname) {
     surnameLabel = std::make_unique<QLabel>(surname, this);
-    surnameLabel->setStyleSheet("color: #000000; font-family: Open Sans; font-size: 12px; font-weight:600");
+    surnameLabel->setStyleSheet(nameStyle);
 }
 
 void DropdownMenu::initializeEmailLabel(QString email) {
     emailLabel = std::make_unique<QLabel>(email, this);
-    emailLabel->setStyleSheet("color: #B2B2B2; font-family: Open Sans; font-size: 12px; font-weight:400;");
+    emailLabel->setStyleSheet(emailStyle);
 }
 
 void DropdownMenu::initializeNameLayout() {
@@ -65,7 +65,7 @@ void DropdownMenu::initializeSeparatorLine()
     separatorLine->setFrameShadow(QFrame::Sunken);
     separatorLine->setLineWidth(0);
     separatorLine->setMidLineWidth(1);
-    separatorLine->setStyleSheet("color: #B2B2B2;");
+    separatorLine->setStyleSheet(greyColor);
 
     QSizePolicy policy = separatorLine->sizePolicy();
     policy.setHorizontalStretch(1);  // Розтягнути горизонтально
@@ -74,7 +74,7 @@ void DropdownMenu::initializeSeparatorLine()
 
 void DropdownMenu::initializeLogoutButton() {
     logoutButton = std::make_unique <QPushButton>("Logout", this);
-    logoutButton->setStyleSheet("color: #000000; font-family: Open Sans; font-size: 12px; font-weight: 600; border: none;");
+    logoutButton->setStyleSheet(logoutButtonNotHoverStyle);
 }
 
 void DropdownMenu::initializeButtonLayout() {
@@ -88,7 +88,7 @@ void DropdownMenu::initializeButtonWidget() {
     buttonWidget = std::make_unique<QWidget>(this);
     buttonWidget->setLayout(buttonLayout.get());
     buttonWidget->setObjectName("buttonWidget");
-    buttonWidget->setStyleSheet("#buttonWidget { background-color: white; }");
+    buttonWidget->setStyleSheet(buttonWidgetNotHoverStyle);
     buttonWidget->setFixedHeight(infoLayout->sizeHint().height());
     buttonWidget->installEventFilter(this);
 }
@@ -104,7 +104,7 @@ void DropdownMenu::initializeMenuLayout(QHBoxLayout* mainLayout) {
     setFixedWidth(menuWidth);
     menuLayout = std::make_unique <QVBoxLayout>(this);
     menuLayout->setContentsMargins(1, 0, 0, 1);
-    menuLayout->setSpacing(0); // Встановлюємо нульовий відступ між елементами
+    menuLayout->setSpacing(0);
     menuLayout->addLayout(infoLayout.get());
     menuLayout->addWidget(separatorLine.get());
     menuLayout->addWidget(buttonWidget.get());
@@ -146,12 +146,12 @@ void DropdownMenu::changeButtonBackgroundColor(bool hover)
 {
     if (hover) {
         buttonWidget.get()->setCursor(*customCursor);
-        buttonWidget->setStyleSheet("#buttonWidget { background-color: rgba(215, 33, 48, 0.11); }");
-        logoutButton->setStyleSheet("color: #D72130; font-family: Open Sans; font-size: 12px; font-weight: 600; border: none; background-color: rgba(215, 33, 48, 0);");
+        buttonWidget->setStyleSheet(buttonWidgetHoverStyle);
+        logoutButton->setStyleSheet(logoutButtonHoverStyle);
     } else {
         setCursor(Qt::ArrowCursor);
         buttonWidget.get()->setCursor(Qt::ArrowCursor);
-        buttonWidget->setStyleSheet("#buttonWidget { background-color: white; }");
-        logoutButton->setStyleSheet("color: #000000; font-family: Open Sans; font-size: 12px; font-weight: 600; border: none; background-color: white;");
+        buttonWidget->setStyleSheet(buttonWidgetNotHoverStyle);
+        logoutButton->setStyleSheet(logoutButtonNotHoverStyle);
     }
 }

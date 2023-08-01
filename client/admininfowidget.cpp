@@ -2,7 +2,8 @@
 #include "clientsession.h"
 
 AdminInfoWidget::AdminInfoWidget(QWidget *parent) : QWidget(parent) {
-    QFontDatabase::addApplicationFont("../client/fonts/OpenSans-Regular.ttf");
+    QString fontRoute = "../client/fonts/OpenSans-Regular.ttf";
+    QFontDatabase::addApplicationFont(fontRoute);
     initializePhotoLabel();
     initializeNameLabel();
     initializeSurnameLabel();
@@ -39,17 +40,17 @@ void AdminInfoWidget::initializePhotoLabel() {
 
 void AdminInfoWidget::initializeNameLabel() {
     nameLabel = std::make_unique<QLabel>(QString::fromStdString(ClientSession::getInstance()->getFirstName()), this);
-    nameLabel->setStyleSheet("color: #000000; font-family: Open Sans; font-size: 14px; font-weight:600");
+    nameLabel->setStyleSheet(nameStyle);
 }
 
 void AdminInfoWidget::initializeSurnameLabel() {
     surnameLabel = std::make_unique<QLabel>(QString::fromStdString(ClientSession::getInstance()->getLastName()), this);
-    surnameLabel->setStyleSheet("color: #000000; font-family: Open Sans; font-size: 14px; font-weight:600");
+    surnameLabel->setStyleSheet(nameStyle);
 }
 
 void AdminInfoWidget::initializeRoleLabel() {
     roleLabel = std::make_unique<QLabel>("Administrator", this);
-    roleLabel->setStyleSheet("color: #B2B2B2; font-family: Open Sans; font-size: 10px; font-weight:600");
+    roleLabel->setStyleSheet(roleStyle);
 }
 
 void AdminInfoWidget::initializeNameLayout() {
@@ -71,7 +72,7 @@ void AdminInfoWidget::initializeInfoLayout() {
 
 void AdminInfoWidget::initializeArrowButton() {
     arrowButton = std::make_unique<QPushButton>(this);
-    arrowButton->setStyleSheet("QPushButton { border: none; }");
+    arrowButton->setStyleSheet(arrowStyle);
     QPixmap arrowPixmap(pathToImages + "chevron_down.png");
     arrowButton->setIcon(QIcon(arrowPixmap));
     arrowButton->setIconSize(QSize(8, 8));
