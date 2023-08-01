@@ -64,6 +64,8 @@ set(PROJECT_SOURCES
     categorycustommenu.h
     searchline.h 
     searchline.cpp
+    paginationwidget.h
+    paginationwidget.cpp
 )
 
 

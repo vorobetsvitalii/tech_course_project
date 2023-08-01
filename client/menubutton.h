@@ -18,6 +18,7 @@
 #include "teamsui.h"
 #include "tableWidget.h"
 #include "searchline.h"
+#include "paginationwidget.h"
 #include "resizableWidget.h"
 #include "adminpage.h"
 

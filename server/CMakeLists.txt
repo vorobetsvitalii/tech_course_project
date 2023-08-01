@@ -29,7 +29,7 @@ list(APPEND PROJECT_SOURCES "../dal/dbexecutor.h")
 list(APPEND PROJECT_SOURCES "../dal/dbexecutor.cpp")
 list(APPEND PROJECT_SOURCES "../common/model/team.cpp")
 list(APPEND PROJECT_SOURCES "../common/model/team.h")
-
+list(APPEND PROJECT_SOURCES "../common/error/unauthorizedTokenError.cpp")
 
 
 # Add your source files to the project

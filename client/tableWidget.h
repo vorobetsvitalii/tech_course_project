@@ -14,6 +14,8 @@
 #include "deletepopup.h"
 #include "editpopup.h"
 
+#include "paginationwidget.h"
+
 #include <QVector>
 #include <QIcon>
 #include <QLabel>
@@ -44,8 +46,11 @@ public:
 
     void resize();
 
+    void initPagination();
+    PaginationWidget* getPagination();
+
 private:
-    void fillWithData();
+    void fillWithData(std::vector<Team> &teams_data);
     void resizeTable();
     bool viewportEvent(QEvent* event);
     void showEvent(QShowEvent* event);
@@ -64,14 +69,23 @@ private:
     int hoveredRow = -1;
     std::vector<QStackedWidget*> rowStackedWidgets;
 
+    std::unique_ptr<PaginationWidget> pagination;
+
     void setupRowWidgets(int row);
     void updateRowWidgetsVisibility(int row);
+    
+    void setPageResults(std::vector<Team> &teams_data);
+    void refreshPageResults(std::vector<Team> &teams_data);
 
 public slots:
     void editButtonClicked(int row);
     void deleteButtonClicked(int row);
-    void filterTeams(int locationId, int categoryId, int subcategoryId);
+    void filterTeams(QString name, int locationId, int categoryId, int subcategoryId);
     void searchTeamByName(const QString& name);
+
+    void onResultCountChanged();
+    void onPageChanged();
+
 };
 
 

@@ -14,6 +14,7 @@
 #include "teammodel.h"
 #include "subcategoryModel.h"
 #include "dbmodel.h"
+#include "../common/error/unauthorizedTokenError.h"
 
 
 #include <QJsonDocument>
@@ -122,6 +123,7 @@ private:
     void DeleteSubcategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
     void DeleteCategory(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
     void DeleteTeam(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    void handleUnauthorizedError(Poco::Net::HTTPServerResponse& response);
 
 };
 

@@ -234,17 +234,19 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     teamfilter= new TeamUIFilter();
     //}
     TableWidget* tableWidget = new TableWidget();
+    tableWidget->initPagination();
 
+
+    SearchLine* searchLine = new SearchLine();
+    PaginationWidget* pagination = tableWidget->getPagination();
 
     layout->addWidget(teamui);
     layout->addWidget(teamfilter);
-
-    SearchLine* searchLine = new SearchLine();
-
-
+    
     layout->addWidget(searchLine);
 
     layout->addWidget(tableWidget);
+    layout->addWidget(pagination);
 
     widget->setLayout(layout);
     widget->setWindowTitle("Teams");
