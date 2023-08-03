@@ -28,6 +28,8 @@
 #include "client.h"
 
 
+#include "menubutton.h"
+
 
 class TeamInterface: public QWidget
 {
@@ -43,7 +45,6 @@ private:
 
 
 
-
 protected:
     std::unique_ptr<QComboBox>LocationDrop;
     std::unique_ptr<QComboBox>CategoryDrop;
@@ -53,8 +54,7 @@ protected:
     std::unique_ptr<QLineEdit>TeamInput;
 
 
-    QScopedPointer<QPushButton>ApplyButton;
-    std::unique_ptr<QPushButton>CancelButton;
+
 
     std::unique_ptr<QLabel>LocationLabel;
     std::unique_ptr<QLabel>CategoryLabel;
@@ -85,7 +85,13 @@ protected:
 
 
 public:
+
+    QScopedPointer<QPushButton>ApplyButton;
+    std::unique_ptr<QPushButton>CancelButton;
+
     std::unique_ptr<QFrame> Frame;
+
+
     static std::map<int,std::string> LocationMap;
     static std::map<int,std::string> CategoriesMap;
     std::vector<Subcategory> SubCategoriesVector;

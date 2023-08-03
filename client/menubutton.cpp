@@ -1,8 +1,7 @@
 #include "menubutton.h"
 
 
-std::shared_ptr<QPushButton> ButtonsForMenu::CSTButton = nullptr;
-std::shared_ptr<QPushButton> ButtonsForMenu::TeamButton= nullptr;
+
 
 TeamsUI* MenuButton::teamui = nullptr;
 TeamUIFilter* MenuButton::teamfilter = nullptr;
@@ -62,6 +61,13 @@ void MenuButton::showFilterForTeamTable()
 {
     teamfilter->setVisible(true);
     teamui->setVisible(false);
+}
+
+void MenuButton::cancelButtonOnAddTeamClicked()
+{
+    teamui->setVisible(false);
+    teamfilter->setVisible(true);
+
 }
 
 void MenuButton::SetAdvertising(MenuButton *clickedButton, QScrollArea *Content)
@@ -232,6 +238,16 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
    // if(!teamui){
     teamui = new TeamsUI(false);
     teamfilter= new TeamUIFilter();
+
+    //teamui->CancelButton->disconnect(SIGNAL(clicked()));
+   //QObject::connect(teamui->CancelButton, &QPushButton::clicked, teamui, &MenuButton::cancelButtonOnAddTeamClicked);
+
+    /*
+    Тут доробити сигнал для перемикання ui після cancel
+
+
+
+    */
     //}
     TableWidget* tableWidget = new TableWidget();
     tableWidget->initPagination();
@@ -438,15 +454,5 @@ QVBoxLayout* MenuButton::categoriesVLayout = nullptr;
 QVBoxLayout* MenuButton::subcategoriesVLayout = nullptr;
 QVBoxLayout* MenuButton::teamsVLayout = nullptr;
 
-std::shared_ptr<QPushButton> ButtonsForMenu::TeamButtonInit()
-{
-    std::shared_ptr<QPushButton> button = std::make_shared<QPushButton>();
-    button->setText("Add team");
-    button->setFixedSize(110, 30);
-    button->setStyleSheet("QPushButton { \
-                        background-color: rgb(208, 0, 0); \
-                        color: rgb(255, 255, 255); border:none}");
 
-    return button;
-}
 

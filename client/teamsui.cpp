@@ -176,7 +176,7 @@ void TeamsUI::initializeTeamInput()
 void TeamsUI::initializeApplyButton()
 {
     ApplyButton.reset(new QPushButton());
-    ApplyButton->setText("Apply");
+    ApplyButton->setText("Add Team");
     ApplyButton->setFixedSize(246, 32);
     ApplyButton->setStyleSheet("QPushButton {"
                                "background-color: rgba(224, 34, 50, 1);"
@@ -422,17 +422,17 @@ void TeamsUI::leaveEvent(QEvent* event)
 std::map<int,std::string> TeamsUI::GetLocations()
 {
 
-    //std::string apiUrl = "http://" + Client::IP_ADDRESS + ":" + std::to_string(Client::PORT) + url + "?key=" + Client::key;
-    std::string path = "http://localhost:8080"+Constants::locationsGet;
+
+    std::string path = "http://"+Constants::IP+":"+Constants::Port+Constants::locationsGet;
 
     HTTPRequestManager manager;
-    auto a = manager.sendHTTPGetRequest(path);
-    std::cout<<a<<std::endl;
+    auto responce = manager.sendHTTPGetRequest(path);
+    std::cout<<responce<<std::endl;
 
     std::map<int, std::string> locationMap;
 
 
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(QString::fromStdString(a).toUtf8());
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(QString::fromStdString(responce).toUtf8());
 
 
     if (jsonDocument.isNull())
@@ -558,6 +558,8 @@ void TeamsUI::CreateTeam()
 
 void TeamsUI::Cancel()
 {
+    MenuButton::teamui->setVisible(false);
+    MenuButton::teamfilter->setVisible(true);
     qDebug()<<"Cancel";
 }
 

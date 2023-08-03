@@ -24,20 +24,11 @@
 
 class AdminPage;
 
+class TeamsUI;
+
+class TeamUIFilter;
 
 
-class ButtonsForMenu : public QPushButton
-{
-    Q_OBJECT
-public:
-
-    static std::shared_ptr<QPushButton>TeamButton;
-    static std::shared_ptr<QPushButton>CSTButton;
-
-    static std::shared_ptr<QPushButton>TeamButtonInit();
-
-
-};
 
 class MenuButton : public QPushButton
 {
@@ -68,6 +59,9 @@ public:
     static void setSubcategoriesLayout(QVBoxLayout* subcategoriesVLayout_);
     static void setTeamsLayout(QVBoxLayout* teamsVLayout_);
 
+    static TeamsUI* teamui;
+    static TeamUIFilter* teamfilter;
+
 private:
 
     std::unique_ptr<QWidget> advertisingContent=initializeAdvertisingContent();
@@ -88,8 +82,7 @@ private:
     QIcon originalIcon;
     QString buttonName;
 
-    static TeamsUI* teamui;
-    static TeamUIFilter* teamfilter;
+
 
     void showTooltip();
     void hideTooltip();
@@ -119,6 +112,7 @@ protected:
 public slots:
     static void addTeamButtonClicked();
     static void showFilterForTeamTable();
+    static void cancelButtonOnAddTeamClicked();
 signals:
     void menuItemClicked(MenuButton* clickedButton);
 

@@ -69,7 +69,7 @@ QJsonObject Team::GetJsonObject()
     jsonObject["TeamLocation"] = this->getTeamLocation();
     jsonObject["TeamName"] = this->getTeamName();
     jsonObject["CreatingDate"] = this->getDate();
-    return jsonObject;
+    return std::move(jsonObject);
 }
 
 void Team::LoadJsonObject(QJsonObject Json)
