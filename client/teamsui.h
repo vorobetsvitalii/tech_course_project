@@ -31,11 +31,7 @@
 #include "menubutton.h"
 
 
-class TeamInterface: public QWidget
-{
-    Q_OBJECT
 
-};
 
 class TeamsUI: public QWidget
 {
