@@ -336,12 +336,15 @@ void AdminPage::appendCategories()
         QHBoxLayout* buttons_layout = new QHBoxLayout();
         QPushButton* context_menu_button = new QPushButton();
 
+        button->setMinimumWidth(80);
         button->setStyleSheet("QPushButton {"
                               "border: 1px solid gray;"
+                              "border-right: none;"
                               "border-radius: 3px;"
                               "padding: 5px;"
                               "font-weight: bold;"
                               "color: gray;"
+                              "image: none;"
                               "}"
                               "QPushButton:hover {"
                               "color: red;"
@@ -405,6 +408,7 @@ void AdminPage::appendSubcategories()
         QHBoxLayout* buttons_layout = new QHBoxLayout();
         QPushButton* context_menu_button = new QPushButton();
 
+        button->setMinimumWidth(80);
         button->setStyleSheet("QPushButton {"
                               "border: 1px solid gray;"
                               "border-right: none;"
@@ -477,6 +481,7 @@ void AdminPage::appendTeams()
         QHBoxLayout* buttons_layout = new QHBoxLayout();
         QPushButton* context_menu_button = new QPushButton();
 
+        button->setMinimumWidth(80);
         button->setStyleSheet("QPushButton {"
                               "border: 1px solid gray;"
                               "border-right: none;"
@@ -622,6 +627,7 @@ void AdminPage::on_save_changes_clicked()
 
         team.setTeamName(tempTeam);
         team.setTeamId(tempTeamId);
+        team.setSubcategoryId(tempSubcategoryId);
 
         teams_map_id.insert(tempTeam, Client::getInstance().GetTeams().at(Client::getInstance().GetTeams().size() - 1).getTeamId());
         Client::getInstance().PostTeam(team);
@@ -646,8 +652,10 @@ void AdminPage::handleNewButtonAdded()
         QHBoxLayout* buttons_layout = new QHBoxLayout();
         QPushButton* context_menu_button = new QPushButton();
 
+        newButton->setMinimumWidth(80);
         newButton->setStyleSheet("QPushButton {"
                                  "border: 1px solid gray;"
+                                 "border-right: none;"
                                  "border-radius: 3px;"
                                  "padding: 5px;"
                                  "font-weight: bold;"
@@ -683,7 +691,7 @@ void AdminPage::handleNewButtonAdded()
         });
 
         buttons_widget->setLayout(buttons_layout);
-        subcategoriesVLayout->insertWidget(1, buttons_widget);
+        categoriesVLayout->insertWidget(1, buttons_widget);
         tempCategoryId = NULL;
     }
 }
@@ -699,6 +707,7 @@ void AdminPage::handleNewSubcategoryAdded()
         QHBoxLayout* buttons_layout = new QHBoxLayout();
         QPushButton* context_menu_button = new QPushButton();
 
+        newButton->setMinimumWidth(80);
         newButton->setStyleSheet("QPushButton {"
                                  "border: 1px solid gray;"
                                  "border-right: none;"
@@ -737,7 +746,7 @@ void AdminPage::handleNewSubcategoryAdded()
         });
 
         buttons_widget->setLayout(buttons_layout);
-        teamsVLayout->insertWidget(1, buttons_widget);
+        subcategoriesVLayout->insertWidget(1, buttons_widget);
     }
 }
 
@@ -753,6 +762,7 @@ void AdminPage::handleNewTeamAdded()
         QHBoxLayout* buttons_layout = new QHBoxLayout();
         QPushButton* context_menu_button = new QPushButton();
 
+        newButton->setMinimumWidth(80);
         newButton->setStyleSheet("QPushButton {"
                                  "border: 1px solid gray;"
                                  "border-right: none;"
@@ -817,20 +827,24 @@ void AdminPage::onCategoryClicked()
 
     clickedButton->setStyleSheet("QPushButton {"
                                  "border: 1px solid gray;"
+                                 "border-right: none;"
                                  "border-radius: 3px;"
                                  "padding: 5px;"
                                  "font-weight: bold;"
                                  "color: red;"
                                  "}");
 
+
     if (previousButton != nullptr)
     {
         previousButton->setStyleSheet("QPushButton {"
                                       "border: 1px solid gray;"
+                                      "border-right: none;"
                                       "border-radius: 3px;"
                                       "padding: 5px;"
                                       "font-weight: bold;"
                                       "color: gray;"
+                                      "image: none;"
                                       "}"
                                       "QPushButton:hover {"
                                       "color: red;"
