@@ -5,26 +5,26 @@ std::map<int,std::string> TeamsUI::CategoriesMap;
 std::vector<Subcategory> TeamsUI::SubCategoriesAll;
 
 QString TeamsUI::comboBoxStyle = "QComboBox {"
-                        "background-color: white;"
-                        "color: black;"
-                        "border: 1px solid rgba(212, 217, 226, 1);"
-                        "min-width: 246px;"
-                        "min-height: 36px;"
-                        "}"
-                        "QComboBox::drop-down {"
-                        "border: none;"
-                        "}"
-                        "QComboBox::down-arrow {"
-                        "image: url(../img/TeamArrow.png);"
-                        "height: 5px;"
-                        "width: 7px;"
-                        "}"
-                        "QListView::item {"
-                        "max-width: 240px;"
-                        "min-height: 36px;"
-                        "border: none;"
-                        "outline: 0px;"
-                        "}";
+                                 "background-color: white;"
+                                 "color: black;"
+                                 "border: 1px solid rgba(212, 217, 226, 1);"
+                                 "min-width: 246px;"
+                                 "min-height: 36px;"
+                                 "}"
+                                 "QComboBox::drop-down {"
+                                 "border: none;"
+                                 "}"
+                                 "QComboBox::down-arrow {"
+                                 "image: url(../img/TeamArrow.png);"
+                                 "height: 5px;"
+                                 "width: 7px;"
+                                 "}"
+                                 "QListView::item {"
+                                 "max-width: 240px;"
+                                 "min-height: 36px;"
+                                 "border: none;"
+                                 "outline: 0px;"
+                                 "}";
 
 
 QString TeamsUI::listViewStyle="QListView::item {"
@@ -57,7 +57,6 @@ void TeamsUI::initializeLocationDrop()
     QListView * listView = new QListView();
     listView->setStyleSheet(listViewStyle);
 
-    //listView->setFixedSize(250,36);
 
     LocationDrop->setView(listView);
     LocationDrop->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -82,7 +81,6 @@ void TeamsUI::initializeCategoryDrop()
     QListView * listView = new QListView();
     listView->setStyleSheet(listViewStyle);
 
-    //listView->setFixedSize(250,36);
 
     CategoryDrop->setView(listView);
     CategoryDrop->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -111,11 +109,11 @@ void TeamsUI::onCategoryActivated(int index)
 
     for (auto tmp : SubCategoriesAll)
     {
-       // qDebug() << QString::number(tmp.getCategoryId()) + "   " + QString::fromStdString(this->CategoriesMap[tmp.getCategoryId()]);
+
         if (this->CategoriesMap[tmp.getCategoryId()].compare(category.toStdString()) == 0)
         {
             this->SubCategoriesVector.push_back(tmp);
-            //qDebug() <<QString("PUSH BACK\n");
+
         }
 
     }
@@ -123,10 +121,7 @@ void TeamsUI::onCategoryActivated(int index)
     for (int i = 0; i < SubCount; i++) {
         SubCategoryDrop->removeItem(0);
     }
-    //qDebug() << QString("SubCategoriesVector:");
-    //for (const auto& tmp : SubCategoriesVector) {
-    //    qDebug() << QString::fromStdString(tmp.getName());
-    //}
+
 
 
 
@@ -258,7 +253,7 @@ void TeamsUI::initializeTeamImage()
     layout->addWidget(container, 0, Qt::AlignCenter);
 
     QVBoxLayout* containerLayout = new QVBoxLayout(container);
-    //containerLayout->setSpacing(0); // Встановлення проміжку між елементами у контейнері
+
 
     CameraIcon = std::make_unique<QPushButton>(container);
     CameraIcon->setFixedSize(39, 39);
@@ -290,42 +285,6 @@ void TeamsUI::initializeTeamImage()
 
 TeamsUI::TeamsUI()
 {
-/*
-    initializeLocationDrop();
-    initializeCategoryDrop();
-    initializeLocationLabel();
-    initializeSubCategoryLabel();
-    initializeCategoryLabel();
-    initializeSubCategoryDrop();
-    initializeTeamLabel();
-    initializeTeamInput();
-    initializeTeamImage();
-    initializeApplyButton();
-    initializeCancelButton();
-
-    Layout = std::make_unique<QVBoxLayout>(this);
-
-    Layout->addWidget(LocationLabel.get());
-    Layout->addWidget(LocationDrop.get());
-
-    Layout->addWidget(CategoryLabel.get());
-    Layout->addWidget(CategoryDrop.get());
-
-    Layout->addWidget(SubCategoryLabel.get());
-    Layout->addWidget(SubCategoryDrop.get());
-
-    Layout->addWidget(TeamLabel.get());
-    Layout->addWidget(TeamInput.get());
-
-    Layout->addWidget(TeamImage.get());
-
-    Layout->addWidget(ApplyButton.get());
-    Layout->addWidget(CancelButton.get());
-
-    setStyleSheet("background-color: rgba(255, 255, 255, 1);");
-
-    setLayout(Layout.get());
-*/
 
 
 }
@@ -386,7 +345,7 @@ void TeamsUI::openFileExplorer()
 
         isImageSet = true; // Встановити прапорець, що зображення встановлено
 
-        // Приховати кнопки та текст, оскільки зображення встановлено
+
         CameraIcon->setVisible(false);
         LogoText->setVisible(false);
     }
@@ -401,9 +360,9 @@ void TeamsUI::enterEvent(QEnterEvent* event)
         CameraIcon->setVisible(true);
         LogoText->setVisible(true);
 
-   }
+    }
 
-   QWidget::enterEvent(event);
+    QWidget::enterEvent(event);
 }
 
 void TeamsUI::leaveEvent(QEvent* event)
@@ -430,7 +389,6 @@ std::map<int,std::string> TeamsUI::GetLocations()
     std::cout<<responce<<std::endl;
 
     std::map<int, std::string> locationMap;
-
 
     QJsonDocument jsonDocument = QJsonDocument::fromJson(QString::fromStdString(responce).toUtf8());
 
@@ -498,8 +456,6 @@ void TeamsUI::CreateTeam()
     QString LocationText = this->LocationDrop->currentText();
     QString TeamName = this->TeamInput->text();
 
-
-
     if (!CategoryText.isNull() && !SubCategoryText.isNull() && !LocationText.isEmpty() && !TeamName.isNull() && !this->ImagePath.isNull()) {
         QMessageBox applyMessageBox;
         applyMessageBox.setText("Команду додано");
@@ -520,28 +476,28 @@ void TeamsUI::CreateTeam()
             "   background-color: rgba(248, 248, 248, 1);"
             "   font-size: 14px;"  // Розмір шрифту
             "}");
-;
+        ;
         applyMessageBox.exec();
         return;
     }
 
     if(!SubCategoryText.isEmpty()){
-    for(const auto tmp: this->SubCategoriesVector)
-    {
-        if(tmp.getName()==SubCategoryText.toStdString())
+        for(const auto tmp: this->SubCategoriesVector)
         {
-            team.setSubcategoryId(tmp.getId());
-            break;
-        }
-    }}else{return;}
+            if(tmp.getName()==SubCategoryText.toStdString())
+            {
+                team.setSubcategoryId(tmp.getId());
+                break;
+            }
+        }}else{return;}
 
     if(!LocationText.isEmpty()){
-    for (const auto pair : this->LocationMap) {
-        if (pair.second == LocationText.toStdString()) {
-            team.setTeamLocation(pair.first);
-            break;
-        }
-    }}else{return;}
+        for (const auto pair : this->LocationMap) {
+            if (pair.second == LocationText.toStdString()) {
+                team.setTeamLocation(pair.first);
+                break;
+            }
+        }}else{return;}
 
     if(!TeamName.isEmpty()){
         team.setTeamName(TeamName);
@@ -578,6 +534,7 @@ void TeamUIFilter::initializeApplyButton()
                                "QPushButton:pressed {"
                                "background-color: rgba(200, 5, 21, 1);"
                                "}");
+    connect(ApplyButton.get(), &QPushButton::clicked, this, &TeamUIFilter::applyButtonEvent);
 }
 
 void TeamUIFilter::initializeCancelButton()
@@ -623,9 +580,6 @@ TeamUIFilter::TeamUIFilter()
     initializeCategoryLabel();
     initializeSubCategoryDrop();
 
-    //initializeTeamLabel();
-    //initializeTeamInput();
-    //initializeTeamImage();
     initializeApplyButton();
     initializeCancelButton();
 
@@ -644,9 +598,7 @@ TeamUIFilter::TeamUIFilter()
     Layout->addWidget(SubCategoryDrop.get());
 
     Layout->addWidget(Frame.get());
-    //Layout->addWidget(TeamInput.get());
 
-    //Layout->addWidget(TeamImage.get());
 
     Layout->addWidget(ApplyButton.get());
     Layout->addWidget(CancelButton.get());
@@ -654,4 +606,39 @@ TeamUIFilter::TeamUIFilter()
     setStyleSheet("background-color: rgba(255, 255, 255, 1);");
 
     setLayout(Layout.get());
+}
+
+void TeamUIFilter::applyButtonEvent()
+{
+    Subcategory* currentSub = nullptr;
+    int locationId = -1; // За замовчуванням, якщо не знайдено
+    if(CategoryDrop->currentText()!="All"){
+        std::string currentText = SubCategoryDrop->currentText().toStdString();
+        auto it = std::find_if(SubCategoriesVector.begin(), SubCategoriesVector.end(), [&currentText](const Subcategory& subCategory) {
+            return subCategory.getName() == currentText;
+        });
+
+
+
+        if (it != SubCategoriesVector.end()) {
+
+            currentSub = &(*it);
+        }
+
+    }else{currentSub = new Subcategory();
+        currentSub->setId(0);currentSub->setCategoryId(0);
+    }
+    QString selectedLocation = LocationDrop->currentText();
+
+    if(selectedLocation != "All"){
+        for (const auto& entry : LocationMap) {
+            if (entry.second == selectedLocation.toStdString()) {
+                locationId = entry.first;
+                break;
+            }
+        }
+    }else{locationId =0;}
+    qDebug()<< QString::number(locationId) +QString::number(currentSub->getCategoryId())+QString::number(currentSub->getId()) ;
+    emit teamsFilterRequested("",locationId ,currentSub->getCategoryId() ,currentSub->getId() );
+    delete currentSub;
 }

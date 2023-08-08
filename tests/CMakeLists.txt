@@ -8,6 +8,7 @@ set(PROJECT_SOURCES
     CategoriesModelSerializationAndDeserializationTests.cpp
     SubcategoriesModelSerializationAndDeserializationTests.cpp
     TeamsModelSerializationAndDeserializationTests.cpp
+    TeamModelMock.h     TeamModelTests.cpp
     ../server/categoriesmodel.h
     ../server/subcategoryModel.h
     ../server/Dbmodel.h
@@ -52,10 +53,10 @@ file(GLOB DAL_SOURCES "${DAL_DIR}/*.cpp" "${DAL_DIR}/*.h")
 if ($ENV{GOOGLETEST_DIR})
     set(GOOGLETEST_DIR $ENV{GOOGLETEST_DIR})
 else ()
-    if (NOT "C:/Users/Administrator/Desktop/Softserve_project/tech_course_project/googletest" STREQUAL "")
+    if (NOT "../googletest" STREQUAL "")
         message(WARNING "Using googletest src dir specified at Qt Creator wizard")
     endif ()
-    set(GOOGLETEST_DIR "C:/Users/Administrator/Desktop/Softserve_project/tech_course_project/googletest")
+    set(GOOGLETEST_DIR "../googletest")
 endif ()
 
 if (EXISTS ${GOOGLETEST_DIR})
@@ -100,7 +101,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 target_link_libraries(SportHubTests PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 
 # Include and link Poco libraries
-set(POCO_DIR "C:/msys64/mingw64")
+set(POCO_DIR "D:/MSYS/mingw64")
 include_directories("${POCO_DIR}/include")
 target_link_libraries(SportHubTests PRIVATE
     "${POCO_DIR}/lib/libPocoFoundation.dll.a"

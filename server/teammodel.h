@@ -17,6 +17,7 @@ class TeamModel: public DbModel , public Team
 
 public:
     virtual const QString GetTable() const override;
+
     void InsertTeam();
 
     void UpdateTeam();

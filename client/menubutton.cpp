@@ -235,22 +235,14 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     std::unique_ptr<ResizableWidget> widget = std::make_unique<ResizableWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
 
-   // if(!teamui){
     teamui = new TeamsUI(false);
     teamfilter= new TeamUIFilter();
 
-    //teamui->CancelButton->disconnect(SIGNAL(clicked()));
-   //QObject::connect(teamui->CancelButton, &QPushButton::clicked, teamui, &MenuButton::cancelButtonOnAddTeamClicked);
 
-    /*
-    Тут доробити сигнал для перемикання ui після cancel
-
-
-
-    */
-    //}
     TableWidget* tableWidget = new TableWidget();
     tableWidget->initPagination();
+
+    connect(teamfilter, &TeamUIFilter::teamsFilterRequested, tableWidget, &TableWidget::filterTeams);
 
 
     SearchLine* searchLine = new SearchLine();
@@ -389,7 +381,7 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
     clickedButton->clicked=true;
     QIcon originalIcon = clickedButton->GetIcon();
 
-    // Змініть іконку натиснутої кнопки на оригінальну
+
     clickedButton->setButtonIcon(originalIcon);
 
 
