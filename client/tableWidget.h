@@ -56,8 +56,6 @@ private:
     void showEvent(QShowEvent* event);
     void initializeCells();
 
-    void updateTableWithfilteredTeams(); ///
-
     const int columnNumber = 7;
     int width;
 
