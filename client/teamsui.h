@@ -1,6 +1,5 @@
 #ifndef TEAMSUI_H
 #define TEAMSUI_H
-#pragma once
 
 #include <QWidget>
 #include <QMenu>
@@ -33,7 +32,7 @@
 #include "client.h"
 #include "menubutton.h"
 
-
+class TableWidget;
 
 
 class TeamsUI: public QWidget
@@ -139,5 +138,36 @@ signals:
     void teamsFilterRequested(QString name, int locationId, int categoryId, int subcategoryId);
 };
 
+class TeamsEditUI:public TeamsUI
+{
+
+    Q_OBJECT
+public:
+    TeamsEditUI(const Team& selectedTeam);
+    TeamsEditUI();
+
+    virtual void initializeCancelButton();
+    virtual void initializeApplyButton();
+    virtual void EditTeam() final;
+    virtual void initializeTeamsImage();
+
+    void CancelEdit();
+    Team getEditedTeam() const { return editedTeam; }
+
+    static Team selectedTeam;
+    std::map<int,std::string> GetSubcategories();
+private:
+    bool isImageSet = false;
+    Team editedTeam;
+    std::unique_ptr<QPushButton> ClickableButton;
+    std::unique_ptr< QLabel> imageLabel;
+signals:
+    void TeamEdited(const Team& editedTeam);
+    void EditUI();
+public slots:
+    Team getSelectedTeam();
+private slots:
+    void openFilesExplorer();
+};
 
 #endif // TEAMSUI_H

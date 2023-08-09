@@ -120,7 +120,7 @@ install(TARGETS Client
 #Poco installation start
 
 # Set the POCO library directory
-set(POCO_DIR "D:/MSYS/mingw64")
+set(POCO_DIR "c:/msys64/mingw64")
 
 # Include directories for POCO
 

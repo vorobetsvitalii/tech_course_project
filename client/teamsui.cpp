@@ -642,3 +642,250 @@ void TeamUIFilter::applyButtonEvent()
     emit teamsFilterRequested("",locationId ,currentSub->getCategoryId() ,currentSub->getId() );
     delete currentSub;
 }
+Team TeamsEditUI::selectedTeam = Team();
+TeamsEditUI::TeamsEditUI(const Team& SelectedTeam)
+{
+    selectedTeam = SelectedTeam;
+    initializeLocationDrop();
+    initializeCategoryDrop();
+    initializeLocationLabel();
+    initializeSubCategoryLabel();
+    initializeCategoryLabel();
+    initializeSubCategoryDrop();
+    initializeTeamLabel();
+    initializeTeamInput();
+    initializeTeamsImage();
+    initializeApplyButton();
+    initializeCancelButton();
+
+    Layout = std::make_unique<QVBoxLayout>(this);
+
+    Layout->addWidget(LocationLabel.get());
+    Layout->addWidget(LocationDrop.get());
+
+    Layout->addWidget(CategoryLabel.get());
+    Layout->addWidget(CategoryDrop.get());
+
+    Layout->addWidget(SubCategoryLabel.get());
+    Layout->addWidget(SubCategoryDrop.get());
+
+    Layout->addWidget(TeamLabel.get());
+    Layout->addWidget(TeamInput.get());
+
+    Layout->addWidget(imageLabel.get());
+
+    Layout->addWidget(ApplyButton.get());
+    Layout->addWidget(CancelButton.get());
+
+    setStyleSheet("background-color: rgba(255, 255, 255, 1);");
+
+    setLayout(Layout.get());
+
+}
+void TeamsEditUI::initializeTeamsImage()
+{
+    imageLabel = std::make_unique<QLabel>();
+    imageLabel->setFixedSize(246, 155);
+    imageLabel->setStyleSheet("QLabel { "
+                              "background-color: white;"
+                              "background-image: none;"
+                              "border: 1px solid rgba(209, 209, 209, 1);"
+                              "}"
+                              "QLabel:hover { background-color: white; }");
+
+    QVBoxLayout* layout = new QVBoxLayout(imageLabel.get());
+
+    QWidget* container = new QWidget(imageLabel.get());
+    layout->addWidget(container, 0, Qt::AlignCenter);
+
+    QVBoxLayout* containerLayout = new QVBoxLayout(container);
+    //containerLayout->setSpacing(0); // Встановлення проміжку між елементами у контейнері
+
+    ClickableButton = std::make_unique<QPushButton>(container);
+    ClickableButton->setFixedSize(39, 39);
+    ClickableButton->setFlat(true);
+    ClickableButton->setAttribute(Qt::WA_TranslucentBackground);
+    ClickableButton->setStyleSheet("background-color: rgba(0, 0, 0, 0); border: none;");
+
+    containerLayout->addWidget(ClickableButton.get(), 0, Qt::AlignCenter);
+
+    connect(ClickableButton.get(), &QPushButton::clicked, this, &TeamsEditUI::openFilesExplorer);
+
+}
+void TeamsEditUI::openFilesExplorer()
+{
+    ImagePath = QFileDialog::getOpenFileName(this, "Відкрити файл", "", "Зображення (*.png *.jpg *.jpeg *.svg)");
+    if (!ImagePath.isEmpty()) {
+
+        QPixmap pixmap(ImagePath);
+        QSize imageSize = imageLabel->size();
+        pixmap = pixmap.scaled(imageSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        imageLabel->clear();
+        imageLabel->setStyleSheet(QString("QLabel { border: none; background-image: url(%1); background-repeat: no-repeat; background-position: center; background-origin: content; background-clip: content; }QLabel:hover { background-color: white;background-image: none; }").arg(ImagePath));
+
+        TeamIcon = QIcon(pixmap);
+
+
+        //isImageSet = true; // Встановити прапорець, що зображення встановлено
+        ClickableButton->setVisible(false);
+
+        imageLabel->setVisible(true);
+    }
+
+}
+Team TeamsEditUI::getSelectedTeam()
+{
+    LocationDrop->setCurrentText(FindLocationById(selectedTeam.getTeamLocation()));
+    CategoryDrop->setCurrentText(FindCategoryById(FindCategoryIdBySubcategoryId(selectedTeam.getSubcategoryId())));
+    int categoryId = FindCategoryIdBySubcategoryId(selectedTeam.getSubcategoryId());
+    SubCategoryDrop->setCurrentText(FindSubcategoryById(selectedTeam.getSubcategoryId(), &categoryId));
+    TeamInput->setText(selectedTeam.getTeamName());
+
+    if (!selectedTeam.getTeamLogoBlob().isEmpty()) {
+        QByteArray imageData = QByteArray::fromBase64(selectedTeam.getTeamLogoBlob().toLatin1());
+        QImage teamImage;
+        teamImage.loadFromData(imageData);
+
+        QPixmap teamPixmap = QPixmap::fromImage(teamImage);
+        if (!teamPixmap.isNull()) {
+
+            QSize imageSize = imageLabel->size();
+            teamPixmap = teamPixmap.scaled(imageSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // imageLabel = std::make_unique<QLabel>();
+            // imageLabel->setFixedSize(246, 155);
+            imageLabel->setPixmap(teamPixmap);
+            imageLabel->setScaledContents(true);
+            //TeamImage->layout()->addWidget(imageLabel.get());
+        }
+    }
+    /* if (!selectedTeam.getTeamLogoBlob().isEmpty()) {
+        QByteArray imageData = QByteArray::fromBase64(selectedTeam.getTeamLogoBlob().toLatin1());
+
+        QImage teamImage;
+        teamImage.loadFromData(imageData);
+
+    if (!teamImage.isNull()) {
+        QPixmap pixmap = QPixmap::fromImage(teamImage);
+        QSize imageSize = TeamImage->size();
+        pixmap = pixmap.scaled(imageSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        TeamImage->setStyleSheet(QString("QFrame { border: none; background-image: url(%1); background-repeat: no-repeat; background-position: center; background-origin: content; background-clip: content; }QFrame:hover { background-color: white;background-image: none; }").arg(ImagePath));
+
+        TeamIcon = QIcon(pixmap);
+
+        // Hide the CameraIcon and LogoText
+        CameraIcon->setVisible(false);
+        LogoText->setVisible(false);
+    }
+   }*/
+    return selectedTeam;
+}
+TeamsEditUI::TeamsEditUI()
+{
+
+}
+std::map<int, std::string> TeamsEditUI::GetSubcategories()
+{
+    std::map<int, std::string> subcategoriesMap;
+    std::string All = "All";
+    subcategoriesMap.insert(std::make_pair(0, All));
+
+    auto future = std::async(std::launch::async, []() {
+        return Client::getInstance().GetSubcategories();
+    });
+
+    const auto& subcategories = future.get();
+    for (const auto& subcategory : subcategories)
+    {
+        subcategoriesMap.insert(std::make_pair(subcategory.getId(), subcategory.getName()));
+    }
+    return subcategoriesMap;
+}
+
+void TeamsEditUI::initializeApplyButton()
+{
+    ApplyButton.reset(new QPushButton());
+    ApplyButton->setText("Save");
+    ApplyButton->setFixedSize(246, 32);
+    ApplyButton->setStyleSheet("QPushButton {"
+                               "background-color: rgba(224, 34, 50, 1);"
+                               "color: white;"
+                               "border: 0px;"
+                               "}"
+                               "QPushButton:pressed {"
+                               "background-color: rgba(200, 5, 21, 1);"
+                               "}");
+
+    connect(ApplyButton.data(), &QPushButton::clicked, this, &TeamsEditUI::EditTeam);
+}
+void TeamsEditUI::initializeCancelButton()
+{
+
+    CancelButton = std::make_unique<QPushButton>();
+    CancelButton->setText("Cancel");
+    CancelButton->setFixedSize(246,32);
+    CancelButton->setStyleSheet("QPushButton {"
+                                "background-color: white;"
+                                "color: #D72130;"
+                                "border: 0px;"
+                                "}"
+                                "QPushButton:hover {"
+                                "background-color: rgba(248, 248, 248, 1);"
+                                "}"
+                                "QPushButton:pressed {"
+                                "background-color: white;"
+                                "}");
+    connect(CancelButton.get(), &QPushButton::clicked, this, &TeamsEditUI::CancelEdit);
+}
+void TeamsEditUI::EditTeam()
+{
+    qDebug()<<"EditTeam";
+    QString CategoryName = this->CategoryDrop->currentText();
+    QString SubCategoryName = this->SubCategoryDrop->currentText();
+    QString LocationName = this->LocationDrop->currentText();
+    QString TeamName = this->TeamInput->text();
+
+    std::map<int, std::string> locationMap = GetLocations();
+
+    int locationId = 0;
+    for (const auto& [id, name] : locationMap)
+    {
+        if (name == LocationName.toStdString())
+        {
+            locationId = id;
+            break;
+        }
+    }
+    std::map<int, std::string> subcategoryMap = GetSubcategories();
+
+    int subcategoryId=0;
+
+    for (const auto& [id, name] : subcategoryMap)
+    {
+        if (name == SubCategoryName.toStdString())
+        {
+            subcategoryId = id;
+            break;
+        }
+    }
+    if (locationId!=0&&subcategoryId!=0){
+        selectedTeam.setSubcategoryId(subcategoryId);
+        selectedTeam.setTeamLocation(locationId);
+        selectedTeam.setTeamName(TeamName);
+        if(!this->ImagePath.isEmpty())
+        {
+            selectedTeam.setTeamLogoBlob(this->ImagePath);
+
+        }else{return;}
+    }
+    Client::getInstance().EditTeam(selectedTeam);
+    qDebug()<<SubCategoryName+"  "+QString::number( selectedTeam.getSubcategoryId())+  " " +LocationName+"  "+QString::number(selectedTeam.getTeamLocation())+"  "+selectedTeam.getTeamName()+"   "+this->ImagePath;
+    emit TeamEdited(getSelectedTeam());
+    //close();
+    setVisible(false);
+}
+void TeamsEditUI::CancelEdit()
+{
+    setVisible(false);
+        //close();
+}

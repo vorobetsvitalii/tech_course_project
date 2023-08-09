@@ -37,6 +37,8 @@ public:
     }
 };
 
+class TeamsEditUI;
+
 class TableWidget : public QTableWidget
 {
     Q_OBJECT
@@ -49,6 +51,8 @@ public:
     void initPagination();
     PaginationWidget* getPagination();
 
+    void onTeamEdited(const Team& editedTeam);
+    TeamsEditUI* teamsEditUI;
 private:
     void fillWithData(std::vector<Team> &teams_data);
     void resizeTable();
@@ -94,7 +98,8 @@ public slots:
 
     void onResultCountChanged();
     void onPageChanged();
-
+signals:
+    void EditUI();
 };
 
 

@@ -28,7 +28,9 @@ class TeamsUI;
 
 class TeamUIFilter;
 
+class TableWidget;
 
+class TeamsEditUI;
 
 class MenuButton : public QPushButton
 {
@@ -47,6 +49,8 @@ public:
     void SetLanguages(MenuButton* clickedButton ,QScrollArea* Content);
     void SetIA(MenuButton* clickedButton ,QScrollArea* Content);
 
+    void onTeamEdited(const Team& editedTeam);
+
     QIcon GetIcon();
     bool clicked;
 
@@ -59,9 +63,12 @@ public:
     static void setSubcategoriesLayout(QVBoxLayout* subcategoriesVLayout_);
     static void setTeamsLayout(QVBoxLayout* teamsVLayout_);
 
+    static void setTeamForEdit();
+
     static TeamsUI* teamui;
     static TeamUIFilter* teamfilter;
-
+    static TeamsEditUI* teamEdit;
+     TableWidget* tableWidget;
 private:
 
     std::unique_ptr<QWidget> advertisingContent=initializeAdvertisingContent();
@@ -113,6 +120,8 @@ public slots:
     static void addTeamButtonClicked();
     static void showFilterForTeamTable();
     static void cancelButtonOnAddTeamClicked();
+
+    static void EditTeam();
 signals:
     void menuItemClicked(MenuButton* clickedButton);
 
