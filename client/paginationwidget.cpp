@@ -55,15 +55,7 @@ void PaginationControl::setParameters(int items_count, int result_count)
         page_buttons[i].setText(QString::number(i+1));
         page_buttons[i].setStyleSheet("font: 500 12px \"Open Sans\"; color: #5C7694; margin:0px 2px 0px 2px;");
         page_buttons[i].setCursor(Qt::PointingHandCursor);
-
-        connect(&page_buttons[i], &QLabel::linkActivated,
-            [this](const QString& text)
-            {
-                    qDebug() << "Activated: " << text;
-                this->setCurrentPage(text.toInt() - 1);
-            }
-        );
-
+        
         clayout->addWidget(&page_buttons[i], Qt::AlignJustify);
         if(i < lvisible || i > rvisible) page_buttons[i].setHidden(true);
     }
