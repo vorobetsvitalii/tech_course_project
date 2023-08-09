@@ -84,7 +84,6 @@ void TeamContextMenu::handleContextMenuAction()
              DeletePopup deletePopup(deletePopup.getTableTeam(), this);
              deletePopup.setSelectedTeam(selectedTeam);
              deletePopup.setStyleSheet("border: none");
-             deletePopup.exec();
              if(deletePopup.exec()== QDialog::Accepted){
                  temp_team_button->parentWidget()->deleteLater();
              }

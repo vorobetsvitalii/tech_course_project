@@ -85,7 +85,6 @@ void CustomContextMenu::handleContextMenuAction()
                 DeletePopup deletePopup(deletePopup.getTableSubcategory(), this);
                 deletePopup.setSelectedSubcategory(selectedSubcategory);
                 deletePopup.setStyleSheet("border: none");
-                deletePopup.exec();
                 if(deletePopup.exec()== QDialog::Accepted){
                 temp_subcategory_button->parentWidget()->deleteLater();
                 }
