@@ -61,19 +61,19 @@ public:
 
     void EditEntity(const std::string& url, Entity& object);
     void DeleteEntity(const std::string& url, const std::string& objectId);
-    static std::vector<Category> GetCategories();
-    static std::vector<Subcategory> GetSubcategories();
-    static std::vector<Team> GetTeams();
-    static void PostCategory(const std::string& categoryName);
-    static void PostSubcategory(const std::string& subcategoryName, int categoryId);
+    std::vector<Category> GetCategories();
+    std::vector<Subcategory> GetSubcategories();
+    std::vector<Team> GetTeams();
+    void PostCategory(const std::string& categoryName);
+    void PostSubcategory(const std::string& subcategoryName, int categoryId);
 
-    static void PostTeam(Team& team);
-    static void EditCategory(Category& category);
-    static void DeleteCategory(Category& category);
-    static void EditSubcategory(Subcategory& subcategory);
-    static void EditTeam(Team& team);
-    static void DeleteSubcategory(Subcategory& subcategory);
-    static void DeleteTeam(Team& team);
+    void PostTeam(Team& team);
+    void EditCategory(Category& category);
+    void DeleteCategory(Category& category);
+    void EditSubcategory(Subcategory& subcategory);
+    void EditTeam(Team& team);
+    void DeleteSubcategory(Subcategory& subcategory);
+    void DeleteTeam(Team& team);
 
 
 

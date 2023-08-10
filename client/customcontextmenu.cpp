@@ -25,7 +25,7 @@ CustomContextMenu::CustomContextMenu(QWidget *parent) : QMenu(parent)
                         "font-size: 9pt;"
                         "font-weight: bold;"
                         "");
-    subcategoriesList = Client::GetSubcategories();
+    subcategoriesList = Client::getInstance().GetSubcategories();
 
 }
 

@@ -225,7 +225,7 @@ void TableWidget::editButtonClicked(int row)
 
 
     Team selectedTeam;
-    std::vector<Team> teamsList = Client::GetTeams();
+    std::vector<Team> teamsList = Client::getInstance().GetTeams();
     for (Team& team : teamsList)
     {
         if (team.getTeamName() == teamName)
