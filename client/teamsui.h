@@ -1,6 +1,5 @@
 #ifndef TEAMSUI_H
 #define TEAMSUI_H
-#pragma once
 
 #include <QWidget>
 #include <QMenu>
@@ -15,22 +14,25 @@
 #include <QEvent>
 #include <QEnterEvent>
 #include <QGraphicsDropShadowEffect>
+
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
 #include <Poco/Net/HTTPClientSession.h>
 #include <Poco/Net/SocketAddress.h>
+#include <Poco/URI.h>
+
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <Poco/URI.h>
+
+
 #include <iostream>
 #include <future>
+
 #include "HTTPRequestManager.h"
 #include "client.h"
-
-
 #include "menubutton.h"
 
-
+class TableWidget;
 
 
 class TeamsUI: public QWidget
@@ -46,11 +48,7 @@ protected:
     std::unique_ptr<QComboBox>CategoryDrop;
     std::unique_ptr<QComboBox>SubCategoryDrop;
 
-
     std::unique_ptr<QLineEdit>TeamInput;
-
-
-
 
     std::unique_ptr<QLabel>LocationLabel;
     std::unique_ptr<QLabel>CategoryLabel;
@@ -77,8 +75,6 @@ protected:
     std::vector<Subcategory> GetSubCategories();
     virtual void CreateTeam() final;
     virtual void Cancel();
-
-
 
 public:
 
@@ -109,7 +105,6 @@ public:
 
     virtual void initializeTeamImage()final;
 
-
     TeamsUI();
     TeamsUI(const bool);
 
@@ -137,7 +132,42 @@ public:
     virtual void leaveEvent(QEvent* event) override;
 
     TeamUIFilter();
+public slots:
+    void applyButtonEvent();
+signals:
+    void teamsFilterRequested(QString name, int locationId, int categoryId, int subcategoryId);
 };
 
+class TeamsEditUI:public TeamsUI
+{
+
+    Q_OBJECT
+public:
+    TeamsEditUI(const Team& selectedTeam);
+    TeamsEditUI();
+
+    virtual void initializeCancelButton();
+    virtual void initializeApplyButton();
+    virtual void EditTeam() final;
+    virtual void initializeTeamsImage();
+
+    void CancelEdit();
+    Team getEditedTeam() const { return editedTeam; }
+
+    static Team selectedTeam;
+    std::map<int,std::string> GetSubcategories();
+private:
+    bool isImageSet = false;
+    Team editedTeam;
+    std::unique_ptr<QPushButton> ClickableButton;
+    std::unique_ptr< QLabel> imageLabel;
+signals:
+    void TeamEdited(const Team& editedTeam);
+    void EditUI();
+public slots:
+    Team getSelectedTeam();
+private slots:
+    void openFilesExplorer();
+};
 
 #endif // TEAMSUI_H

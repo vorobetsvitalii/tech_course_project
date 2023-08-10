@@ -5,6 +5,7 @@
 
 TeamsUI* MenuButton::teamui = nullptr;
 TeamUIFilter* MenuButton::teamfilter = nullptr;
+TeamsEditUI* MenuButton::teamEdit = nullptr;
 
 MenuButton::MenuButton(const QString& name, const QString& tooltip, const QIcon& icon, QWidget* parent, AdminPage* adminpage)
     : QPushButton(parent), originalIcon(icon)
@@ -62,7 +63,10 @@ void MenuButton::showFilterForTeamTable()
     teamfilter->setVisible(true);
     teamui->setVisible(false);
 }
-
+void MenuButton::EditTeam()
+{
+    setTeamForEdit();
+}
 void MenuButton::cancelButtonOnAddTeamClicked()
 {
     teamui->setVisible(false);
@@ -235,29 +239,24 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     std::unique_ptr<ResizableWidget> widget = std::make_unique<ResizableWidget>();
     QVBoxLayout* layout = new QVBoxLayout(widget.get());
 
-   // if(!teamui){
     teamui = new TeamsUI(false);
     teamfilter= new TeamUIFilter();
+    teamEdit = new TeamsEditUI(TeamsEditUI::selectedTeam);
+    teamEdit->setVisible(false);
 
-    //teamui->CancelButton->disconnect(SIGNAL(clicked()));
-   //QObject::connect(teamui->CancelButton, &QPushButton::clicked, teamui, &MenuButton::cancelButtonOnAddTeamClicked);
-
-    /*
-    Тут доробити сигнал для перемикання ui після cancel
-
-
-
-    */
-    //}
-    TableWidget* tableWidget = new TableWidget();
+    tableWidget = new TableWidget();
     tableWidget->initPagination();
 
+    connect(teamfilter, &TeamUIFilter::teamsFilterRequested, tableWidget, &TableWidget::filterTeams);
+    QObject::connect(tableWidget,&TableWidget::EditUI,this,this->EditTeam);
 
     SearchLine* searchLine = new SearchLine();
     PaginationWidget* pagination = tableWidget->getPagination();
 
     layout->addWidget(teamui);
     layout->addWidget(teamfilter);
+    layout->addWidget(teamEdit);
+
     
     layout->addWidget(searchLine);
 
@@ -270,10 +269,15 @@ std::unique_ptr<QWidget> MenuButton::initializeTeamsContent()
     QObject::connect(adminpage, &AdminPage::adminPageResized, widget.get(), &ResizableWidget::resize);
     QObject::connect(widget.get(), &ResizableWidget::resizableWidgetResized, tableWidget, &TableWidget::resize);
     QObject::connect(searchLine, &SearchLine::nameChanged, tableWidget, &TableWidget::searchTeamByName);
+    QObject::connect(teamEdit, &TeamsEditUI::TeamEdited, this, &MenuButton::onTeamEdited);
 
     return widget;
 }
-
+void MenuButton::onTeamEdited(const Team& editedTeam)
+{
+    // Update the table widget data when a team is edited
+    tableWidget->onTeamEdited(editedTeam);
+}
 std::unique_ptr<QWidget> MenuButton::initializeUsersContent()
 {
     std::unique_ptr<QWidget> widget = std::make_unique<QWidget>();
@@ -314,7 +318,15 @@ std::unique_ptr<QWidget> MenuButton::initializeIAContent()
 
     return widget;
 }
+void MenuButton::setTeamForEdit()
+{
+    //teamEdit = new TeamsEditUI(TeamsEditUI::selectedTeam);
+    teamEdit->getSelectedTeam();
 
+    teamEdit->setVisible(true);
+    teamfilter->setVisible(false);
+    teamui->setVisible(false);
+}
 QIcon MenuButton::convertToGrayIcon(const QIcon& icon)
 {
     QList<QSize> sizes = icon.availableSizes();
@@ -389,7 +401,7 @@ void handleMenuItemClick(MenuButton* clickedButton ,QScrollArea* Content)
     clickedButton->clicked=true;
     QIcon originalIcon = clickedButton->GetIcon();
 
-    // Змініть іконку натиснутої кнопки на оригінальну
+
     clickedButton->setButtonIcon(originalIcon);
 
 

@@ -29,7 +29,7 @@ void TeamModel::UpdateTeam()
     QString updateQuery = "UPDATE " + GetTable() + " SET TeamName='" + this->getTeamName() + "', SubcategoryId="
                           + QString::number(this->getSubcategoryId()) + ", TeamLocation=" + QString::number(this->getTeamLocation()) +
                           ", TeamLogo=CAST('" + this->getTeamLogoBlob() + "' AS VARBINARY(MAX)) WHERE TeamId=" + QString::number(this->getTeamId());
-                          Update(updateQuery);
+    Update(updateQuery);
 }
 
 void TeamModel::DeleteTeam()
@@ -60,40 +60,40 @@ std::vector<Team> TeamModel::SelectTeams()
     for (const QString& teamId : teamIdTokens) {
 
 
-    QString selectQuery = QString("SELECT [TeamId],[TeamName],[SubcategoryId],[TeamLocation],[CreatingDate],[TeamLogo] FROM %1 WHERE TeamId = %2").arg(TM->GetTable()).arg(teamId);
-    QString result = TM->Select(selectQuery);
-    qDebug() << result;
+        QString selectQuery = QString("SELECT [TeamId],[TeamName],[SubcategoryId],[TeamLocation],[CreatingDate],[TeamLogo] FROM %1 WHERE TeamId = %2").arg(TM->GetTable()).arg(teamId);
+        QString result = TM->Select(selectQuery);
+        qDebug() << result;
 
 
 
-    QRegularExpression regex(R"((.*?), (.*?), (.*?), (.*?), (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}), (.*))");
+        QRegularExpression regex(R"((.*?), (.*?), (.*?), (.*?), (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}), (.*))");
 
 
-    // Використовуємо QRegularExpressionMatchIterator для знаходження всіх входжень, що відповідають регулярному виразу
-    QRegularExpressionMatchIterator regexIterator = regex.globalMatch(result);
+        // Використовуємо QRegularExpressionMatchIterator для знаходження всіх входжень, що відповідають регулярному виразу
+        QRegularExpressionMatchIterator regexIterator = regex.globalMatch(result);
 
-    // Перебираємо всі знайдені входження
-    while (regexIterator.hasNext()) {
-        QRegularExpressionMatch match = regexIterator.next();
+        // Перебираємо всі знайдені входження
+        while (regexIterator.hasNext()) {
+            QRegularExpressionMatch match = regexIterator.next();
 
-        // Отримуємо значення полів за номерами груп
-        QString teamId = match.captured(1);
-        QString teamName = match.captured(2);
-        QString subcategoryId = match.captured(3);
-        QString teamLocation = match.captured(4);
-        QString Date = match.captured(5);
-        QString teamLogo = match.captured(6);
+            // Отримуємо значення полів за номерами груп
+            QString teamId = match.captured(1);
+            QString teamName = match.captured(2);
+            QString subcategoryId = match.captured(3);
+            QString teamLocation = match.captured(4);
+            QString Date = match.captured(5);
+            QString teamLogo = match.captured(6);
 
-        // Створюємо новий екземпляр Team і додаємо його до вектора
-        Team team;
-        team.setTeamId(teamId.toInt());
-        team.setTeamName(teamName);
-        team.setSubcategoryId(subcategoryId.toInt());
-        team.setTeamLocation(teamLocation.toInt());
-        team.setTeamLogoBlob(teamLogo);
-        team.setDate(Date);
-        TeamVector.push_back(team);
-    }
+            // Створюємо новий екземпляр Team і додаємо його до вектора
+            Team team;
+            team.setTeamId(teamId.toInt());
+            team.setTeamName(teamName);
+            team.setSubcategoryId(subcategoryId.toInt());
+            team.setTeamLocation(teamLocation.toInt());
+            team.setTeamLogoBlob(teamLogo);
+            team.setDate(Date);
+            TeamVector.push_back(team);
+        }
 
     }
     return TeamVector;

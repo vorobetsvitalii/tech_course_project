@@ -81,10 +81,9 @@ void CategoryCustomMenu::handleContextMenuAction()
 
                     }
                 }
-                DeletePopup deletePopup(deletePopup.getTableSubcategory(), this);
+                DeletePopup deletePopup(deletePopup.getTableCategory(), this);
                 deletePopup.setSelectedCategory(selectedCategory);
                 deletePopup.setStyleSheet("border: none");
-                deletePopup.exec();
                 if(deletePopup.exec()== QDialog::Accepted){
                     temp_category_button->parentWidget()->deleteLater();
                 }

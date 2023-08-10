@@ -220,7 +220,7 @@ int FindCategoryIdBySubcategoryId(int id) {
 
 void TableWidget::editButtonClicked(int row)
 {
-    // Get the data from the selected row
+    /*// Get the data from the selected row
     QString teamName = item(row, 0)->text();
 
 
@@ -245,10 +245,60 @@ void TableWidget::editButtonClicked(int row)
             nameItem->setText(newName);
         }
     });
-    editPopup.exec();
+    editPopup.exec();*/
+    // Get the data from the selected row
+    QString teamName = item(row, 0)->text();
+    //QString CategoryName = item(row,3)->text();
+
+    Team selectedTeam;
+    std::vector<Team> teamsList = Client::GetTeams();
+    for (Team& team : teamsList)
+    {
+        if (team.getTeamName() == teamName)
+        {
+            selectedTeam = team;
+
+        }
+    }
+
+    teamsEditUI = new TeamsEditUI(selectedTeam
+                                  );
+
+
+    emit EditUI();
+   // connect(teamsEditUI, &TeamsEditUI::TeamEdited, this, &TableWidget::onTeamEdited);
 
 }
 
+void TableWidget::onTeamEdited(const Team& editedTeam)
+{
+    int rowIndex = -1;
+    for (int i = 0; i < teams.size(); ++i)
+    {
+        if (teams[i].getTeamId() == editedTeam.getTeamId())
+        {
+            rowIndex = i;
+            break;
+        }
+    }
+    if (rowIndex != -1)
+    {
+        teams[rowIndex] = editedTeam;
+        int locationId = editedTeam.getTeamLocation();
+        int subcategoryId = editedTeam.getSubcategoryId();
+        int categoryId;
+        QString locationName = FindLocationById(locationId);
+        QString subcategoryName = FindSubcategoryById(subcategoryId, &categoryId);
+        QString categoryName = FindCategoryById(categoryId);
+
+        setItem(rowIndex, 0, new QTableWidgetItem(editedTeam.getTeamName()));
+        setItem(rowIndex, 1, new QTableWidgetItem(locationName));
+        //setItem(rowIndex, 2, new QTableWidgetItem(editedTeam.getDate().left(10)));
+        setItem(rowIndex, 3, new QTableWidgetItem(categoryName));
+        setItem(rowIndex, 4, new QTableWidgetItem(subcategoryName));
+
+    }
+}
 void TableWidget::deleteButtonClicked(int row)
 {
     // Get the team name from the first column in the selected row
